@@ -2,16 +2,12 @@
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { NavLink } from "react-router-dom";
-import { Menu, X, Moon, Sun, Upload } from "lucide-react";
+import { Menu, X, Upload } from "lucide-react";
 import { useToast } from "@/components/ui/use-toast";
 
 export const Header = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [darkMode, setDarkMode] = useState(
-    localStorage.getItem("theme") === "dark" || 
-    (!localStorage.getItem("theme") && window.matchMedia("(prefers-color-scheme: dark)").matches)
-  );
   const { toast } = useToast();
 
   useEffect(() => {
@@ -27,19 +23,11 @@ export const Header = () => {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
+  // Force dark mode on app startup
   useEffect(() => {
-    if (darkMode) {
-      document.documentElement.classList.add("dark");
-      localStorage.setItem("theme", "dark");
-    } else {
-      document.documentElement.classList.remove("dark");
-      localStorage.setItem("theme", "light");
-    }
-  }, [darkMode]);
-
-  const toggleDarkMode = () => {
-    setDarkMode(!darkMode);
-  };
+    document.documentElement.classList.add("dark");
+    localStorage.setItem("theme", "dark");
+  }, []);
 
   const toggleMobileMenu = () => {
     setMobileMenuOpen(!mobileMenuOpen);
@@ -120,19 +108,6 @@ export const Header = () => {
           </nav>
 
           <div className="flex items-center gap-2">
-            <Button 
-              variant="outline" 
-              size="icon" 
-              onClick={toggleDarkMode}
-              className="rounded-full border-none bg-transparent hover:bg-primary/10 dark:hover:bg-white/10"
-            >
-              {darkMode ? (
-                <Sun className="h-5 w-5 text-white" />
-              ) : (
-                <Moon className="h-5 w-5 text-primary" />
-              )}
-            </Button>
-
             <Button 
               onClick={handleUploadClick} 
               className="hidden md:flex items-center gap-2 bg-accent hover:bg-accent/90 text-primary rounded-full"
@@ -221,3 +196,4 @@ export const Header = () => {
     </header>
   );
 };
+
