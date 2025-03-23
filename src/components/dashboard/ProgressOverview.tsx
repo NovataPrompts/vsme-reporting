@@ -14,7 +14,7 @@ export const ProgressOverview = () => {
   return (
     <Card className="shadow-sm glass-card">
       <CardHeader className="pb-2">
-        <CardTitle className="text-lg font-medium flex items-center justify-between">
+        <CardTitle className="text-2xl font-bold flex items-center justify-between">
           <span>Report Completion</span>
           <span className="text-sm text-accent font-normal flex items-center gap-1 cursor-pointer hover:underline">
             View All
