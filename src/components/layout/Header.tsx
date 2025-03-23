@@ -70,7 +70,7 @@ export const Header = () => {
             <img 
               src="/lovable-uploads/b05f0448-8c26-463d-b69b-98061b769e16.png" 
               alt="Novata Logo" 
-              className="h-9 w-auto" 
+              className="h-12 w-auto" 
             />
             <span className="font-semibold text-xl hidden sm:block">VSME Reporting</span>
           </NavLink>
