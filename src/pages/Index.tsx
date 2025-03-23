@@ -35,7 +35,7 @@ const Index = () => {
           <div className="container mx-auto px-4 md:px-6 relative z-10">
             <div className="max-w-3xl mx-auto text-center py-16 md:py-32">
               <h1 className="text-3xl md:text-5xl font-bold mb-6 animate-fadeIn leading-tight text-white drop-shadow-lg">
-                Modern VSME Sustainability Reporting for Forward-Thinking Companies
+                Smart VSME Sustainability Reporting for Forward-Thinking Companies
               </h1>
               <p className="text-lg md:text-xl mb-8 text-white/90 dark:text-white/90 animate-slideUp drop-shadow-md">
                 Create beautiful, professional, and compliant sustainability reports following the European voluntary standard for non-listed SMEs.
