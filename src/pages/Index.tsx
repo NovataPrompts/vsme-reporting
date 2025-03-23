@@ -19,18 +19,24 @@ const Index = () => {
       <main className="flex-1 pt-24">
         {/* Hero Section */}
         <section className="relative overflow-hidden mb-12">
-          <div className="absolute inset-0 z-0 opacity-50">
-            <div className="absolute top-0 left-0 right-0 h-64 bg-gradient-to-b from-accent/20 to-transparent"></div>
-            <div className="absolute top-1/4 -left-10 w-72 h-72 bg-secondary/30 rounded-full blur-3xl"></div>
-            <div className="absolute bottom-1/4 right-0 w-80 h-80 bg-accent/30 rounded-full blur-3xl"></div>
+          {/* Background Image with Overlay */}
+          <div className="absolute inset-0 z-0">
+            <img 
+              src="/lovable-uploads/43c7e6d0-8a2f-432f-9320-55b38b1bb6b8.png" 
+              alt="Northern Lights" 
+              className="w-full h-full object-cover"
+            />
+            {/* Gradient Overlay */}
+            <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-primary/60 to-transparent"></div>
+            <div className="absolute inset-0 bg-gradient-to-r from-black/40 to-transparent"></div>
           </div>
           
           <div className="container mx-auto px-4 md:px-6 relative z-10">
-            <div className="max-w-3xl mx-auto text-center py-12 md:py-20">
-              <h1 className="text-3xl md:text-5xl font-bold mb-6 animate-fadeIn leading-tight">
+            <div className="max-w-3xl mx-auto text-center py-16 md:py-32">
+              <h1 className="text-3xl md:text-5xl font-bold mb-6 animate-fadeIn leading-tight text-white drop-shadow-lg">
                 Modern VSME Sustainability Reporting for Forward-Thinking Companies
               </h1>
-              <p className="text-lg md:text-xl mb-8 text-gray-600 dark:text-gray-300 animate-slideUp">
+              <p className="text-lg md:text-xl mb-8 text-white/90 dark:text-white/90 animate-slideUp drop-shadow-md">
                 Create beautiful, professional, and compliant sustainability reports following the European voluntary standard for non-listed SMEs.
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center animate-slideUp">
@@ -45,7 +51,7 @@ const Index = () => {
                 <Button 
                   onClick={() => navigate("/standards")}
                   variant="outline" 
-                  className="rounded-full px-6 py-6 border-2 hover:bg-white/20 dark:hover:bg-white/10 hover:text-foreground"
+                  className="rounded-full px-6 py-6 border-2 bg-black/30 hover:bg-white/20 dark:hover:bg-white/10 hover:text-foreground text-white border-white/60"
                   size="lg"
                 >
                   Explore VSME Standard
