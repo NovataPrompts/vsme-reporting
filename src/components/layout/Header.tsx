@@ -101,16 +101,6 @@ export const Header = () => {
             >
               Metrics
             </NavLink>
-            <NavLink 
-              to="/import" 
-              className={({ isActive }) => `px-4 py-2 rounded-md transition-all-ease ${
-                isActive 
-                  ? "text-secondary font-medium" 
-                  : "text-primary/80 dark:text-white/80 hover:text-primary dark:hover:text-white"
-              }`}
-            >
-              Import
-            </NavLink>
           </nav>
 
           <div className="flex items-center gap-2">
@@ -185,17 +175,6 @@ export const Header = () => {
               onClick={() => setMobileMenuOpen(false)}
             >
               Metrics
-            </NavLink>
-            <NavLink 
-              to="/import" 
-              className={({ isActive }) => `px-4 py-2 rounded-md transition-all-ease ${
-                isActive 
-                  ? "text-secondary font-medium" 
-                  : "text-primary/80 dark:text-white/80 hover:text-primary dark:hover:text-white"
-              }`}
-              onClick={() => setMobileMenuOpen(false)}
-            >
-              Import
             </NavLink>
             <Button 
               onClick={() => {
