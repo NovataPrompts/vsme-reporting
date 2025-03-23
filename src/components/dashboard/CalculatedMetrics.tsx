@@ -12,39 +12,23 @@ export const CalculatedMetrics = () => {
       id: 1,
       title: "Unadjusted Gender Pay Gap",
       value: "23.4%",
-      change: "+2.1%",
-      trend: "negative",
       icon: Users
     },
     {
       id: 2,
       title: "GHG Intensity",
       value: "3.2 tCO₂e/M€",
-      change: "-5.7%", 
-      trend: "positive",
       icon: Gauge
     },
     {
       id: 3,
       title: "Employee Turnover Rate",
       value: "14.8%",
-      change: "-1.2%",
-      trend: "positive",
       icon: RotateCcw
     }
   ];
 
-  // Emissions data for charts
-  const emissionsData = [
-    { month: 'Jan', scope1: 80, scope2: 120, scope3: 240 },
-    { month: 'Feb', scope1: 90, scope2: 140, scope3: 270 },
-    { month: 'Mar', scope1: 85, scope2: 130, scope3: 255 },
-    { month: 'Apr', scope1: 70, scope2: 110, scope3: 280 },
-    { month: 'May', scope1: 75, scope2: 125, scope3: 290 },
-    { month: 'Jun', scope1: 65, scope2: 115, scope3: 260 },
-  ];
-
-  // Donut chart data for emissions by scope
+  // Emissions data for the pie chart (simplified, no monthly data)
   const scopeData = [
     { name: 'Scope 1', value: 465 },
     { name: 'Scope 2', value: 740 },
@@ -53,25 +37,29 @@ export const CalculatedMetrics = () => {
 
   const COLORS = ['#00f5f3', '#d8f225', '#00344d'];
 
-  const CustomTooltip = ({ active, payload, label }: any) => {
+  const PieCustomTooltip = ({ active, payload }: any) => {
     if (active && payload && payload.length) {
       return (
         <div className="p-2 bg-white dark:bg-gray-800 shadow-md rounded-md border border-gray-200 dark:border-gray-700">
-          <p className="font-medium">{`${label}`}</p>
-          {payload.map((entry: any, index: number) => (
-            <p key={index} style={{ color: entry.color }}>{`${entry.name}: ${entry.value} tons`}</p>
-          ))}
+          <p className="font-medium">{`${payload[0].name}: ${payload[0].value} tons (${((payload[0].value / 2800) * 100).toFixed(1)}%)`}</p>
         </div>
       );
     }
     return null;
   };
 
-  const PieCustomTooltip = ({ active, payload }: any) => {
+  // Simplified data for the bar chart (just scopes, no monthly data)
+  const emissionsData = [
+    { name: 'Scope 1', value: 465 },
+    { name: 'Scope 2', value: 740 },
+    { name: 'Scope 3', value: 1595 },
+  ];
+
+  const CustomTooltip = ({ active, payload }: any) => {
     if (active && payload && payload.length) {
       return (
         <div className="p-2 bg-white dark:bg-gray-800 shadow-md rounded-md border border-gray-200 dark:border-gray-700">
-          <p className="font-medium">{`${payload[0].name}: ${payload[0].value} tons (${((payload[0].value / 2800) * 100).toFixed(1)}%)`}</p>
+          <p className="font-medium">{`${payload[0].name}: ${payload[0].value} tons`}</p>
         </div>
       );
     }
@@ -101,19 +89,19 @@ export const CalculatedMetrics = () => {
       </CardHeader>
       <CardContent>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
-          {/* GHG Emissions Chart */}
+          {/* GHG Emissions Chart - Simplified Bar Chart */}
           <div className="bg-white/30 dark:bg-white/5 p-4 rounded-lg border border-gray-100 dark:border-white/10">
             <h3 className="text-lg font-medium mb-2">GHG Emissions by Scope</h3>
             <div className="h-64">
               <ResponsiveContainer width="100%" height="100%">
                 <BarChart data={emissionsData} margin={{ top: 20, right: 20, left: -20, bottom: 5 }}>
-                  <XAxis dataKey="month" tickLine={false} axisLine={false} />
+                  <XAxis dataKey="name" tickLine={false} axisLine={false} />
                   <YAxis tickLine={false} axisLine={false} tickFormatter={(value) => `${value}`} />
                   <Tooltip content={<CustomTooltip />} />
-                  <Legend />
-                  <Bar dataKey="scope1" name="Scope 1" fill="#00f5f3" radius={[4, 4, 0, 0]} stackId="a" />
-                  <Bar dataKey="scope2" name="Scope 2" fill="#d8f225" radius={[4, 4, 0, 0]} stackId="a" />
-                  <Bar dataKey="scope3" name="Scope 3" fill="#00344d" radius={[4, 4, 0, 0]} stackId="a" />
+                  <Bar dataKey="value" fill={(entry) => {
+                    const index = emissionsData.findIndex(item => item.name === entry.name);
+                    return COLORS[index % COLORS.length];
+                  }} radius={[4, 4, 0, 0]} />
                 </BarChart>
               </ResponsiveContainer>
             </div>
@@ -146,12 +134,12 @@ export const CalculatedMetrics = () => {
           </div>
         </div>
 
-        {/* Metrics Grid */}
+        {/* Metrics Grid - Simplified without change indicators */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           {metrics.map((metric) => (
             <div 
               key={metric.id} 
-              className="flex items-center justify-between p-4 rounded-lg bg-white/30 dark:bg-white/5 hover:bg-white/50 dark:hover:bg-white/10 transition-all-ease border border-gray-100 dark:border-white/10"
+              className="flex items-center p-4 rounded-lg bg-white/30 dark:bg-white/5 hover:bg-white/50 dark:hover:bg-white/10 transition-all-ease border border-gray-100 dark:border-white/10"
             >
               <div className="flex items-center gap-3">
                 <div className="h-10 w-10 rounded-full bg-primary/10 dark:bg-white/10 flex items-center justify-center">
@@ -161,9 +149,6 @@ export const CalculatedMetrics = () => {
                   <p className="text-sm font-medium">{metric.title}</p>
                   <p className="text-xl font-semibold">{metric.value}</p>
                 </div>
-              </div>
-              <div className={`text-sm font-medium ${metric.trend === 'positive' ? 'text-green-500' : 'text-red-500'}`}>
-                {metric.change}
               </div>
             </div>
           ))}
