@@ -67,9 +67,11 @@ export const Header = () => {
             to="/" 
             className="flex items-center gap-2 text-primary dark:text-white transition-all-ease"
           >
-            <div className="relative h-8 w-8 rounded-full overflow-hidden bg-accent flex items-center justify-center">
-              <span className="text-primary font-bold text-xl">V</span>
-            </div>
+            <img 
+              src="/lovable-uploads/b05f0448-8c26-463d-b69b-98061b769e16.png" 
+              alt="Novata Logo" 
+              className="h-9 w-auto" 
+            />
             <span className="font-semibold text-xl hidden sm:block">VSME Reporting</span>
           </NavLink>
 

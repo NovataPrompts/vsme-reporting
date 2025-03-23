@@ -8,9 +8,11 @@ export const Footer = () => {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           <div className="space-y-3">
             <div className="flex items-center gap-2">
-              <div className="h-8 w-8 rounded-full overflow-hidden bg-accent flex items-center justify-center">
-                <span className="text-primary font-bold text-xl">V</span>
-              </div>
+              <img 
+                src="/lovable-uploads/b05f0448-8c26-463d-b69b-98061b769e16.png" 
+                alt="Novata Logo" 
+                className="h-8 w-auto" 
+              />
               <span className="font-semibold text-xl">VSME Reporting</span>
             </div>
             <p className="text-sm text-white/80">
