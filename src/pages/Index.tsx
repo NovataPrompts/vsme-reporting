@@ -3,10 +3,9 @@ import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 import { Button } from "@/components/ui/button";
 import { ProgressOverview } from "@/components/dashboard/ProgressOverview";
-import { RecentReports } from "@/components/dashboard/RecentReports";
-import { MetricsHighlight } from "@/components/dashboard/MetricsHighlight";
 import { DataSharingCard } from "@/components/dashboard/DataSharingCard";
 import { CalculatedMetrics } from "@/components/dashboard/CalculatedMetrics";
+import { MetricsHighlight } from "@/components/dashboard/MetricsHighlight";
 import { ArrowRight, LineChart, FileText, Share2 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
@@ -104,19 +103,15 @@ const Index = () => {
           <div className="container mx-auto px-4 md:px-6">
             <h2 className="text-2xl md:text-3xl font-bold mb-8 text-center">Your Sustainability Dashboard</h2>
             
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-              {/* Main content area - 2/3 width */}
-              <div className="lg:col-span-2 space-y-6">
-                <DataSharingCard />
-                <MetricsHighlight />
-              </div>
+            <div className="space-y-6">
+              {/* Data Sharing Hub - Full Width */}
+              <DataSharingCard />
               
-              {/* Sidebar - 1/3 width */}
-              <div className="space-y-6">
-                <CalculatedMetrics />
-                <ProgressOverview />
-                <RecentReports />
-              </div>
+              {/* Calculated Metrics with Emissions Charts - Full Width */}
+              <CalculatedMetrics />
+              
+              {/* Progress Overview */}
+              <ProgressOverview />
             </div>
           </div>
         </section>
