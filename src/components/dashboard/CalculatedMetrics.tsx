@@ -35,7 +35,7 @@ export const CalculatedMetrics = () => {
     { name: 'Scope 3', value: 1595 },
   ];
 
-  const COLORS = ['#00f5f3', '#d8f225', '#00344d'];
+  const COLORS = ['#00f5f3', '#d8f225', '#539db5']; // Updated Scope 3 color to #539db5
 
   const PieCustomTooltip = ({ active, payload }: any) => {
     if (active && payload && payload.length) {
@@ -64,12 +64,6 @@ export const CalculatedMetrics = () => {
       );
     }
     return null;
-  };
-
-  // Fix the color map for Bar chart
-  const getBarColor = (entry: any) => {
-    const index = emissionsData.findIndex(item => item.name === entry.name);
-    return COLORS[index % COLORS.length];
   };
 
   return (
@@ -104,13 +98,7 @@ export const CalculatedMetrics = () => {
                   <XAxis dataKey="name" tickLine={false} axisLine={false} />
                   <YAxis tickLine={false} axisLine={false} tickFormatter={(value) => `${value}`} />
                   <Tooltip content={<CustomTooltip />} />
-                  <Bar 
-                    dataKey="value" 
-                    fill="#00f5f3" 
-                    radius={[4, 4, 0, 0]}
-                    fillOpacity={0.9}
-                    // Using a proper fill prop that accepts a string, and applying colors with Cell component
-                  >
+                  <Bar dataKey="value" radius={[4, 4, 0, 0]} fillOpacity={0.9}>
                     {emissionsData.map((entry, index) => (
                       <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                     ))}

@@ -20,7 +20,7 @@ export const MetricsHighlight = () => {
     { name: 'Scope 3', value: 1595 },
   ];
 
-  const COLORS = ['#00f5f3', '#d8f225', '#00344d'];
+  const COLORS = ['#00f5f3', '#d8f225', '#539db5']; // Updated Scope 3 color to #539db5
 
   const CustomTooltip = ({ active, payload, label }: any) => {
     if (active && payload && payload.length) {
@@ -63,7 +63,7 @@ export const MetricsHighlight = () => {
                 <Legend />
                 <Bar dataKey="scope1" name="Scope 1" fill="#00f5f3" radius={[4, 4, 0, 0]} stackId="a" />
                 <Bar dataKey="scope2" name="Scope 2" fill="#d8f225" radius={[4, 4, 0, 0]} stackId="a" />
-                <Bar dataKey="scope3" name="Scope 3" fill="#00344d" radius={[4, 4, 0, 0]} stackId="a" />
+                <Bar dataKey="scope3" name="Scope 3" fill="#539db5" radius={[4, 4, 0, 0]} stackId="a" />
               </BarChart>
             </ResponsiveContainer>
           </div>
