@@ -4,12 +4,14 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button";
 import { Upload, AlertCircle, CheckCircle2 } from "lucide-react";
 import { useToast } from "@/components/ui/use-toast";
+import { Progress } from "@/components/ui/progress";
 
 export const MetricsUpload = () => {
   const { toast } = useToast();
   const [isDragging, setIsDragging] = useState(false);
   const [uploadStatus, setUploadStatus] = useState<'idle' | 'uploading' | 'success' | 'error'>('idle');
   const [fileName, setFileName] = useState<string | null>(null);
+  const [uploadProgress, setUploadProgress] = useState(0);
 
   const handleDragOver = (e: React.DragEvent<HTMLDivElement>) => {
     e.preventDefault();
@@ -40,26 +42,44 @@ export const MetricsUpload = () => {
   const processFile = (file: File) => {
     setFileName(file.name);
     setUploadStatus('uploading');
+    setUploadProgress(0);
     
-    // Simulate upload process
-    setTimeout(() => {
-      if (file.name.endsWith('.csv') || file.name.endsWith('.xlsx') || file.name.endsWith('.json')) {
-        setUploadStatus('success');
-        toast({
-          title: "Upload successful",
-          description: `${file.name} has been uploaded successfully.`,
-          duration: 3000,
-        });
-      } else {
-        setUploadStatus('error');
-        toast({
-          title: "Upload failed",
-          description: "Please upload a CSV, Excel, or JSON file.",
-          variant: "destructive",
-          duration: 3000,
-        });
+    // Simulate upload process with progress updates
+    const totalDuration = 1500; // Total duration in milliseconds
+    const intervalTime = 100; // Update progress every 100ms
+    const totalSteps = totalDuration / intervalTime;
+    let currentStep = 0;
+    
+    const progressInterval = setInterval(() => {
+      currentStep++;
+      const newProgress = Math.min(Math.round((currentStep / totalSteps) * 100), 95);
+      setUploadProgress(newProgress);
+      
+      if (currentStep >= totalSteps) {
+        clearInterval(progressInterval);
+        
+        // Complete the upload
+        setTimeout(() => {
+          setUploadProgress(100);
+          if (file.name.endsWith('.csv') || file.name.endsWith('.xlsx') || file.name.endsWith('.json')) {
+            setUploadStatus('success');
+            toast({
+              title: "Upload successful",
+              description: `${file.name} has been uploaded successfully.`,
+              duration: 3000,
+            });
+          } else {
+            setUploadStatus('error');
+            toast({
+              title: "Upload failed",
+              description: "Please upload a CSV, Excel, or JSON file.",
+              variant: "destructive",
+              duration: 3000,
+            });
+          }
+        }, 200);
       }
-    }, 1500);
+    }, intervalTime);
   };
 
   return (
@@ -111,8 +131,14 @@ export const MetricsUpload = () => {
             <div className="flex flex-col items-center">
               <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-accent mb-4"></div>
               <h3 className="text-lg font-medium mb-2">Uploading {fileName}</h3>
-              <p className="text-sm text-gray-500 dark:text-gray-400">
+              <p className="text-sm text-gray-500 dark:text-gray-400 mb-4">
                 Please wait while we process your file...
+              </p>
+              <div className="w-full max-w-md mb-2">
+                <Progress value={uploadProgress} className="h-2" />
+              </div>
+              <p className="text-sm text-gray-500 dark:text-gray-400">
+                {uploadProgress}% Complete
               </p>
             </div>
           )}
@@ -129,6 +155,7 @@ export const MetricsUpload = () => {
                 onClick={() => {
                   setUploadStatus('idle');
                   setFileName(null);
+                  setUploadProgress(0);
                 }}
               >
                 Upload Another File
@@ -148,6 +175,7 @@ export const MetricsUpload = () => {
                 onClick={() => {
                   setUploadStatus('idle');
                   setFileName(null);
+                  setUploadProgress(0);
                 }}
               >
                 Try Again
