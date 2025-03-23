@@ -2,7 +2,7 @@
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { NavLink } from "react-router-dom";
-import { Menu, X, Upload } from "lucide-react";
+import { Menu, X, Download } from "lucide-react";
 import { useToast } from "@/components/ui/use-toast";
 
 export const Header = () => {
@@ -33,10 +33,10 @@ export const Header = () => {
     setMobileMenuOpen(!mobileMenuOpen);
   };
 
-  const handleUploadClick = () => {
+  const handleImportClick = () => {
     toast({
-      title: "Upload feature",
-      description: "Coming soon! This will allow sharing data between organizations.",
+      title: "Import Novata Metrics",
+      description: "Coming soon! This will allow importing metrics from Novata.",
       duration: 3000,
     });
   };
@@ -58,9 +58,8 @@ export const Header = () => {
             <img 
               src="/lovable-uploads/b05f0448-8c26-463d-b69b-98061b769e16.png" 
               alt="Novata Logo" 
-              className="h-12 w-auto" 
+              className="h-16 w-auto" 
             />
-            <span className="font-semibold text-xl hidden sm:block">VSME Reporting</span>
           </NavLink>
 
           {/* Desktop Navigation */}
@@ -109,11 +108,11 @@ export const Header = () => {
 
           <div className="flex items-center gap-2">
             <Button 
-              onClick={handleUploadClick} 
+              onClick={handleImportClick} 
               className="hidden md:flex items-center gap-2 bg-accent hover:bg-accent/90 text-primary rounded-full"
             >
-              <Upload className="h-4 w-4" />
-              <span>Upload Data</span>
+              <Download className="h-4 w-4" />
+              <span>Import Novata Metrics</span>
             </Button>
 
             <Button
@@ -182,13 +181,13 @@ export const Header = () => {
             </NavLink>
             <Button 
               onClick={() => {
-                handleUploadClick();
+                handleImportClick();
                 setMobileMenuOpen(false);
               }} 
               className="flex items-center gap-2 bg-accent hover:bg-accent/90 text-primary rounded-full w-full justify-center mt-2"
             >
-              <Upload className="h-4 w-4" />
-              <span>Upload Data</span>
+              <Download className="h-4 w-4" />
+              <span>Import Novata Metrics</span>
             </Button>
           </nav>
         </div>
