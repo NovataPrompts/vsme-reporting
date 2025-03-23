@@ -1,3 +1,4 @@
+
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 import { Button } from "@/components/ui/button";
@@ -44,7 +45,7 @@ const Index = () => {
                 <Button 
                   onClick={() => navigate("/standards")}
                   variant="outline" 
-                  className="rounded-full px-6 py-6 border-2 hover:bg-primary/5"
+                  className="rounded-full px-6 py-6 border-2 hover:bg-white/20 dark:hover:bg-white/10 hover:text-foreground"
                   size="lg"
                 >
                   Explore VSME Standard
