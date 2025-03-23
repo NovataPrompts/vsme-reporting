@@ -1,7 +1,7 @@
 
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 import { Menu, X, Download } from "lucide-react";
 import { useToast } from "@/components/ui/use-toast";
 
@@ -9,6 +9,7 @@ export const Header = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const { toast } = useToast();
+  const navigate = useNavigate();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -34,11 +35,7 @@ export const Header = () => {
   };
 
   const handleImportClick = () => {
-    toast({
-      title: "Import Novata Metrics",
-      description: "Coming soon! This will allow importing metrics from Novata.",
-      duration: 3000,
-    });
+    navigate("/import");
   };
 
   return (
@@ -103,6 +100,16 @@ export const Header = () => {
               }`}
             >
               Metrics
+            </NavLink>
+            <NavLink 
+              to="/import" 
+              className={({ isActive }) => `px-4 py-2 rounded-md transition-all-ease ${
+                isActive 
+                  ? "text-secondary font-medium" 
+                  : "text-primary/80 dark:text-white/80 hover:text-primary dark:hover:text-white"
+              }`}
+            >
+              Import
             </NavLink>
           </nav>
 
@@ -179,6 +186,17 @@ export const Header = () => {
             >
               Metrics
             </NavLink>
+            <NavLink 
+              to="/import" 
+              className={({ isActive }) => `px-4 py-2 rounded-md transition-all-ease ${
+                isActive 
+                  ? "text-secondary font-medium" 
+                  : "text-primary/80 dark:text-white/80 hover:text-primary dark:hover:text-white"
+              }`}
+              onClick={() => setMobileMenuOpen(false)}
+            >
+              Import
+            </NavLink>
             <Button 
               onClick={() => {
                 handleImportClick();
@@ -195,4 +213,3 @@ export const Header = () => {
     </header>
   );
 };
-

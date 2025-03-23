@@ -8,6 +8,7 @@ import Index from "./pages/Index";
 import Reports from "./pages/Reports";
 import Metrics from "./pages/Metrics";
 import Standards from "./pages/Standards";
+import Import from "./pages/Import";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -23,6 +24,7 @@ const App = () => (
           <Route path="/reports" element={<Reports />} />
           <Route path="/metrics" element={<Metrics />} />
           <Route path="/standards" element={<Standards />} />
+          <Route path="/import" element={<Import />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>

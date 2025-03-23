@@ -1,13 +1,11 @@
 
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
-import { MetricsUpload } from "@/components/metrics/MetricsUpload";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { 
-  ArrowUpDown, 
   Search, 
   Briefcase, 
   Users, 
@@ -19,9 +17,11 @@ import {
 } from "lucide-react";
 import { useState } from "react";
 import { useToast } from "@/components/ui/use-toast";
+import { useNavigate } from "react-router-dom";
 
 const Metrics = () => {
   const { toast } = useToast();
+  const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState("");
   
   const metricCategories = [
@@ -123,6 +123,13 @@ const Metrics = () => {
                 Collect, manage, and report on your VSME sustainability metrics
               </p>
             </div>
+            <Button 
+              onClick={() => navigate("/import")}
+              className="flex items-center gap-2 bg-accent hover:bg-accent/90 text-primary"
+            >
+              <ArrowRight className="h-4 w-4" />
+              <span>Import Metrics</span>
+            </Button>
           </div>
           
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
@@ -249,9 +256,36 @@ const Metrics = () => {
             </div>
             
             <div>
-              <MetricsUpload />
+              <Card className="shadow-sm mb-6">
+                <CardHeader>
+                  <CardTitle className="text-lg">Actions</CardTitle>
+                  <CardDescription>
+                    Manage your sustainability metrics data
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-4">
+                    <Button 
+                      variant="outline" 
+                      className="w-full justify-between"
+                      onClick={() => navigate("/import")}
+                    >
+                      <span>Import Data</span>
+                      <ArrowRight className="h-4 w-4" />
+                    </Button>
+                    <Button 
+                      variant="outline" 
+                      className="w-full justify-between"
+                      onClick={() => handleLearnMore("Export Data")}
+                    >
+                      <span>Export Data</span>
+                      <ArrowRight className="h-4 w-4" />
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
               
-              <Card className="shadow-sm mt-6">
+              <Card className="shadow-sm">
                 <CardHeader>
                   <CardTitle className="text-lg">Need Help?</CardTitle>
                   <CardDescription>
