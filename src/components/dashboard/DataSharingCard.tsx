@@ -53,10 +53,10 @@ export const DataSharingCard = () => {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <Button 
             onClick={handleUploadClick}
-            className="flex h-28 items-center justify-center gap-3 bg-white/50 dark:bg-white/5 hover:bg-accent/20 text-primary dark:text-white border border-gray-100 dark:border-white/10 rounded-lg transition-all-ease"
+            className="flex h-28 items-center justify-center gap-3 bg-white/50 dark:bg-white/5 hover:bg-accent/20 hover:scale-105 text-primary dark:text-white border border-gray-100 dark:border-white/10 rounded-lg transition-all-ease"
             variant="ghost"
           >
-            <Upload className="h-6 w-6" />
+            <Upload className="h-8 w-8" />
             <div className="flex flex-col items-start">
               <span className="font-semibold text-lg">Upload Data</span>
               <span className="text-sm opacity-70">CSV, Excel, or JSON</span>
@@ -65,10 +65,10 @@ export const DataSharingCard = () => {
           
           <Button 
             onClick={handleInviteClick}
-            className="flex h-28 items-center justify-center gap-3 bg-white/50 dark:bg-white/5 hover:bg-accent/20 text-primary dark:text-white border border-gray-100 dark:border-white/10 rounded-lg transition-all-ease"
+            className="flex h-28 items-center justify-center gap-3 bg-white/50 dark:bg-white/5 hover:bg-accent/20 hover:scale-105 text-primary dark:text-white border border-gray-100 dark:border-white/10 rounded-lg transition-all-ease"
             variant="ghost"
           >
-            <UserPlus className="h-6 w-6" />
+            <UserPlus className="h-8 w-8" />
             <div className="flex flex-col items-start">
               <span className="font-semibold text-lg">Invite Partners</span>
               <span className="text-sm opacity-70">Share with collaborators</span>
@@ -77,10 +77,10 @@ export const DataSharingCard = () => {
           
           <Button 
             onClick={handleShareClick}
-            className="flex h-28 items-center justify-center gap-3 bg-white/50 dark:bg-white/5 hover:bg-accent/20 text-primary dark:text-white border border-gray-100 dark:border-white/10 rounded-lg transition-all-ease"
+            className="flex h-28 items-center justify-center gap-3 bg-white/50 dark:bg-white/5 hover:bg-accent/20 hover:scale-105 text-primary dark:text-white border border-gray-100 dark:border-white/10 rounded-lg transition-all-ease"
             variant="ghost"
           >
-            <Share className="h-6 w-6" />
+            <Share className="h-8 w-8" />
             <div className="flex flex-col items-start">
               <span className="font-semibold text-lg">Share Reports</span>
               <span className="text-sm opacity-70">Generate shareable links</span>

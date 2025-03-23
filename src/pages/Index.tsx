@@ -101,7 +101,7 @@ const Index = () => {
         {/* Dashboard Overview */}
         <section className="py-16">
           <div className="container mx-auto px-4 md:px-6">
-            <h2 className="text-2xl md:text-3xl font-bold mb-8 text-center">Your Sustainability Dashboard</h2>
+            <h2 className="text-2xl md:text-3xl font-bold mb-8 text-center text-[#d8f225]">Your Sustainability Dashboard</h2>
             
             <div className="space-y-6">
               {/* Data Sharing Hub - Full Width */}

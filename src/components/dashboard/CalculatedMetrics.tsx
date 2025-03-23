@@ -66,6 +66,12 @@ export const CalculatedMetrics = () => {
     return null;
   };
 
+  // Fix the color map for Bar chart
+  const getBarColor = (entry: any) => {
+    const index = emissionsData.findIndex(item => item.name === entry.name);
+    return COLORS[index % COLORS.length];
+  };
+
   return (
     <Card className="shadow-sm glass-card relative overflow-hidden">
       {/* Background decoration */}
@@ -73,7 +79,7 @@ export const CalculatedMetrics = () => {
       <div className="absolute -left-16 -top-16 w-48 h-48 bg-secondary/10 dark:bg-secondary/5 rounded-full blur-2xl"></div>
       
       <CardHeader>
-        <CardTitle className="text-2xl font-bold flex items-center justify-between text-primary dark:text-white">
+        <CardTitle className="text-2xl font-bold flex items-center justify-between text-[#d8f225]">
           <span>Calculated Metrics</span>
           <span 
             className="text-sm text-accent font-normal flex items-center gap-1 cursor-pointer hover:underline"
@@ -98,10 +104,17 @@ export const CalculatedMetrics = () => {
                   <XAxis dataKey="name" tickLine={false} axisLine={false} />
                   <YAxis tickLine={false} axisLine={false} tickFormatter={(value) => `${value}`} />
                   <Tooltip content={<CustomTooltip />} />
-                  <Bar dataKey="value" fill={(entry) => {
-                    const index = emissionsData.findIndex(item => item.name === entry.name);
-                    return COLORS[index % COLORS.length];
-                  }} radius={[4, 4, 0, 0]} />
+                  <Bar 
+                    dataKey="value" 
+                    fill="#00f5f3" 
+                    radius={[4, 4, 0, 0]}
+                    fillOpacity={0.9}
+                    // Using a proper fill prop that accepts a string, and applying colors with Cell component
+                  >
+                    {emissionsData.map((entry, index) => (
+                      <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                    ))}
+                  </Bar>
                 </BarChart>
               </ResponsiveContainer>
             </div>
