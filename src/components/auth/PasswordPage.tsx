@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 import { LockKeyhole } from "lucide-react";
 import { useToast } from "@/components/ui/use-toast";
+import { QuickNav } from "../navigation/QuickNav";
 
 const PASSWORD = "novataVSME2025$";
 
@@ -89,6 +90,9 @@ export const PasswordPage = () => {
           </form>
         </div>
       </main>
+      
+      {/* Add QuickNav here */}
+      <QuickNav />
     </div>
   );
 };
