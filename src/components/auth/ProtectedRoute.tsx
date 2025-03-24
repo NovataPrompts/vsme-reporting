@@ -2,6 +2,7 @@
 import { useEffect, useState } from "react";
 import { Navigate, useLocation } from "react-router-dom";
 import { PasswordPage } from "./PasswordPage";
+import { QuickNav } from "../navigation/QuickNav";
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
@@ -27,6 +28,11 @@ export const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
     return <PasswordPage />;
   }
   
-  // If authenticated, show the protected content
-  return <>{children}</>;
+  // If authenticated, show the protected content with QuickNav
+  return (
+    <>
+      {children}
+      <QuickNav />
+    </>
+  );
 };
