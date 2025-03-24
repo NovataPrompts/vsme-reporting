@@ -1,4 +1,3 @@
-
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { ArrowUpRight, Upload, Link, MessageCirclePlus } from "lucide-react";
@@ -53,7 +52,7 @@ export const DataSharingCard = () => {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <Button 
             onClick={handleUploadClick}
-            className="flex items-center justify-start gap-3 bg-white/50 dark:bg-white/5 hover:bg-white/60 dark:hover:bg-white/10 text-primary dark:text-white border border-gray-100 dark:border-white/10 rounded-lg transition-all-ease h-28 px-4"
+            className="group flex items-center justify-start gap-3 bg-white/50 dark:bg-white/5 hover:bg-white/60 dark:hover:bg-white/10 text-primary dark:text-white border border-gray-100 dark:border-white/10 rounded-lg transition-all-ease h-28 px-4"
             variant="ghost"
           >
             <div className="h-14 w-14 flex items-center justify-center rounded-full bg-white/70 dark:bg-white/10 border border-gray-100 dark:border-white/20 group-hover:bg-[#d8f225] transition-all-ease">
@@ -67,7 +66,7 @@ export const DataSharingCard = () => {
           
           <Button 
             onClick={handleInviteClick}
-            className="flex items-center justify-start gap-3 bg-white/50 dark:bg-white/5 hover:bg-white/60 dark:hover:bg-white/10 text-primary dark:text-white border border-gray-100 dark:border-white/10 rounded-lg transition-all-ease h-28 px-4 group"
+            className="group flex items-center justify-start gap-3 bg-white/50 dark:bg-white/5 hover:bg-white/60 dark:hover:bg-white/10 text-primary dark:text-white border border-gray-100 dark:border-white/10 rounded-lg transition-all-ease h-28 px-4"
             variant="ghost"
           >
             <div className="h-14 w-14 flex items-center justify-center rounded-full bg-white/70 dark:bg-white/10 border border-gray-100 dark:border-white/20 group-hover:bg-[#d8f225] transition-all-ease">
@@ -81,7 +80,7 @@ export const DataSharingCard = () => {
           
           <Button 
             onClick={handleShareClick}
-            className="flex items-center justify-start gap-3 bg-white/50 dark:bg-white/5 hover:bg-white/60 dark:hover:bg-white/10 text-primary dark:text-white border border-gray-100 dark:border-white/10 rounded-lg transition-all-ease h-28 px-4 group"
+            className="group flex items-center justify-start gap-3 bg-white/50 dark:bg-white/5 hover:bg-white/60 dark:hover:bg-white/10 text-primary dark:text-white border border-gray-100 dark:border-white/10 rounded-lg transition-all-ease h-28 px-4"
             variant="ghost"
           >
             <div className="h-14 w-14 flex items-center justify-center rounded-full bg-white/70 dark:bg-white/10 border border-gray-100 dark:border-white/20 group-hover:bg-[#d8f225] transition-all-ease">
