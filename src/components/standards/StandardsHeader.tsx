@@ -9,9 +9,9 @@ interface StandardsHeaderProps {
 export const StandardsHeader = ({ onDownload }: StandardsHeaderProps) => {
   return (
     <div className="max-w-3xl mx-auto text-center mb-12">
-      <h1 className="text-3xl font-bold mb-4">VSME Sustainability Standard</h1>
+      <h1 className="text-3xl font-bold mb-4">VSME Reporting Standard</h1>
       <p className="text-lg text-gray-600 dark:text-gray-300 mb-6">
-        A comprehensive guide to the European voluntary sustainability reporting standard for non-listed SMEs
+        A comprehensive guide to the voluntary sustainability reporting standard for non-listed SMEs
       </p>
       <Button 
         onClick={onDownload}
