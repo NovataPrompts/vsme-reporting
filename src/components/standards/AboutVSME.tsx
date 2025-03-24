@@ -1,6 +1,5 @@
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 
 export const AboutVSME = () => {
   return (
@@ -13,7 +12,7 @@ export const AboutVSME = () => {
       </CardHeader>
       <CardContent className="space-y-4">
         <p>
-          The voluntary sustainability reporting standard for non-listed SMEs (VSME) is a European reporting framework
+          The voluntary sustainability reporting standard for non-listed SMEs (VSME) is a reporting framework
           designed to make sustainability reporting accessible and efficient for small and medium-sized enterprises.
         </p>
         <p>
@@ -21,11 +20,6 @@ export const AboutVSME = () => {
           across environmental, social, and governance dimensions, enabling them to respond to market demands,
           enhance transparency, and drive sustainable practices.
         </p>
-        <div className="flex flex-wrap gap-2 mt-4">
-          <Badge className="bg-secondary text-primary">Voluntary Standard</Badge>
-          <Badge variant="outline">European Framework</Badge>
-          <Badge variant="outline">SME-Focused</Badge>
-        </div>
       </CardContent>
     </Card>
   );
