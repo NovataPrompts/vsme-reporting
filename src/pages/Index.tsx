@@ -1,4 +1,3 @@
-
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 import { Button } from "@/components/ui/button";
@@ -58,10 +57,20 @@ const Index = () => {
         </section>
         
         {/* Features Section */}
-        <section className="py-12 bg-white/50 dark:bg-primary/50 backdrop-blur-sm">
-          <div className="container mx-auto px-4 md:px-6">
+        <section className="py-12 bg-white/5 dark:bg-primary/5 backdrop-blur-md relative">
+          {/* Keep the same background image visible */}
+          <div className="absolute inset-0 -z-10">
+            <img 
+              src="/lovable-uploads/43c7e6d0-8a2f-432f-9320-55b38b1bb6b8.png" 
+              alt="Northern Lights" 
+              className="w-full h-full object-cover"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-black/40"></div>
+          </div>
+          
+          <div className="container mx-auto px-4 md:px-6 relative z-10">
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-              <div className="rounded-lg p-6 shadow-sm border border-gray-100 dark:border-white/10 transition-all-ease hover:shadow-md animate-fadeIn bg-[#008099] text-white">
+              <div className="rounded-lg p-6 shadow-lg backdrop-blur-md border border-white/20 transition-all-ease hover:shadow-xl animate-fadeIn bg-white/10 text-white">
                 <div className="h-12 w-12 rounded-full bg-white/20 flex items-center justify-center mb-4">
                   <LineChart className="h-6 w-6 text-white" />
                 </div>
@@ -71,17 +80,17 @@ const Index = () => {
                 </p>
               </div>
               
-              <div className="rounded-lg p-6 shadow-sm border border-gray-100 dark:border-white/10 transition-all-ease hover:shadow-md animate-fadeIn bg-[#73c9ca] text-primary" style={{ animationDelay: "0.2s" }}>
+              <div className="rounded-lg p-6 shadow-lg backdrop-blur-md border border-white/20 transition-all-ease hover:shadow-xl animate-fadeIn bg-white/15 text-white" style={{ animationDelay: "0.2s" }}>
                 <div className="h-12 w-12 rounded-full bg-white/20 flex items-center justify-center mb-4">
-                  <FileText className="h-6 w-6 text-primary" />
+                  <FileText className="h-6 w-6 text-white" />
                 </div>
                 <h3 className="text-xl font-medium mb-2">Beautiful Reports</h3>
-                <p className="text-primary/90">
+                <p className="text-white/90">
                   Generate professional, ready-to-publish reports that meet all VSME requirements.
                 </p>
               </div>
               
-              <div className="rounded-lg p-6 shadow-sm border border-gray-100 dark:border-white/10 transition-all-ease hover:shadow-md animate-fadeIn bg-[#539db5] text-white" style={{ animationDelay: "0.4s" }}>
+              <div className="rounded-lg p-6 shadow-lg backdrop-blur-md border border-white/20 transition-all-ease hover:shadow-xl animate-fadeIn bg-white/10 text-white" style={{ animationDelay: "0.4s" }}>
                 <div className="h-12 w-12 rounded-full bg-white/20 flex items-center justify-center mb-4">
                   <Share2 className="h-6 w-6 text-white" />
                 </div>
