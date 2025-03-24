@@ -1,4 +1,5 @@
 
+import React, { useState } from "react";
 import { ChevronDown, Info } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { 
@@ -15,7 +16,6 @@ import {
   CollapsibleContent,
   CollapsibleTrigger
 } from "@/components/ui/collapsible";
-import { useState } from "react";
 
 interface VSMEMetricsTableProps {
   metrics: VSMEMetric[];
