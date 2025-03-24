@@ -9,6 +9,7 @@ import Index from "./pages/Index";
 import Dashboard from "./pages/Dashboard";
 import Reports from "./pages/Reports";
 import Metrics from "./pages/Metrics";
+import CalculatedMetrics from "./pages/CalculatedMetrics";
 import Standards from "./pages/Standards";
 import Import from "./pages/Import";
 import NotFound from "./pages/NotFound";
@@ -52,6 +53,14 @@ const App = () => (
             element={
               <ProtectedRoute>
                 <Metrics />
+              </ProtectedRoute>
+            } 
+          />
+          <Route 
+            path="/metrics/calculated" 
+            element={
+              <ProtectedRoute>
+                <CalculatedMetrics />
               </ProtectedRoute>
             } 
           />

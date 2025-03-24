@@ -3,6 +3,7 @@ import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 import { VSMEMetricsSearch } from "@/components/metrics/VSMEMetricsSearch";
 import { VSMEMetricsTabs } from "@/components/metrics/VSMEMetricsTabs";
+import { VSMEMetricsDropdown } from "@/components/metrics/VSMEMetricsDropdown";
 import { useVSMEMetrics } from "@/hooks/useVSMEMetrics";
 
 const Metrics = () => {
@@ -29,6 +30,7 @@ const Metrics = () => {
                 Collect, manage, and report on your VSME sustainability metrics
               </p>
             </div>
+            <VSMEMetricsDropdown />
           </div>
           
           <div className="mb-8">
