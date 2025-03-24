@@ -1,13 +1,12 @@
-
+import React, { useState } from 'react';
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
 import { Search, PlusCircle, Download, Share2, MoreHorizontal, FileText, File, FileCog } from "lucide-react";
-import { useState } from "react";
 import { useToast } from "@/components/ui/use-toast";
 
 const Reports = () => {
@@ -145,8 +144,198 @@ const Reports = () => {
               <Card className="shadow-sm">
                 <CardContent className="p-0">
                   <div className="grid grid-cols-1 divide-y divide-gray-200 dark:divide-gray-700">
-                    {filteredReports.length > 0 ? (
-                      filteredReports.map((report) => (
+                    {filteredReports.map((report) => (
+                      <div key={report.id} className="p-4 hover:bg-gray-50 dark:hover:bg-gray-800 transition-all-ease">
+                        <div className="flex items-start md:items-center gap-4">
+                          <div className="h-10 w-10 rounded-full bg-gray-100 dark:bg-gray-700 flex items-center justify-center">
+                            {statusIcon(report.type)}
+                          </div>
+                          <div className="flex-1">
+                            <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-2">
+                              <div>
+                                <h3 className="font-medium">{report.title}</h3>
+                                <p className="text-sm text-gray-500 dark:text-gray-400">{report.description}</p>
+                              </div>
+                              <div className="flex items-center gap-2">
+                                <Badge 
+                                  variant={report.status === "published" ? "default" : "outline"}
+                                  className={
+                                    report.status === "published" 
+                                      ? "bg-secondary text-primary" 
+                                      : report.status === "archived"
+                                        ? "bg-gray-200 text-gray-800 dark:bg-gray-700 dark:text-gray-300"
+                                        : ""
+                                  }
+                                >
+                                  {report.status}
+                                </Badge>
+                                <span className="text-xs text-gray-500 dark:text-gray-400">{report.date}</span>
+                              </div>
+                            </div>
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <Button 
+                              variant="ghost" 
+                              size="icon"
+                              className="rounded-full hover:bg-gray-100 dark:hover:bg-gray-700"
+                              onClick={() => handleReportAction("Download", report.title)}
+                            >
+                              <Download className="h-4 w-4" />
+                            </Button>
+                            <Button 
+                              variant="ghost" 
+                              size="icon"
+                              className="rounded-full hover:bg-gray-100 dark:hover:bg-gray-700"
+                              onClick={() => handleReportAction("Share", report.title)}
+                            >
+                              <Share2 className="h-4 w-4" />
+                            </Button>
+                            <Button 
+                              variant="ghost" 
+                              size="icon"
+                              className="rounded-full hover:bg-gray-100 dark:hover:bg-gray-700"
+                              onClick={() => handleReportAction("More options", report.title)}
+                            >
+                              <MoreHorizontal className="h-4 w-4" />
+                            </Button>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </CardContent>
+              </Card>
+            </TabsContent>
+            
+            <TabsContent value="published" className="mt-0">
+              <Card className="shadow-sm">
+                <CardContent className="p-0">
+                  <div className="grid grid-cols-1 divide-y divide-gray-200 dark:divide-gray-700">
+                    {filteredReports
+                      .filter(r => r.status === "published")
+                      .map((report) => (
+                        <div key={report.id} className="p-4 hover:bg-gray-50 dark:hover:bg-gray-800 transition-all-ease">
+                          <div className="flex items-start md:items-center gap-4">
+                            <div className="h-10 w-10 rounded-full bg-gray-100 dark:bg-gray-700 flex items-center justify-center">
+                              {statusIcon(report.type)}
+                            </div>
+                            <div className="flex-1">
+                              <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-2">
+                                <div>
+                                  <h3 className="font-medium">{report.title}</h3>
+                                  <p className="text-sm text-gray-500 dark:text-gray-400">{report.description}</p>
+                                </div>
+                                <div className="flex items-center gap-2">
+                                  <Badge className="bg-secondary text-primary">
+                                    {report.status}
+                                  </Badge>
+                                  <span className="text-xs text-gray-500 dark:text-gray-400">{report.date}</span>
+                                </div>
+                              </div>
+                            </div>
+                            <div className="flex items-center gap-2">
+                              <Button 
+                                variant="ghost" 
+                                size="icon"
+                                className="rounded-full hover:bg-gray-100 dark:hover:bg-gray-700"
+                                onClick={() => handleReportAction("Download", report.title)}
+                              >
+                                <Download className="h-4 w-4" />
+                              </Button>
+                              <Button 
+                                variant="ghost" 
+                                size="icon"
+                                className="rounded-full hover:bg-gray-100 dark:hover:bg-gray-700"
+                                onClick={() => handleReportAction("Share", report.title)}
+                              >
+                                <Share2 className="h-4 w-4" />
+                              </Button>
+                              <Button 
+                                variant="ghost" 
+                                size="icon"
+                                className="rounded-full hover:bg-gray-100 dark:hover:bg-gray-700"
+                                onClick={() => handleReportAction("More options", report.title)}
+                              >
+                                <MoreHorizontal className="h-4 w-4" />
+                              </Button>
+                            </div>
+                          </div>
+                        </div>
+                      ))
+                    }
+                  </div>
+                </CardContent>
+              </Card>
+            </TabsContent>
+            
+            <TabsContent value="draft" className="mt-0">
+              <Card className="shadow-sm">
+                <CardContent className="p-0">
+                  <div className="grid grid-cols-1 divide-y divide-gray-200 dark:divide-gray-700">
+                    {filteredReports
+                      .filter(r => r.status === "draft")
+                      .map((report) => (
+                        <div key={report.id} className="p-4 hover:bg-gray-50 dark:hover:bg-gray-800 transition-all-ease">
+                          <div className="flex items-start md:items-center gap-4">
+                            <div className="h-10 w-10 rounded-full bg-gray-100 dark:bg-gray-700 flex items-center justify-center">
+                              {statusIcon(report.type)}
+                            </div>
+                            <div className="flex-1">
+                              <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-2">
+                                <div>
+                                  <h3 className="font-medium">{report.title}</h3>
+                                  <p className="text-sm text-gray-500 dark:text-gray-400">{report.description}</p>
+                                </div>
+                                <div className="flex items-center gap-2">
+                                  <Badge variant="outline">
+                                    {report.status}
+                                  </Badge>
+                                  <span className="text-xs text-gray-500 dark:text-gray-400">{report.date}</span>
+                                </div>
+                              </div>
+                            </div>
+                            <div className="flex items-center gap-2">
+                              <Button 
+                                variant="ghost" 
+                                size="icon"
+                                className="rounded-full hover:bg-gray-100 dark:hover:bg-gray-700"
+                                onClick={() => handleReportAction("Download", report.title)}
+                              >
+                                <Download className="h-4 w-4" />
+                              </Button>
+                              <Button 
+                                variant="ghost" 
+                                size="icon"
+                                className="rounded-full hover:bg-gray-100 dark:hover:bg-gray-700"
+                                onClick={() => handleReportAction("Share", report.title)}
+                              >
+                                <Share2 className="h-4 w-4" />
+                              </Button>
+                              <Button 
+                                variant="ghost" 
+                                size="icon"
+                                className="rounded-full hover:bg-gray-100 dark:hover:bg-gray-700"
+                                onClick={() => handleReportAction("More options", report.title)}
+                              >
+                                <MoreHorizontal className="h-4 w-4" />
+                              </Button>
+                            </div>
+                          </div>
+                        </div>
+                      ))
+                    }
+                  </div>
+                </CardContent>
+              </Card>
+            </TabsContent>
+            
+            <TabsContent value="archived" className="mt-0">
+              <Card className="shadow-sm">
+                <CardContent className="p-0">
+                  <div className="grid grid-cols-1 divide-y divide-gray-200 dark:divide-gray-700">
+                    {filteredReports
+                      .filter(r => r.status === "archived")
+                      .map((report) => (
                         <div key={report.id} className="p-4 hover:bg-gray-50 dark:hover:bg-gray-800 transition-all-ease">
                           <div className="flex items-start md:items-center gap-4">
                             <div className="h-10 w-10 rounded-full bg-gray-100 dark:bg-gray-700 flex items-center justify-center">
@@ -160,14 +349,8 @@ const Reports = () => {
                                 </div>
                                 <div className="flex items-center gap-2">
                                   <Badge 
-                                    variant={report.status === "published" ? "default" : "outline"}
-                                    className={
-                                      report.status === "published" 
-                                        ? "bg-secondary text-primary" 
-                                        : report.status === "archived"
-                                          ? "bg-gray-200 text-gray-800 dark:bg-gray-700 dark:text-gray-300"
-                                          : ""
-                                    }
+                                    variant="outline"
+                                    className="bg-gray-200 text-gray-800 dark:bg-gray-700 dark:text-gray-300"
                                   >
                                     {report.status}
                                   </Badge>
@@ -204,212 +387,7 @@ const Reports = () => {
                           </div>
                         </div>
                       ))
-                    ) : (
-                      <div className="p-8 text-center">
-                        <p className="text-gray-500 dark:text-gray-400">No reports found matching your search criteria.</p>
-                      </div>
-                    )}
-                  </div>
-                </CardContent>
-              </Card>
-            </TabsContent>
-            
-            <TabsContent value="published" className="mt-0">
-              <Card className="shadow-sm">
-                <CardContent className="p-0">
-                  <div className="grid grid-cols-1 divide-y divide-gray-200 dark:divide-gray-700">
-                    {filteredReports.filter(r => r.status === "published").length > 0 ? (
-                      filteredReports
-                        .filter(r => r.status === "published")
-                        .map((report) => (
-                          <div key={report.id} className="p-4 hover:bg-gray-50 dark:hover:bg-gray-800 transition-all-ease">
-                            <div className="flex items-start md:items-center gap-4">
-                              <div className="h-10 w-10 rounded-full bg-gray-100 dark:bg-gray-700 flex items-center justify-center">
-                                {statusIcon(report.type)}
-                              </div>
-                              <div className="flex-1">
-                                <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-2">
-                                  <div>
-                                    <h3 className="font-medium">{report.title}</h3>
-                                    <p className="text-sm text-gray-500 dark:text-gray-400">{report.description}</p>
-                                  </div>
-                                  <div className="flex items-center gap-2">
-                                    <Badge className="bg-secondary text-primary">
-                                      {report.status}
-                                    </Badge>
-                                    <span className="text-xs text-gray-500 dark:text-gray-400">{report.date}</span>
-                                  </div>
-                                </div>
-                              </div>
-                              <div className="flex items-center gap-2">
-                                <Button 
-                                  variant="ghost" 
-                                  size="icon"
-                                  className="rounded-full hover:bg-gray-100 dark:hover:bg-gray-700"
-                                  onClick={() => handleReportAction("Download", report.title)}
-                                >
-                                  <Download className="h-4 w-4" />
-                                </Button>
-                                <Button 
-                                  variant="ghost" 
-                                  size="icon"
-                                  className="rounded-full hover:bg-gray-100 dark:hover:bg-gray-700"
-                                  onClick={() => handleReportAction("Share", report.title)}
-                                >
-                                  <Share2 className="h-4 w-4" />
-                                </Button>
-                                <Button 
-                                  variant="ghost" 
-                                  size="icon"
-                                  className="rounded-full hover:bg-gray-100 dark:hover:bg-gray-700"
-                                  onClick={() => handleReportAction("More options", report.title)}
-                                >
-                                  <MoreHorizontal className="h-4 w-4" />
-                                </Button>
-                              </div>
-                            </div>
-                          </div>
-                        ))
-                    ) : (
-                      <div className="p-8 text-center">
-                        <p className="text-gray-500 dark:text-gray-400">No published reports found.</p>
-                      </div>
-                    )}
-                  </div>
-                </CardContent>
-              </Card>
-            </TabsContent>
-            
-            <TabsContent value="draft" className="mt-0">
-              <Card className="shadow-sm">
-                <CardContent className="p-0">
-                  <div className="grid grid-cols-1 divide-y divide-gray-200 dark:divide-gray-700">
-                    {filteredReports.filter(r => r.status === "draft").length > 0 ? (
-                      filteredReports
-                        .filter(r => r.status === "draft")
-                        .map((report) => (
-                          <div key={report.id} className="p-4 hover:bg-gray-50 dark:hover:bg-gray-800 transition-all-ease">
-                            <div className="flex items-start md:items-center gap-4">
-                              <div className="h-10 w-10 rounded-full bg-gray-100 dark:bg-gray-700 flex items-center justify-center">
-                                {statusIcon(report.type)}
-                              </div>
-                              <div className="flex-1">
-                                <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-2">
-                                  <div>
-                                    <h3 className="font-medium">{report.title}</h3>
-                                    <p className="text-sm text-gray-500 dark:text-gray-400">{report.description}</p>
-                                  </div>
-                                  <div className="flex items-center gap-2">
-                                    <Badge variant="outline">
-                                      {report.status}
-                                    </Badge>
-                                    <span className="text-xs text-gray-500 dark:text-gray-400">{report.date}</span>
-                                  </div>
-                                </div>
-                              </div>
-                              <div className="flex items-center gap-2">
-                                <Button 
-                                  variant="ghost" 
-                                  size="icon"
-                                  className="rounded-full hover:bg-gray-100 dark:hover:bg-gray-700"
-                                  onClick={() => handleReportAction("Download", report.title)}
-                                >
-                                  <Download className="h-4 w-4" />
-                                </Button>
-                                <Button 
-                                  variant="ghost" 
-                                  size="icon"
-                                  className="rounded-full hover:bg-gray-100 dark:hover:bg-gray-700"
-                                  onClick={() => handleReportAction("Share", report.title)}
-                                >
-                                  <Share2 className="h-4 w-4" />
-                                </Button>
-                                <Button 
-                                  variant="ghost" 
-                                  size="icon"
-                                  className="rounded-full hover:bg-gray-100 dark:hover:bg-gray-700"
-                                  onClick={() => handleReportAction("More options", report.title)}
-                                >
-                                  <MoreHorizontal className="h-4 w-4" />
-                                </Button>
-                              </div>
-                            </div>
-                          </div>
-                        ))
-                    ) : (
-                      <div className="p-8 text-center">
-                        <p className="text-gray-500 dark:text-gray-400">No draft reports found.</p>
-                      </div>
-                    )}
-                  </div>
-                </CardContent>
-              </Card>
-            </TabsContent>
-            
-            <TabsContent value="archived" className="mt-0">
-              <Card className="shadow-sm">
-                <CardContent className="p-0">
-                  <div className="grid grid-cols-1 divide-y divide-gray-200 dark:divide-gray-700">
-                    {filteredReports.filter(r => r.status === "archived").length > 0 ? (
-                      filteredReports
-                        .filter(r => r.status === "archived")
-                        .map((report) => (
-                          <div key={report.id} className="p-4 hover:bg-gray-50 dark:hover:bg-gray-800 transition-all-ease">
-                            <div className="flex items-start md:items-center gap-4">
-                              <div className="h-10 w-10 rounded-full bg-gray-100 dark:bg-gray-700 flex items-center justify-center">
-                                {statusIcon(report.type)}
-                              </div>
-                              <div className="flex-1">
-                                <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-2">
-                                  <div>
-                                    <h3 className="font-medium">{report.title}</h3>
-                                    <p className="text-sm text-gray-500 dark:text-gray-400">{report.description}</p>
-                                  </div>
-                                  <div className="flex items-center gap-2">
-                                    <Badge 
-                                      variant="outline"
-                                      className="bg-gray-200 text-gray-800 dark:bg-gray-700 dark:text-gray-300"
-                                    >
-                                      {report.status}
-                                    </Badge>
-                                    <span className="text-xs text-gray-500 dark:text-gray-400">{report.date}</span>
-                                  </div>
-                                </div>
-                              </div>
-                              <div className="flex items-center gap-2">
-                                <Button 
-                                  variant="ghost" 
-                                  size="icon"
-                                  className="rounded-full hover:bg-gray-100 dark:hover:bg-gray-700"
-                                  onClick={() => handleReportAction("Download", report.title)}
-                                >
-                                  <Download className="h-4 w-4" />
-                                </Button>
-                                <Button 
-                                  variant="ghost" 
-                                  size="icon"
-                                  className="rounded-full hover:bg-gray-100 dark:hover:bg-gray-700"
-                                  onClick={() => handleReportAction("Share", report.title)}
-                                >
-                                  <Share2 className="h-4 w-4" />
-                                </Button>
-                                <Button 
-                                  variant="ghost" 
-                                  size="icon"
-                                  className="rounded-full hover:bg-gray-100 dark:hover:bg-gray-700"
-                                  onClick={() => handleReportAction("More options", report.title)}
-                                >
-                                  <MoreHorizontal className="h-4 w-4" />
-                                </Button>
-                              </div>
-                            </div>
-                          </div>
-                        ))
-                    ) : (
-                      <div className="p-8 text-center">
-                        <p className="text-gray-500 dark:text-gray-400">No archived reports found.</p>
-                      </div>
-                    )}
+                    }
                   </div>
                 </CardContent>
               </Card>
