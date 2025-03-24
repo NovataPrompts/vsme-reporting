@@ -4,6 +4,7 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { ProtectedRoute } from "./components/auth/ProtectedRoute";
 import Index from "./pages/Index";
 import Dashboard from "./pages/Dashboard";
 import Reports from "./pages/Reports";
@@ -21,14 +22,63 @@ const App = () => (
       <Sonner />
       <BrowserRouter>
         <Routes>
-          <Route path="/" element={<Index />} />
-          <Route path="/dashboard" element={<Dashboard />} />
-          <Route path="/reports" element={<Reports />} />
-          <Route path="/metrics" element={<Metrics />} />
-          <Route path="/standards" element={<Standards />} />
-          <Route path="/import" element={<Import />} />
+          <Route 
+            path="/" 
+            element={
+              <ProtectedRoute>
+                <Index />
+              </ProtectedRoute>
+            } 
+          />
+          <Route 
+            path="/dashboard" 
+            element={
+              <ProtectedRoute>
+                <Dashboard />
+              </ProtectedRoute>
+            } 
+          />
+          <Route 
+            path="/reports" 
+            element={
+              <ProtectedRoute>
+                <Reports />
+              </ProtectedRoute>
+            } 
+          />
+          <Route 
+            path="/metrics" 
+            element={
+              <ProtectedRoute>
+                <Metrics />
+              </ProtectedRoute>
+            } 
+          />
+          <Route 
+            path="/standards" 
+            element={
+              <ProtectedRoute>
+                <Standards />
+              </ProtectedRoute>
+            } 
+          />
+          <Route 
+            path="/import" 
+            element={
+              <ProtectedRoute>
+                <Import />
+              </ProtectedRoute>
+            } 
+          />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-          <Route path="*" element={<NotFound />} />
+          <Route 
+            path="*" 
+            element={
+              <ProtectedRoute>
+                <NotFound />
+              </ProtectedRoute>
+            } 
+          />
         </Routes>
       </BrowserRouter>
     </TooltipProvider>
