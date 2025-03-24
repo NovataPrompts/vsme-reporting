@@ -45,17 +45,6 @@ export const MobileNavigation = ({ isOpen, onClose }: MobileNavigationProps) => 
           Dashboard
         </NavLink>
         <NavLink 
-          to="/reports" 
-          className={({ isActive }) => `px-4 py-2 rounded-md transition-all-ease ${
-            isActive 
-              ? "text-secondary font-medium" 
-              : "text-primary/80 dark:text-white/80 hover:text-primary dark:hover:text-white"
-          }`}
-          onClick={onClose}
-        >
-          Reports
-        </NavLink>
-        <NavLink 
           to="/standards" 
           className={({ isActive }) => `px-4 py-2 rounded-md transition-all-ease ${
             isActive 
@@ -76,6 +65,17 @@ export const MobileNavigation = ({ isOpen, onClose }: MobileNavigationProps) => 
           onClick={onClose}
         >
           Metrics
+        </NavLink>
+        <NavLink 
+          to="/reports" 
+          className={({ isActive }) => `px-4 py-2 rounded-md transition-all-ease ${
+            isActive 
+              ? "text-secondary font-medium" 
+              : "text-primary/80 dark:text-white/80 hover:text-primary dark:hover:text-white"
+          }`}
+          onClick={onClose}
+        >
+          Reports
         </NavLink>
         <Button 
           onClick={handleImportClick} 
