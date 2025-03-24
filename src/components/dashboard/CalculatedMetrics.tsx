@@ -1,6 +1,6 @@
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, Legend } from "recharts";
-import { ArrowUpRight, Users, Gauge, RotateCcw } from "lucide-react";
+import { ArrowUpRight, Users, Gauge, RotateCcw, AlertTriangle } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
 export const CalculatedMetrics = () => {
@@ -24,17 +24,22 @@ export const CalculatedMetrics = () => {
       title: "Employee Turnover Rate",
       value: "14.8%",
       icon: RotateCcw
+    },
+    {
+      id: 4,
+      title: "Work-Related Accidents Rate",
+      value: "2.1%",
+      icon: AlertTriangle
     }
   ];
 
-  // Emissions data for the pie chart (simplified, no monthly data)
   const scopeData = [
     { name: 'Scope 1', value: 465 },
     { name: 'Scope 2', value: 740 },
     { name: 'Scope 3', value: 1595 },
   ];
 
-  const COLORS = ['#00f5f3', '#d8f225', '#539db5']; // Updated Scope 3 color to #539db5
+  const COLORS = ['#00f5f3', '#d8f225', '#539db5'];
 
   const PieCustomTooltip = ({ active, payload }: any) => {
     if (active && payload && payload.length) {
@@ -47,7 +52,6 @@ export const CalculatedMetrics = () => {
     return null;
   };
 
-  // Simplified data for the bar chart (just scopes, no monthly data)
   const emissionsData = [
     { name: 'Scope 1', value: 465 },
     { name: 'Scope 2', value: 740 },
@@ -67,7 +71,6 @@ export const CalculatedMetrics = () => {
 
   return (
     <Card className="shadow-sm glass-card relative overflow-hidden">
-      {/* Background decoration */}
       <div className="absolute -right-16 -bottom-16 w-64 h-64 bg-accent/10 dark:bg-accent/5 rounded-full blur-2xl"></div>
       <div className="absolute -left-16 -top-16 w-48 h-48 bg-secondary/10 dark:bg-secondary/5 rounded-full blur-2xl"></div>
       
@@ -88,7 +91,6 @@ export const CalculatedMetrics = () => {
       </CardHeader>
       <CardContent>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
-          {/* GHG Emissions Chart - Simplified Bar Chart */}
           <div className="bg-white/30 dark:bg-white/5 p-4 rounded-lg border border-gray-100 dark:border-white/10">
             <h3 className="text-lg font-medium mb-2">GHG Emissions by Scope</h3>
             <div className="h-64">
@@ -107,7 +109,6 @@ export const CalculatedMetrics = () => {
             </div>
           </div>
 
-          {/* Emissions Distribution Chart */}
           <div className="bg-white/30 dark:bg-white/5 p-4 rounded-lg border border-gray-100 dark:border-white/10">
             <h3 className="text-lg font-medium mb-2">Emissions Distribution</h3>
             <div className="h-64 flex items-center justify-center">
@@ -134,8 +135,7 @@ export const CalculatedMetrics = () => {
           </div>
         </div>
 
-        {/* Metrics Grid - Simplified without change indicators */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
           {metrics.map((metric) => (
             <div 
               key={metric.id} 
