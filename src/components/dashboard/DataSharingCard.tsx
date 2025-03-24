@@ -57,7 +57,7 @@ export const DataSharingCard = () => {
             variant="ghost"
           >
             <div className="h-14 w-14 flex items-center justify-center rounded-full bg-white/70 dark:bg-white/10 border border-gray-100 dark:border-white/20 group-hover:bg-[#d8f225] group-hover:border-[#d8f225] transition-colors duration-300">
-              <Upload className="h-7 w-7" />
+              <Upload className="h-7 w-7 text-primary dark:text-white group-hover:text-[#00344d] transition-colors duration-300" />
             </div>
             <div className="flex flex-col items-start">
               <span className="font-semibold text-lg">Upload Data</span>
@@ -71,7 +71,7 @@ export const DataSharingCard = () => {
             variant="ghost"
           >
             <div className="h-14 w-14 flex items-center justify-center rounded-full bg-white/70 dark:bg-white/10 border border-gray-100 dark:border-white/20 group-hover:bg-[#d8f225] group-hover:border-[#d8f225] transition-colors duration-300">
-              <MessageCirclePlus className="h-7 w-7" />
+              <MessageCirclePlus className="h-7 w-7 text-primary dark:text-white group-hover:text-[#00344d] transition-colors duration-300" />
             </div>
             <div className="flex flex-col items-start">
               <span className="font-semibold text-lg">Invite Partners</span>
@@ -85,7 +85,7 @@ export const DataSharingCard = () => {
             variant="ghost"
           >
             <div className="h-14 w-14 flex items-center justify-center rounded-full bg-white/70 dark:bg-white/10 border border-gray-100 dark:border-white/20 group-hover:bg-[#d8f225] group-hover:border-[#d8f225] transition-colors duration-300">
-              <Link className="h-7 w-7" />
+              <Link className="h-7 w-7 text-primary dark:text-white group-hover:text-[#00344d] transition-colors duration-300" />
             </div>
             <div className="flex flex-col items-start">
               <span className="font-semibold text-lg">Share Reports</span>
