@@ -19,6 +19,9 @@ export const StandardsOutline = () => {
   return (
     <Card className="shadow-sm glass-card">
       <CardHeader>
+        <div className="mb-2">
+          <span className="text-[#00f5f3] font-medium">BASIC</span>
+        </div>
         <CardTitle>VSME Standard Outline</CardTitle>
         <CardDescription>
           Comprehensive overview of sustainability reporting requirements for SMEs
