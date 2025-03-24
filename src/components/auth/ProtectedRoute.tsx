@@ -12,6 +12,7 @@ export const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
   
   useEffect(() => {
     const authStatus = localStorage.getItem("vsme-auth") === "true";
+    console.log("Authentication status:", authStatus);
     setIsAuthenticated(authStatus);
   }, []);
   

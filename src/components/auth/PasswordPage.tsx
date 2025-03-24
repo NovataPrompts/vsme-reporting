@@ -24,6 +24,8 @@ export const PasswordPage = () => {
         title: "Access granted",
         description: "Welcome to the VSME Reporting platform",
       });
+      // Add a console log to confirm this code is reached
+      console.log("Password correct, redirecting to index page");
       navigate("/");
     } else {
       setError(true);

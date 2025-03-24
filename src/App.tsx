@@ -12,6 +12,7 @@ import Metrics from "./pages/Metrics";
 import Standards from "./pages/Standards";
 import Import from "./pages/Import";
 import NotFound from "./pages/NotFound";
+import PasswordProtected from "./pages/PasswordProtected";
 
 const queryClient = new QueryClient();
 
@@ -71,6 +72,7 @@ const App = () => (
             } 
           />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+          <Route path="/password" element={<PasswordProtected />} />
           <Route 
             path="*" 
             element={
