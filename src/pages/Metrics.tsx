@@ -11,8 +11,7 @@ import {
   Activity, 
   FileText, 
   Info, 
-  Save,
-  ArrowRight
+  Save
 } from "lucide-react";
 import { useState } from "react";
 import { useToast } from "@/hooks/use-toast";
@@ -26,7 +25,7 @@ const Metrics = () => {
   const metricCategories = [
     {
       id: "general",
-      name: "General Disclosures",
+      name: "General Information",
       description: "General information about your organization's sustainability approach",
       icon: FileText,
       metrics: [
@@ -117,22 +116,15 @@ const Metrics = () => {
         <div className="container mx-auto px-4 md:px-6">
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
             <div>
-              <h1 className="text-3xl font-bold mb-2">Sustainability Metrics</h1>
+              <h1 className="text-3xl font-bold mb-2">Metrics</h1>
               <p className="text-gray-600 dark:text-gray-300">
                 Collect, manage, and report on your VSME sustainability metrics
               </p>
             </div>
-            <Button 
-              onClick={() => navigate("/import")}
-              className="flex items-center gap-2 bg-accent hover:bg-accent/90 text-primary"
-            >
-              <ArrowRight className="h-4 w-4" />
-              <span>Import Metrics</span>
-            </Button>
           </div>
           
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
-            <div className="lg:col-span-2">
+            <div className="lg:col-span-3">
               <div className="mb-6">
                 <div className="relative">
                   <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
@@ -199,7 +191,7 @@ const Metrics = () => {
 
               <Tabs defaultValue="general" className="space-y-4">
                 <TabsList className="grid grid-cols-4 w-full">
-                  <TabsTrigger value="general">General</TabsTrigger>
+                  <TabsTrigger value="general">General Information</TabsTrigger>
                   <TabsTrigger value="environmental">Environmental</TabsTrigger>
                   <TabsTrigger value="social">Social</TabsTrigger>
                   <TabsTrigger value="governance">Governance</TabsTrigger>
@@ -252,37 +244,6 @@ const Metrics = () => {
                   </TabsContent>
                 ))}
               </Tabs>
-            </div>
-            
-            <div>
-              <Card className="shadow-sm mb-6">
-                <CardHeader>
-                  <CardTitle className="text-lg">Actions</CardTitle>
-                  <CardDescription>
-                    Manage your sustainability metrics data
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-4">
-                    <Button 
-                      variant="outline" 
-                      className="w-full justify-between"
-                      onClick={() => navigate("/import")}
-                    >
-                      <span>Import Data</span>
-                      <ArrowRight className="h-4 w-4" />
-                    </Button>
-                    <Button 
-                      variant="outline" 
-                      className="w-full justify-between"
-                      onClick={() => handleLearnMore("Export Data")}
-                    >
-                      <span>Export Data</span>
-                      <ArrowRight className="h-4 w-4" />
-                    </Button>
-                  </div>
-                </CardContent>
-              </Card>
             </div>
           </div>
         </div>
