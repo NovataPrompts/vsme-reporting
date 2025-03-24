@@ -1,6 +1,6 @@
 
 import { useEffect, useState } from "react";
-import { Navigate } from "react-router-dom";
+import { Navigate, useLocation } from "react-router-dom";
 import { PasswordPage } from "./PasswordPage";
 
 interface ProtectedRouteProps {
@@ -9,12 +9,13 @@ interface ProtectedRouteProps {
 
 export const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
   const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
+  const location = useLocation();
   
   useEffect(() => {
     const authStatus = localStorage.getItem("vsme-auth") === "true";
     console.log("Authentication status:", authStatus);
     setIsAuthenticated(authStatus);
-  }, []);
+  }, [location.pathname]); // Re-check when pathname changes (like after logout)
   
   // Still checking authentication status
   if (isAuthenticated === null) {
