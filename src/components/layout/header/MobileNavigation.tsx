@@ -31,6 +31,17 @@ export const MobileNavigation = ({ isOpen, onClose }: MobileNavigationProps) => 
           }`}
           onClick={onClose}
         >
+          Home
+        </NavLink>
+        <NavLink 
+          to="/dashboard" 
+          className={({ isActive }) => `px-4 py-2 rounded-md transition-all-ease ${
+            isActive 
+              ? "text-secondary font-medium" 
+              : "text-primary/80 dark:text-white/80 hover:text-primary dark:hover:text-white"
+          }`}
+          onClick={onClose}
+        >
           Dashboard
         </NavLink>
         <NavLink 

@@ -2,10 +2,6 @@
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 import { Button } from "@/components/ui/button";
-import { ProgressOverview } from "@/components/dashboard/ProgressOverview";
-import { DataSharingCard } from "@/components/dashboard/DataSharingCard";
-import { CalculatedMetrics } from "@/components/dashboard/CalculatedMetrics";
-import { MetricsHighlight } from "@/components/dashboard/MetricsHighlight";
 import { ArrowRight, LineChart, FileText, Share2 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
@@ -37,7 +33,7 @@ const Index = () => {
                 Smart VSME Sustainability Reporting for Forward-Thinking Companies
               </h1>
               <p className="text-lg md:text-xl mb-8 text-white/90 dark:text-white/90 animate-slideUp drop-shadow-md">
-                Create beautiful, professional, and compliant sustainability reports following the European voluntary standard for non-listed SMEs.
+                Create beautiful, professional, and compliant sustainability reports following the voluntary standard for non-listed SMEs.
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center animate-slideUp">
                 <Button 
@@ -94,24 +90,6 @@ const Index = () => {
                   Easily share your sustainability data with stakeholders, suppliers, and partners.
                 </p>
               </div>
-            </div>
-          </div>
-        </section>
-        
-        {/* Dashboard Overview */}
-        <section className="py-16">
-          <div className="container mx-auto px-4 md:px-6">
-            <h2 className="text-2xl md:text-3xl font-bold mb-8 text-center text-[#00f5f3]">Your VSME Report Dashboard</h2>
-            
-            <div className="space-y-6">
-              {/* Data Sharing Hub - Full Width */}
-              <DataSharingCard />
-              
-              {/* Calculated Metrics with Emissions Charts - Full Width */}
-              <CalculatedMetrics />
-              
-              {/* Progress Overview */}
-              <ProgressOverview />
             </div>
           </div>
         </section>

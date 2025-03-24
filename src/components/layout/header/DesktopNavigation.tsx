@@ -12,6 +12,16 @@ export const DesktopNavigation = () => {
             : "text-primary/80 dark:text-white/80 hover:text-primary dark:hover:text-white"
         }`}
       >
+        Home
+      </NavLink>
+      <NavLink 
+        to="/dashboard" 
+        className={({ isActive }) => `px-4 py-2 rounded-md transition-all-ease ${
+          isActive 
+            ? "text-secondary font-medium" 
+            : "text-primary/80 dark:text-white/80 hover:text-primary dark:hover:text-white"
+        }`}
+      >
         Dashboard
       </NavLink>
       <NavLink 
