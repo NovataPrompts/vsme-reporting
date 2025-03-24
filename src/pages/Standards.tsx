@@ -7,12 +7,23 @@ import { StandardsOutline } from "@/components/standards/StandardsOutline";
 import { StandardsResources } from "@/components/standards/StandardsResources";
 import { HowWeCanHelp } from "@/components/standards/HowWeCanHelp";
 import { StandardsHeader } from "@/components/standards/StandardsHeader";
+import { StandardsHelp } from "@/components/standards/StandardsHelp";
+import { Button } from "@/components/ui/button";
+import { ArrowRight } from "lucide-react";
 
 const Standards = () => {
   const { toast } = useToast();
 
   const handleDownload = () => {
     window.open("https://www.efrag.org/sites/default/files/sites/webpublishing/SiteAssets/VSME%20Standard.pdf", "_blank");
+  };
+
+  const handleLearnMore = (topic: string) => {
+    toast({
+      title: "Learn More",
+      description: `Additional information about ${topic} will be available soon.`,
+      duration: 3000,
+    });
   };
 
   return (
@@ -31,6 +42,7 @@ const Standards = () => {
             
             <div>
               <StandardsResources />
+              <StandardsHelp onLearnMore={handleLearnMore} />
               <HowWeCanHelp />
             </div>
           </div>

@@ -1,4 +1,3 @@
-
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -16,7 +15,7 @@ import {
   ArrowRight
 } from "lucide-react";
 import { useState } from "react";
-import { useToast } from "@/components/ui/use-toast";
+import { useToast } from "@/hooks/use-toast";
 import { useNavigate } from "react-router-dom";
 
 const Metrics = () => {
@@ -279,43 +278,6 @@ const Metrics = () => {
                       onClick={() => handleLearnMore("Export Data")}
                     >
                       <span>Export Data</span>
-                      <ArrowRight className="h-4 w-4" />
-                    </Button>
-                  </div>
-                </CardContent>
-              </Card>
-              
-              <Card className="shadow-sm">
-                <CardHeader>
-                  <CardTitle className="text-lg">Need Help?</CardTitle>
-                  <CardDescription>
-                    Learn more about VSME sustainability metrics and how to report them.
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-4">
-                    <Button 
-                      variant="outline" 
-                      className="w-full justify-between"
-                      onClick={() => handleLearnMore("VSME Documentation")}
-                    >
-                      <span>VSME Documentation</span>
-                      <ArrowRight className="h-4 w-4" />
-                    </Button>
-                    <Button 
-                      variant="outline" 
-                      className="w-full justify-between"
-                      onClick={() => handleLearnMore("Metrics Guide")}
-                    >
-                      <span>Metrics Guide</span>
-                      <ArrowRight className="h-4 w-4" />
-                    </Button>
-                    <Button 
-                      variant="outline" 
-                      className="w-full justify-between"
-                      onClick={() => handleLearnMore("Data Collection Tips")}
-                    >
-                      <span>Data Collection Tips</span>
                       <ArrowRight className="h-4 w-4" />
                     </Button>
                   </div>
