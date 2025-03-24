@@ -4,7 +4,6 @@ import { Footer } from "@/components/layout/Footer";
 import { ProgressOverview } from "@/components/dashboard/ProgressOverview";
 import { DataSharingCard } from "@/components/dashboard/DataSharingCard";
 import { CalculatedMetrics } from "@/components/dashboard/CalculatedMetrics";
-import { RecentReports } from "@/components/dashboard/RecentReports";
 
 const Dashboard = () => {
   return (
@@ -31,9 +30,6 @@ const Dashboard = () => {
               
               {/* Progress Overview */}
               <ProgressOverview />
-              
-              {/* Recent Reports */}
-              <RecentReports />
             </div>
           </div>
         </section>
