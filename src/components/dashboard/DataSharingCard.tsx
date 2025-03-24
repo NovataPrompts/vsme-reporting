@@ -1,7 +1,7 @@
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { ArrowUpRight, Upload, UserPlus, Share } from "lucide-react";
+import { ArrowUpRight, Upload, Link, MessageCirclePlus } from "lucide-react";
 import { useToast } from "@/components/ui/use-toast";
 
 export const DataSharingCard = () => {
@@ -53,10 +53,12 @@ export const DataSharingCard = () => {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <Button 
             onClick={handleUploadClick}
-            className="flex h-28 items-center justify-center gap-3 bg-white/50 dark:bg-white/5 hover:bg-accent/20 hover:scale-105 text-primary dark:text-white border border-gray-100 dark:border-white/10 rounded-lg transition-all-ease"
+            className="flex items-center justify-start gap-3 bg-white/50 dark:bg-white/5 hover:bg-white/60 dark:hover:bg-white/10 text-primary dark:text-white border border-gray-100 dark:border-white/10 rounded-lg transition-all-ease h-28 px-4"
             variant="ghost"
           >
-            <Upload className="h-8 w-8" />
+            <div className="h-14 w-14 flex items-center justify-center rounded-full bg-white/70 dark:bg-white/10 border border-gray-100 dark:border-white/20 group-hover:bg-[#d8f225] transition-all-ease">
+              <Upload className="h-7 w-7" />
+            </div>
             <div className="flex flex-col items-start">
               <span className="font-semibold text-lg">Upload Data</span>
               <span className="text-sm opacity-70">CSV, Excel, or JSON</span>
@@ -65,10 +67,12 @@ export const DataSharingCard = () => {
           
           <Button 
             onClick={handleInviteClick}
-            className="flex h-28 items-center justify-center gap-3 bg-white/50 dark:bg-white/5 hover:bg-accent/20 hover:scale-105 text-primary dark:text-white border border-gray-100 dark:border-white/10 rounded-lg transition-all-ease"
+            className="flex items-center justify-start gap-3 bg-white/50 dark:bg-white/5 hover:bg-white/60 dark:hover:bg-white/10 text-primary dark:text-white border border-gray-100 dark:border-white/10 rounded-lg transition-all-ease h-28 px-4 group"
             variant="ghost"
           >
-            <UserPlus className="h-8 w-8" />
+            <div className="h-14 w-14 flex items-center justify-center rounded-full bg-white/70 dark:bg-white/10 border border-gray-100 dark:border-white/20 group-hover:bg-[#d8f225] transition-all-ease">
+              <MessageCirclePlus className="h-7 w-7" />
+            </div>
             <div className="flex flex-col items-start">
               <span className="font-semibold text-lg">Invite Partners</span>
               <span className="text-sm opacity-70">Share with collaborators</span>
@@ -77,10 +81,12 @@ export const DataSharingCard = () => {
           
           <Button 
             onClick={handleShareClick}
-            className="flex h-28 items-center justify-center gap-3 bg-white/50 dark:bg-white/5 hover:bg-accent/20 hover:scale-105 text-primary dark:text-white border border-gray-100 dark:border-white/10 rounded-lg transition-all-ease"
+            className="flex items-center justify-start gap-3 bg-white/50 dark:bg-white/5 hover:bg-white/60 dark:hover:bg-white/10 text-primary dark:text-white border border-gray-100 dark:border-white/10 rounded-lg transition-all-ease h-28 px-4 group"
             variant="ghost"
           >
-            <Share className="h-8 w-8" />
+            <div className="h-14 w-14 flex items-center justify-center rounded-full bg-white/70 dark:bg-white/10 border border-gray-100 dark:border-white/20 group-hover:bg-[#d8f225] transition-all-ease">
+              <Link className="h-7 w-7" />
+            </div>
             <div className="flex flex-col items-start">
               <span className="font-semibold text-lg">Share Reports</span>
               <span className="text-sm opacity-70">Generate shareable links</span>
