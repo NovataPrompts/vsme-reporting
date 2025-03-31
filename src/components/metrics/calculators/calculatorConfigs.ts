@@ -1,4 +1,3 @@
-
 import { CalculatorConfig } from "@/types/metrics";
 
 // Employee Turnover Calculator Config
@@ -178,10 +177,49 @@ export const workAccidentsCalculator: CalculatorConfig = {
   }
 };
 
+// Gender Diversity Ratio Calculator
+export const genderDiversityCalculator: CalculatorConfig = {
+  id: "gender-diversity",
+  title: "Gender Diversity Ratio Calculator",
+  description: "Calculate your organization's gender diversity ratio",
+  guidance: "Gender diversity ratio measures the balance of gender representation across the organization's workforce. This metric helps track progress toward gender equality and identify areas for improvement.",
+  formula: "female / male",
+  formulaDescription: "Ratio of female to male employees (Female : Male)",
+  vsmeReference: "VSME.C5.60",
+  inputs: [
+    {
+      id: "femaleEmployees",
+      label: "Number of female employees",
+      placeholder: "Enter number",
+      type: "number",
+    },
+    {
+      id: "maleEmployees",
+      label: "Number of male employees", 
+      placeholder: "Enter number",
+      type: "number",
+    }
+  ],
+  calculateFunction: (inputs) => {
+    const female = parseFloat(inputs.femaleEmployees);
+    const male = parseFloat(inputs.maleEmployees);
+    
+    if (isNaN(female) || isNaN(male) || male === 0) {
+      return "Invalid input";
+    }
+    
+    const ratio = female / male;
+    const percentage = (female / (female + male)) * 100;
+    
+    return `${ratio.toFixed(1)}:1 (${percentage.toFixed(0)}%)`;
+  }
+};
+
 // Map metric IDs to calculator configs
 export const calculatorConfigsMap: Record<number, CalculatorConfig> = {
-  3: employeeTurnoverCalculator,
-  2: ghgIntensityCalculator, 
+  1: genderDiversityCalculator,
+  2: ghgIntensityCalculator,
+  3: employeeTurnoverCalculator, 
   4: workAccidentsCalculator,
   5: genderPayGapCalculator,
 };
