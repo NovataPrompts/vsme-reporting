@@ -1,6 +1,7 @@
+
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, Legend } from "recharts";
-import { ArrowUpRight, Users, Gauge, RotateCcw, AlertTriangle, UserSquare2, PersonStanding } from "lucide-react";
+import { ArrowUpRight, Users, Gauge, RotateCcw, AlertTriangle, UserSquare2, PersonStanding, Calculator } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
 export const CalculatedMetrics = () => {
@@ -81,6 +82,10 @@ export const CalculatedMetrics = () => {
     return null;
   };
 
+  const handleMetricClick = () => {
+    navigate("/metrics/calculated");
+  };
+
   return (
     <Card className="shadow-sm glass-card relative overflow-hidden">
       <div className="absolute -right-16 -bottom-16 w-64 h-64 bg-accent/10 dark:bg-accent/5 rounded-full blur-2xl"></div>
@@ -91,7 +96,7 @@ export const CalculatedMetrics = () => {
           <span>Calculated Metrics</span>
           <span 
             className="text-sm text-accent font-normal flex items-center gap-1 cursor-pointer hover:underline"
-            onClick={() => navigate("/metrics")}
+            onClick={() => navigate("/metrics/calculated")}
           >
             View All
             <ArrowUpRight className="h-3 w-3" />
@@ -151,7 +156,7 @@ export const CalculatedMetrics = () => {
           {metrics.map((metric) => (
             <div 
               key={metric.id} 
-              className="group metric-card flex items-center p-5 bg-[#e3ecec] dark:bg-white/5 border border-[#008099]/30 dark:border-white/20 rounded-lg shadow-sm hover:shadow-md transition-all duration-300 h-28"
+              className="group metric-card flex items-center p-5 bg-[#e3ecec] dark:bg-white/5 border border-[#008099]/30 dark:border-white/20 rounded-lg shadow-sm hover:shadow-md transition-all duration-300 h-28 relative"
             >
               <div className="flex items-center gap-4">
                 <div className="h-14 w-14 flex items-center justify-center rounded-full bg-[#e3ecec] dark:bg-white/10 border border-[#008099]/30 dark:border-white/20 group-hover:bg-[#d8f225] group-hover:border-[#d8f225] transition-colors duration-300">
@@ -160,6 +165,24 @@ export const CalculatedMetrics = () => {
                 <div>
                   <p className="text-sm font-medium text-[#00344d] dark:text-white/80">{metric.title}</p>
                   <p className="text-2xl font-semibold text-[#008099] dark:text-white mt-1">{metric.value}</p>
+                </div>
+              </div>
+              
+              {/* Navigation icons in the corner */}
+              <div className="absolute bottom-3 right-3 flex gap-2">
+                <div 
+                  className="p-1.5 rounded-full bg-white/80 dark:bg-gray-800/80 hover:bg-[#d8f225] cursor-pointer transition-colors duration-300 flex items-center justify-center"
+                  onClick={handleMetricClick}
+                  title="Calculate"
+                >
+                  <Calculator className="h-3.5 w-3.5 text-[#008099] dark:text-white" />
+                </div>
+                <div 
+                  className="p-1.5 rounded-full bg-white/80 dark:bg-gray-800/80 hover:bg-[#d8f225] cursor-pointer transition-colors duration-300 flex items-center justify-center"
+                  onClick={handleMetricClick}
+                  title="View Details"
+                >
+                  <ArrowUpRight className="h-3.5 w-3.5 text-[#008099] dark:text-white" />
                 </div>
               </div>
             </div>
