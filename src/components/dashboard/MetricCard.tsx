@@ -10,6 +10,16 @@ interface MetricCardProps {
 export const MetricCard = ({ metric }: MetricCardProps) => {
   const navigate = useNavigate();
   
+  // Extract the main title without the reference in parentheses
+  const mainTitle = metric.title.includes('(') 
+    ? metric.title.substring(0, metric.title.indexOf('(')).trim() 
+    : metric.title;
+
+  // Extract the main value without the reference in parentheses
+  const mainValue = metric.value.includes('(') 
+    ? metric.value.substring(0, metric.value.indexOf('(')).trim() 
+    : metric.value;
+  
   const handleMetricClick = () => {
     navigate(`/metric/${metric.id}`);
   };
@@ -21,13 +31,13 @@ export const MetricCard = ({ metric }: MetricCardProps) => {
       onClick={handleMetricClick}
     >
       <div className="flex items-center gap-4">
-        <div className="h-14 w-14 flex items-center justify-center rounded-full bg-[#e3ecec] dark:bg-white/10 border border-[#008099]/30 dark:border-white/20 group-hover:bg-[#d8f225] group-hover:border-[#d8f225] transition-colors duration-300">
-          {/* Render icon without passing any props */}
-          <metric.icon />
+        <div className="h-16 w-16 flex items-center justify-center rounded-full bg-[#e3ecec] dark:bg-white/10 border border-[#008099]/30 dark:border-white/20 group-hover:bg-[#d8f225] group-hover:border-[#d8f225] transition-colors duration-300">
+          {/* Render icon without passing any props, with consistent sizing */}
+          <metric.icon className="h-8 w-8" />
         </div>
         <div>
-          <p className="text-xl font-medium text-[#00344d] dark:text-white/80 group-hover:text-[#00344d]">{metric.title}</p>
-          <p className="text-2xl font-semibold text-[#008099] dark:text-white mt-1 group-hover:text-[#00344d]">{metric.value}</p>
+          <p className="text-xl font-medium text-[#00344d] dark:text-white/80 group-hover:text-[#00344d]">{mainTitle}</p>
+          <p className="text-2xl font-semibold text-[#008099] dark:text-white mt-1 group-hover:text-[#00344d]">{mainValue}</p>
         </div>
       </div>
       
@@ -46,3 +56,4 @@ export const MetricCard = ({ metric }: MetricCardProps) => {
     </div>
   );
 };
+
