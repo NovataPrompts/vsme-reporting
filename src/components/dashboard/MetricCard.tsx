@@ -24,6 +24,9 @@ export const MetricCard = ({ metric }: MetricCardProps) => {
     navigate(`/metric/${metric.id}`);
   };
 
+  // Create a component that renders the icon
+  const IconComponent = metric.icon;
+
   return (
     <div 
       key={metric.id} 
@@ -32,8 +35,8 @@ export const MetricCard = ({ metric }: MetricCardProps) => {
     >
       <div className="flex items-center gap-4">
         <div className="h-16 w-16 flex items-center justify-center rounded-full bg-[#e3ecec] dark:bg-white/10 border border-[#008099]/30 dark:border-white/20 group-hover:bg-[#d8f225] group-hover:border-[#d8f225] transition-colors duration-300">
-          {/* Render icon without passing any props, with consistent sizing */}
-          <metric.icon className="h-8 w-8" />
+          {/* Render icon with proper JSX approach */}
+          <IconComponent className="h-8 w-8" />
         </div>
         <div>
           <p className="text-xl font-medium text-[#00344d] dark:text-white/80 group-hover:text-[#00344d]">{mainTitle}</p>
@@ -56,4 +59,3 @@ export const MetricCard = ({ metric }: MetricCardProps) => {
     </div>
   );
 };
-

@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Calculator, Check } from "lucide-react";
 import { Label } from "@/components/ui/label";
@@ -11,12 +10,19 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 interface MetricCalculatorProps {
   config: CalculatorConfig;
   onCalculate: (value: string, timestamp: string | null) => void;
+  onAddToMetrics?: () => void;
+  addedToMetrics?: boolean;
 }
 
-export const MetricCalculator = ({ config, onCalculate }: MetricCalculatorProps) => {
+export const MetricCalculator = ({ 
+  config, 
+  onCalculate, 
+  onAddToMetrics,
+  addedToMetrics = false
+}: MetricCalculatorProps) => {
   const [inputValues, setInputValues] = useState<Record<string, string>>({});
   const [calculatedValue, setCalculatedValue] = useState<string | null>(null);
-  const [addedToMetrics, setAddedToMetrics] = useState<boolean>(false);
+  const [localAddedToMetrics, setLocalAddedToMetrics] = useState<boolean>(false);
   const { toast } = useToast();
   
   const handleInputChange = (id: string, value: string) => {
@@ -60,12 +66,21 @@ export const MetricCalculator = ({ config, onCalculate }: MetricCalculatorProps)
   };
   
   const handleAddToMetrics = () => {
-    setAddedToMetrics(true);
+    setLocalAddedToMetrics(true);
+    
+    // Call the parent component's handler if provided
+    if (onAddToMetrics) {
+      onAddToMetrics();
+    }
+    
     toast({
       title: "Added to Metrics",
       description: `${config.title} (${calculatedValue}) has been added to ${config.vsmeReference}`,
     });
   };
+  
+  // Use the external addedToMetrics prop if provided, otherwise use the local state
+  const isAddedToMetrics = addedToMetrics !== undefined ? addedToMetrics : localAddedToMetrics;
   
   return (
     <div className="mt-8 p-6 bg-white border border-[#008099] rounded-lg text-[#00344d]">
@@ -128,7 +143,7 @@ export const MetricCalculator = ({ config, onCalculate }: MetricCalculatorProps)
           <div className="flex items-center gap-2">
             <span className="text-xl font-bold text-[#008099]">{calculatedValue}</span>
             
-            {!addedToMetrics ? (
+            {!isAddedToMetrics ? (
               <Button 
                 onClick={handleAddToMetrics}
                 className="ml-4 bg-[#d8f225] hover:bg-[#c6e01d] text-[#00344d] font-medium"
@@ -145,7 +160,7 @@ export const MetricCalculator = ({ config, onCalculate }: MetricCalculatorProps)
         )}
       </div>
       
-      {calculatedValue && calculatedValue !== "Invalid input" && calculatedValue !== "Error in calculation" && !addedToMetrics && (
+      {calculatedValue && calculatedValue !== "Invalid input" && calculatedValue !== "Error in calculation" && !isAddedToMetrics && (
         <div className="mt-2 text-gray-500 text-sm">
           This value will be added as a response to {config.vsmeReference}
         </div>
