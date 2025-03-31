@@ -3,7 +3,7 @@ import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, Calculator } from "lucide-react";
 import { useNavigate, useParams } from "react-router-dom";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { metrics } from "@/components/dashboard/CalculatedMetrics";
@@ -19,6 +19,7 @@ const MetricDetail = () => {
   const [employeesLeft, setEmployeesLeft] = useState<string>("");
   const [averageEmployees, setAverageEmployees] = useState<string>("");
   const [calculatedValue, setCalculatedValue] = useState<string | null>(null);
+  const [calculationTimestamp, setCalculationTimestamp] = useState<string | null>(null);
   
   const calculateTurnoverRate = () => {
     const left = parseFloat(employeesLeft);
@@ -26,11 +27,25 @@ const MetricDetail = () => {
     
     if (isNaN(left) || isNaN(average) || average === 0) {
       setCalculatedValue("Invalid input");
+      setCalculationTimestamp(null);
       return;
     }
     
     const turnoverRate = (left / average) * 100;
     setCalculatedValue(turnoverRate.toFixed(1) + "%");
+    
+    // Set the current date and time
+    const now = new Date();
+    const formattedDate = now.toLocaleDateString('en-US', { 
+      year: 'numeric', 
+      month: 'short', 
+      day: 'numeric' 
+    });
+    const formattedTime = now.toLocaleTimeString('en-US', { 
+      hour: '2-digit', 
+      minute: '2-digit'
+    });
+    setCalculationTimestamp(`${formattedDate} at ${formattedTime}`);
   };
   
   if (!metric) {
@@ -164,13 +179,22 @@ const MetricDetail = () => {
             </CardHeader>
             
             <CardContent>
-              <div className="mt-2 mb-6">
+              <div className="mt-2 mb-2">
                 <p className="text-3xl font-bold text-[#d8f225]">
                   {metric.id === 3 && calculatedValue ? calculatedValue : metric.value}
                 </p>
+                {metric.id === 3 && calculationTimestamp && (
+                  <div className="flex items-center gap-2 text-sm text-gray-500 mt-1">
+                    <Calculator className="h-4 w-4" />
+                    <span>Last calculated: {calculationTimestamp}</span>
+                  </div>
+                )}
               </div>
               
-              <div className="space-y-4">
+              {/* Move the calculator above the description section */}
+              {metric.id === 3 && renderEmployeeTurnoverCalculator()}
+              
+              <div className="space-y-4 mt-6">
                 <div>
                   <h3 className="font-semibold text-lg mb-2">Description</h3>
                   <p className="text-gray-700 dark:text-gray-300">
@@ -189,8 +213,6 @@ const MetricDetail = () => {
                   <h3 className="font-semibold text-lg mb-2">Reporting Period</h3>
                   <p className="text-gray-700 dark:text-gray-300">Annual (January - December 2023)</p>
                 </div>
-                
-                {renderEmployeeTurnoverCalculator()}
               </div>
             </CardContent>
           </Card>
