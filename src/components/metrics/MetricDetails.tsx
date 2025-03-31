@@ -28,12 +28,14 @@ export const MetricDetails = ({
     
   return (
     <>
-      <div className="mt-2 mb-2">
-        <p className="text-3xl font-bold text-[#d8f225]">
-          {/* Only show the default value if we don't have a calculated value for calculator metrics */}
-          {isCalculatorMetric && calculatedValue ? null : value}
-        </p>
-      </div>
+      {/* Only show the default value if it's NOT a calculator metric */}
+      {!isCalculatorMetric && (
+        <div className="mt-2 mb-2">
+          <p className="text-3xl font-bold text-[#d8f225]">
+            {value}
+          </p>
+        </div>
+      )}
       
       {addedToMetrics && calculationTimestamp && (
         <div className="text-white/70 text-sm mb-4">
