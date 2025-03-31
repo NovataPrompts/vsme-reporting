@@ -7,9 +7,10 @@ import { Card, CardContent } from "@/components/ui/card";
 import { metrics } from "@/components/dashboard/data/metricsData";
 import { MetricHeader } from "@/components/metrics/MetricHeader";
 import { MetricDetails } from "@/components/metrics/MetricDetails";
-import { EmployeeTurnoverCalculator } from "@/components/metrics/EmployeeTurnoverCalculator";
+import { MetricCalculator } from "@/components/metrics/MetricCalculator";
 import { MetricNotFound } from "@/components/metrics/MetricNotFound";
 import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
+import { hasCalculator, getCalculatorConfigByMetricId } from "@/components/metrics/calculators/calculatorConfigs";
 
 const MetricDetail = () => {
   const { id } = useParams();
@@ -29,7 +30,8 @@ const MetricDetail = () => {
     return <MetricNotFound />;
   }
 
-  const isEmployeeTurnoverMetric = metric.id === 3;
+  const hasMetricCalculator = hasCalculator(metric.id);
+  const calculatorConfig = hasMetricCalculator ? getCalculatorConfigByMetricId(metric.id) : null;
   
   return (
     <div className="min-h-screen flex flex-col">
@@ -47,7 +49,7 @@ const MetricDetail = () => {
             
             <CardContent>
               {/* Display calculation result in a prominent box if available */}
-              {isEmployeeTurnoverMetric && calculatedValue && calculatedValue !== "Invalid input" && (
+              {hasMetricCalculator && calculatedValue && calculatedValue !== "Invalid input" && calculatedValue !== "Error in calculation" && (
                 <Alert className="mb-6 bg-[#539db5]/10 border-[#d8f225]">
                   <AlertTitle className="text-4xl font-bold text-[#d8f225]">
                     {calculatedValue}
@@ -55,15 +57,16 @@ const MetricDetail = () => {
                   {calculationTimestamp && (
                     <AlertDescription className="text-sm text-white">
                       Last calculated: {calculationTimestamp}
-                      {addedToMetrics && <span> • Added to VSME.B8.40 report</span>}
+                      {addedToMetrics && <span> • Added to {calculatorConfig?.vsmeReference || metric.reference} report</span>}
                     </AlertDescription>
                   )}
                 </Alert>
               )}
               
-              {/* Employee Turnover Calculator */}
-              {isEmployeeTurnoverMetric && (
-                <EmployeeTurnoverCalculator 
+              {/* Metric Calculator */}
+              {hasMetricCalculator && calculatorConfig && (
+                <MetricCalculator 
+                  config={calculatorConfig}
                   onCalculate={handleCalculation} 
                 />
               )}
@@ -75,7 +78,7 @@ const MetricDetail = () => {
                 value={metric.value}
                 calculatedValue={calculatedValue}
                 calculationTimestamp={calculationTimestamp}
-                isCalculatorMetric={isEmployeeTurnoverMetric}
+                isCalculatorMetric={hasMetricCalculator}
                 addedToMetrics={addedToMetrics}
               />
             </CardContent>
