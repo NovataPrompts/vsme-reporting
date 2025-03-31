@@ -1,123 +1,14 @@
 
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, Legend } from "recharts";
-import { ArrowUpRight, Calculator } from "lucide-react";
+import { ArrowUpRight } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-
-// Placeholder for icons - to be replaced later
-const PersonStanding = () => null;
-const Gauge = () => null;
-const RotateCcw = () => null;
-const AlertTriangle = () => null;
-const Users = () => null;
-const UserSquare2 = () => null;
-
-export const metrics = [
-  {
-    id: 1,
-    title: "Gender Diversity Ratio (VSME.C5.60)",
-    value: "3:1 (75%)",
-    icon: PersonStanding,
-    reference: "VSME.C5.60",
-    description: "Measures the gender balance across the organization's workforce.",
-    calculationMethod: "Ratio of female to male employees, calculated by total headcount.",
-    titleColor: "#00f5f3"
-  },
-  {
-    id: 2,
-    title: "GHG Intensity (VSME.B3.31)",
-    value: "3.2 tCO₂e/M€",
-    icon: Gauge,
-    reference: "VSME.B3.31",
-    description: "Measures greenhouse gas emissions relative to revenue.",
-    calculationMethod: "Total greenhouse gas emissions divided by total revenue in millions of euros.",
-    titleColor: "#00f5f3"
-  },
-  {
-    id: 3,
-    title: "Employee Turnover Rate (VSME.B8.40)",
-    value: "14.8%",
-    icon: RotateCcw,
-    reference: "VSME.B8.40",
-    description: "Percentage of employees who leave the organization in a given period.",
-    calculationMethod: "Number of employees who left divided by total number of employees, multiplied by 100.",
-    titleColor: "#00f5f3"
-  },
-  {
-    id: 4,
-    title: "Rate of Work-Related Accidents (VSME.B9.41a)",
-    value: "2.1%",
-    icon: AlertTriangle,
-    reference: "VSME.B9.41a",
-    description: "Frequency of work-related accidents within the organization.",
-    calculationMethod: "Number of work-related accidents divided by total employee hours worked, multiplied by 200,000.",
-    titleColor: "#00f5f3"
-  },
-  {
-    id: 5,
-    title: "Unadjusted Gender Pay Gap (VSME.B10.42.b)",
-    value: "23.4%",
-    icon: Users,
-    reference: "VSME.B10.42.b",
-    description: "Difference in average earnings between men and women in the organization.",
-    calculationMethod: "Median earnings of men minus median earnings of women, divided by median earnings of men.",
-    titleColor: "#00f5f3"
-  },
-  {
-    id: 6,
-    title: "Board Gender Ratio (VSME.C9.65)",
-    value: "7:3 (70%:30%)",
-    icon: UserSquare2,
-    reference: "VSME.C9.65",
-    description: "Gender composition of the organization's board of directors.",
-    calculationMethod: "Proportion of board members by gender, calculated by total board headcount.",
-    titleColor: "#00f5f3"
-  }
-];
+import { metrics } from "./data/metricsData";
+import { EmissionsCharts } from "./EmissionsCharts";
+import { MetricCard } from "./MetricCard";
 
 export const CalculatedMetrics = () => {
   const navigate = useNavigate();
   
-  const scopeData = [
-    { name: 'Scope 1', value: 465 },
-    { name: 'Scope 2', value: 740 },
-    { name: 'Scope 3', value: 1595 },
-  ];
-
-  const COLORS = ['#00f5f3', '#d8f225', '#539db5'];
-
-  const PieCustomTooltip = ({ active, payload }: any) => {
-    if (active && payload && payload.length) {
-      return (
-        <div className="p-2 bg-white dark:bg-gray-800 shadow-md rounded-md border border-gray-200 dark:border-gray-700">
-          <p className="font-medium">{`${payload[0].name}: ${payload[0].value} tons (${((payload[0].value / 2800) * 100).toFixed(1)}%)`}</p>
-        </div>
-      );
-    }
-    return null;
-  };
-
-  const emissionsData = [
-    { name: 'Scope 1', value: 465 },
-    { name: 'Scope 2', value: 740 },
-    { name: 'Scope 3', value: 1595 },
-  ];
-
-  const CustomTooltip = ({ active, payload }: any) => {
-    if (active && payload && payload.length) {
-      return (
-        <div className="p-2 bg-white dark:bg-gray-800 shadow-md rounded-md border border-gray-200 dark:border-gray-700">
-          <p className="font-medium">{`${payload[0].name}: ${payload[0].value} tons`}</p>
-        </div>
-      );
-    }
-    return null;
-  };
-
-  const handleMetricClick = (metricId: number) => {
-    navigate(`/metric/${metricId}`);
-  };
-
   return (
     <Card className="shadow-sm glass-card relative overflow-hidden">
       <div className="absolute -right-16 -bottom-16 w-64 h-64 bg-accent/10 dark:bg-accent/5 rounded-full blur-2xl"></div>
@@ -139,82 +30,11 @@ export const CalculatedMetrics = () => {
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
-          <div className="chart-container">
-            <h3 className="text-lg font-medium mb-2 text-[#008099] dark:text-white">GHG Emissions by Scope</h3>
-            <div className="h-64">
-              <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={emissionsData} margin={{ top: 20, right: 20, left: -20, bottom: 5 }}>
-                  <XAxis dataKey="name" tickLine={false} axisLine={false} />
-                  <YAxis tickLine={false} axisLine={false} tickFormatter={(value) => `${value}`} />
-                  <Tooltip content={<CustomTooltip />} />
-                  <Bar dataKey="value" radius={[4, 4, 0, 0]} fillOpacity={0.9}>
-                    {emissionsData.map((entry, index) => (
-                      <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                    ))}
-                  </Bar>
-                </BarChart>
-              </ResponsiveContainer>
-            </div>
-          </div>
-
-          <div className="chart-container">
-            <h3 className="text-lg font-medium mb-2 text-[#008099] dark:text-white">Emissions Distribution</h3>
-            <div className="h-64 flex items-center justify-center">
-              <ResponsiveContainer width="100%" height="100%">
-                <PieChart>
-                  <Pie
-                    data={scopeData}
-                    cx="50%"
-                    cy="50%"
-                    innerRadius={60}
-                    outerRadius={80}
-                    paddingAngle={5}
-                    dataKey="value"
-                  >
-                    {scopeData.map((entry, index) => (
-                      <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                    ))}
-                  </Pie>
-                  <Tooltip content={<PieCustomTooltip />} />
-                  <Legend />
-                </PieChart>
-              </ResponsiveContainer>
-            </div>
-          </div>
-        </div>
+        <EmissionsCharts />
 
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
           {metrics.map((metric) => (
-            <div 
-              key={metric.id} 
-              className="group metric-card flex items-center p-5 bg-[#e3ecec] dark:bg-white/5 border border-[#008099]/30 dark:border-white/20 rounded-lg shadow-sm hover:shadow-md transition-all duration-300 hover:!bg-white hover:!text-[#00344d] h-28 relative cursor-pointer"
-              onClick={() => handleMetricClick(metric.id)}
-            >
-              <div className="flex items-center gap-4">
-                <div className="h-14 w-14 flex items-center justify-center rounded-full bg-[#e3ecec] dark:bg-white/10 border border-[#008099]/30 dark:border-white/20 group-hover:bg-[#d8f225] group-hover:border-[#d8f225] transition-colors duration-300">
-                  {/* Render icon without passing any props */}
-                  <metric.icon />
-                </div>
-                <div>
-                  <p className="text-xl font-medium text-[#00344d] dark:text-white/80 group-hover:text-[#00344d]">{metric.title}</p>
-                  <p className="text-2xl font-semibold text-[#008099] dark:text-white mt-1 group-hover:text-[#00344d]">{metric.value}</p>
-                </div>
-              </div>
-              
-              <div className="absolute bottom-3 right-3">
-                <div 
-                  className="p-1.5 rounded-full bg-white/80 dark:bg-gray-800/80 hover:bg-[#d8f225] cursor-pointer transition-colors duration-300 flex items-center justify-center"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    navigate("/metrics/calculated");
-                  }}
-                  title="View metric details"
-                >
-                  <Calculator className="h-3.5 w-3.5 text-[#008099] dark:text-white" />
-                </div>
-              </div>
-            </div>
+            <MetricCard key={metric.id} metric={metric} />
           ))}
         </div>
       </CardContent>
