@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Calculator } from "lucide-react";
 import { Label } from "@/components/ui/label";
@@ -47,7 +46,7 @@ export const EmployeeTurnoverCalculator = ({ onCalculate }: EmployeeTurnoverCalc
       </div>
       
       <div className="space-y-4 mb-6">
-        <div className="text-sm text-[#00344d] mb-4">
+        <div className="text-base text-[#00344d] mb-4">
           <p>According to VSME guidance:</p>
           <p className="mt-2">Employee turnover refers to employees who leave the undertaking voluntarily or due to dismissal, retirement, or death in service.</p>
           <p className="mt-2">An employee is defined as an individual who is in an employment relationship with the undertaking according to national law or practice.</p>
