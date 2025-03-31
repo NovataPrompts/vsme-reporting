@@ -1,4 +1,3 @@
-
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, Legend } from "recharts";
 import { ArrowUpRight, Users, Gauge, RotateCcw, AlertTriangle, UserSquare2, PersonStanding, Calculator } from "lucide-react";
@@ -156,7 +155,7 @@ export const CalculatedMetrics = () => {
           {metrics.map((metric) => (
             <div 
               key={metric.id} 
-              className="group metric-card flex items-center p-5 bg-[#e3ecec] dark:bg-white/5 border border-[#008099]/30 dark:border-white/20 rounded-lg shadow-sm hover:shadow-md transition-all duration-300 hover:bg-[#73c9ca] h-28 relative"
+              className="group metric-card flex items-center p-5 bg-[#e3ecec] dark:bg-white/5 border border-[#008099]/30 dark:border-white/20 rounded-lg shadow-sm hover:shadow-md transition-all duration-300 hover:bg-white hover:text-[#00344d] h-28 relative"
             >
               <div className="flex items-center gap-4">
                 <div className="h-14 w-14 flex items-center justify-center rounded-full bg-[#e3ecec] dark:bg-white/10 border border-[#008099]/30 dark:border-white/20 group-hover:bg-[#d8f225] group-hover:border-[#d8f225] transition-colors duration-300">
