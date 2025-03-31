@@ -28,14 +28,9 @@ export const MetricDetails = ({
     <>
       <div className="mt-2 mb-2">
         <p className="text-3xl font-bold text-[#d8f225]">
-          {isCalculatorMetric && calculatedValue ? calculatedValue : value}
+          {/* Only show the default value if we don't have a calculated value for calculator metrics */}
+          {isCalculatorMetric && calculatedValue ? null : value}
         </p>
-        {isCalculatorMetric && calculationTimestamp && (
-          <div className="flex items-center gap-2 text-sm text-gray-500 mt-1">
-            <Calculator className="h-4 w-4" />
-            <span>Last calculated: {calculationTimestamp}</span>
-          </div>
-        )}
       </div>
       
       <div className="space-y-4 mt-6">
