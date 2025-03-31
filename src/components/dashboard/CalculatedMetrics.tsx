@@ -1,8 +1,21 @@
 
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, Legend } from "recharts";
+import { ArrowUpRight, Calculator } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+
+// Placeholder for icons - to be replaced later
+const PersonStanding = () => null;
+const Gauge = () => null;
+const RotateCcw = () => null;
+const AlertTriangle = () => null;
+const Users = () => null;
+const UserSquare2 = () => null;
+
 export const metrics = [
   {
     id: 1,
-    title: "Gender Diversity Ratio",
+    title: "Gender Diversity Ratio (VSME.C5.60)",
     value: "3:1 (75%)",
     icon: PersonStanding,
     reference: "VSME.C5.60",
@@ -12,7 +25,7 @@ export const metrics = [
   },
   {
     id: 2,
-    title: "GHG Intensity",
+    title: "GHG Intensity (VSME.B3.31)",
     value: "3.2 tCO₂e/M€",
     icon: Gauge,
     reference: "VSME.B3.31",
@@ -22,7 +35,7 @@ export const metrics = [
   },
   {
     id: 3,
-    title: "Employee Turnover Rate",
+    title: "Employee Turnover Rate (VSME.B8.40)",
     value: "14.8%",
     icon: RotateCcw,
     reference: "VSME.B8.40",
@@ -32,7 +45,7 @@ export const metrics = [
   },
   {
     id: 4,
-    title: "Rate of Work-Related Accidents",
+    title: "Rate of Work-Related Accidents (VSME.B9.41a)",
     value: "2.1%",
     icon: AlertTriangle,
     reference: "VSME.B9.41a",
@@ -42,7 +55,7 @@ export const metrics = [
   },
   {
     id: 5,
-    title: "Unadjusted Gender Pay Gap",
+    title: "Unadjusted Gender Pay Gap (VSME.B10.42.b)",
     value: "23.4%",
     icon: Users,
     reference: "VSME.B10.42.b",
@@ -52,7 +65,7 @@ export const metrics = [
   },
   {
     id: 6,
-    title: "Board Gender Ratio",
+    title: "Board Gender Ratio (VSME.C9.65)",
     value: "7:3 (70%:30%)",
     icon: UserSquare2,
     reference: "VSME.C9.65",
