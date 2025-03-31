@@ -1,8 +1,6 @@
-
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, Legend } from "recharts";
-import { ArrowUpRight, Users, Gauge, RotateCcw, AlertTriangle, UserSquare2 } from "lucide-react";
-import { Diversity } from "lucide-react";
+import { ArrowUpRight, Users, Gauge, RotateCcw, AlertTriangle, UserSquare2, PersonStanding } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
 export const CalculatedMetrics = () => {
@@ -37,7 +35,7 @@ export const CalculatedMetrics = () => {
       id: 5,
       title: "Diversity Ratio",
       value: "3:1 (75%)",
-      icon: Diversity
+      icon: PersonStanding
     },
     {
       id: 6,
