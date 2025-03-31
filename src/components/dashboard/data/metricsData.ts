@@ -1,8 +1,7 @@
+import { RotateCcw, RefreshCcwDot } from 'lucide-react';
 
-// Placeholder for icons - to be replaced later
 const PersonStanding = () => null;
 const Gauge = () => null;
-const RotateCcw = () => null;
 const AlertTriangle = () => null;
 const Users = () => null;
 const UserSquare2 = () => null;
@@ -43,7 +42,7 @@ export const metrics: Metric[] = [
     id: 3,
     title: "Employee Turnover Rate (VSME.B8.40)",
     value: "14.8%",
-    icon: RotateCcw,
+    icon: RefreshCcwDot,
     reference: "VSME.B8.40",
     description: "Percentage of employees who leave the organization in a given period.",
     calculationMethod: "Number of employees who left divided by total number of employees, multiplied by 100.",
