@@ -1,50 +1,56 @@
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, Legend } from "recharts";
-import { ArrowUpRight, Users, Gauge, RotateCcw, AlertTriangle, UserSquare2, PersonStanding, Calculator } from "lucide-react";
+import { ArrowUpRight, Users, Gauge, RotateCcw, AlertTriangle, PersonStanding, UserSquare2, Calculator } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+
+export const metrics = [
+  {
+    id: 1,
+    title: "Gender Diversity Ratio",
+    value: "3:1 (75%)",
+    icon: PersonStanding,
+    reference: "VSME.C5.60"
+  },
+  {
+    id: 2,
+    title: "GHG Intensity",
+    value: "3.2 tCO₂e/M€",
+    icon: Gauge,
+    reference: "VSME.B3.31"
+  },
+  {
+    id: 3,
+    title: "Employee Turnover Rate",
+    value: "14.8%",
+    icon: RotateCcw,
+    reference: "VSME.B8.40"
+  },
+  {
+    id: 4,
+    title: "Rate of Work-Related Accidents",
+    value: "2.1%",
+    icon: AlertTriangle,
+    reference: "VSME.B9.41a"
+  },
+  {
+    id: 5,
+    title: "Unadjusted Gender Pay Gap",
+    value: "23.4%",
+    icon: Users,
+    reference: "VSME.B10.42.b"
+  },
+  {
+    id: 6,
+    title: "Board Gender Ratio",
+    value: "7:3 (70%:30%)",
+    icon: UserSquare2,
+    reference: "VSME.C9.65"
+  }
+];
 
 export const CalculatedMetrics = () => {
   const navigate = useNavigate();
   
-  const metrics = [
-    {
-      id: 1,
-      title: "Unadjusted Gender Pay Gap",
-      value: "23.4%",
-      icon: Users
-    },
-    {
-      id: 2,
-      title: "GHG Intensity",
-      value: "3.2 tCO₂e/M€",
-      icon: Gauge
-    },
-    {
-      id: 3,
-      title: "Employee Turnover Rate",
-      value: "14.8%",
-      icon: RotateCcw
-    },
-    {
-      id: 4,
-      title: "Work-Related Accidents Rate",
-      value: "2.1%",
-      icon: AlertTriangle
-    },
-    {
-      id: 5,
-      title: "Diversity Ratio",
-      value: "3:1 (75%)",
-      icon: PersonStanding
-    },
-    {
-      id: 6,
-      title: "Board Gender Ratio (M:F)",
-      value: "7:3 (70%:30%)",
-      icon: UserSquare2
-    }
-  ];
-
   const scopeData = [
     { name: 'Scope 1', value: 465 },
     { name: 'Scope 2', value: 740 },
@@ -81,8 +87,8 @@ export const CalculatedMetrics = () => {
     return null;
   };
 
-  const handleMetricClick = () => {
-    navigate("/metrics/calculated");
+  const handleMetricClick = (metricId: number) => {
+    navigate(`/metric/${metricId}`);
   };
 
   return (
@@ -155,7 +161,8 @@ export const CalculatedMetrics = () => {
           {metrics.map((metric) => (
             <div 
               key={metric.id} 
-              className="group metric-card flex items-center p-5 bg-[#e3ecec] dark:bg-white/5 border border-[#008099]/30 dark:border-white/20 rounded-lg shadow-sm hover:shadow-md transition-all duration-300 hover:!bg-white hover:!text-[#00344d] h-28 relative"
+              className="group metric-card flex items-center p-5 bg-[#e3ecec] dark:bg-white/5 border border-[#008099]/30 dark:border-white/20 rounded-lg shadow-sm hover:shadow-md transition-all duration-300 hover:!bg-white hover:!text-[#00344d] h-28 relative cursor-pointer"
+              onClick={() => handleMetricClick(metric.id)}
             >
               <div className="flex items-center gap-4">
                 <div className="h-14 w-14 flex items-center justify-center rounded-full bg-[#e3ecec] dark:bg-white/10 border border-[#008099]/30 dark:border-white/20 group-hover:bg-[#d8f225] group-hover:border-[#d8f225] transition-colors duration-300">
@@ -170,8 +177,11 @@ export const CalculatedMetrics = () => {
               <div className="absolute bottom-3 right-3">
                 <div 
                   className="p-1.5 rounded-full bg-white/80 dark:bg-gray-800/80 hover:bg-[#d8f225] cursor-pointer transition-colors duration-300 flex items-center justify-center"
-                  onClick={handleMetricClick}
-                  title="Calculate"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    navigate("/metrics/calculated");
+                  }}
+                  title="View metric details"
                 >
                   <Calculator className="h-3.5 w-3.5 text-[#008099] dark:text-white" />
                 </div>

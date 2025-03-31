@@ -10,6 +10,7 @@ import Dashboard from "./pages/Dashboard";
 import Reports from "./pages/Reports";
 import Metrics from "./pages/Metrics";
 import CalculatedMetrics from "./pages/CalculatedMetrics";
+import MetricDetail from "./pages/MetricDetail";
 import Standards from "./pages/Standards";
 import Import from "./pages/Import";
 import NotFound from "./pages/NotFound";
@@ -61,6 +62,14 @@ const App = () => (
             element={
               <ProtectedRoute>
                 <CalculatedMetrics />
+              </ProtectedRoute>
+            } 
+          />
+          <Route 
+            path="/metric/:id" 
+            element={
+              <ProtectedRoute>
+                <MetricDetail />
               </ProtectedRoute>
             } 
           />
