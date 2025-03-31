@@ -1,5 +1,5 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
@@ -11,6 +11,7 @@ import { MetricCalculator } from "@/components/metrics/MetricCalculator";
 import { MetricNotFound } from "@/components/metrics/MetricNotFound";
 import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
 import { hasCalculator, getCalculatorConfigByMetricId } from "@/components/metrics/calculators/calculatorConfigs";
+import { saveCalculatedMetric, getCalculatedMetric } from "@/utils/metricStorage";
 
 const MetricDetail = () => {
   const { id } = useParams();
@@ -20,10 +21,36 @@ const MetricDetail = () => {
   const [calculationTimestamp, setCalculationTimestamp] = useState<string | null>(null);
   const [addedToMetrics, setAddedToMetrics] = useState<boolean>(false);
   
+  // Load saved metric data on component mount
+  useEffect(() => {
+    if (metric) {
+      const savedMetric = getCalculatedMetric(metric.id);
+      if (savedMetric) {
+        setCalculatedValue(savedMetric.value);
+        setCalculationTimestamp(savedMetric.timestamp);
+        setAddedToMetrics(savedMetric.addedToMetrics);
+      }
+    }
+  }, [metric]);
+  
   const handleCalculation = (value: string, timestamp: string | null) => {
     setCalculatedValue(value);
     setCalculationTimestamp(timestamp);
     setAddedToMetrics(false); // Reset when recalculating
+    
+    // Save to local storage
+    if (metric && timestamp) {
+      saveCalculatedMetric(metric.id, value, timestamp, false);
+    }
+  };
+  
+  const handleAddToMetrics = () => {
+    setAddedToMetrics(true);
+    
+    // Update storage with addedToMetrics flag
+    if (metric && calculationTimestamp) {
+      saveCalculatedMetric(metric.id, calculatedValue || "", calculationTimestamp, true);
+    }
   };
   
   if (!metric) {
@@ -67,7 +94,9 @@ const MetricDetail = () => {
               {hasMetricCalculator && calculatorConfig && (
                 <MetricCalculator 
                   config={calculatorConfig}
-                  onCalculate={handleCalculation} 
+                  onCalculate={handleCalculation}
+                  onAddToMetrics={handleAddToMetrics}
+                  addedToMetrics={addedToMetrics} 
                 />
               )}
               
