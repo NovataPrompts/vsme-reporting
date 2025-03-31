@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Calculator, Check } from "lucide-react";
 import { Label } from "@/components/ui/label";
@@ -130,8 +129,8 @@ export const EmployeeTurnoverCalculator = ({ onCalculate }: EmployeeTurnoverCalc
         </div>
       )}
       
-      <div className="mt-4 p-3 bg-[#e3ecec] border border-[#008099]/60 rounded text-md text-[#00344d] font-medium">
-        <p className="text-center">Formula: <span className="font-bold bg-[#d8f225]/50 px-2 py-1 rounded">(Number of employees who left / Average number of employees) × 100</span></p>
+      <div className="mt-4 p-3 bg-[#d8f225] border border-[#008099]/60 rounded text-md text-[#00344d] font-medium">
+        <p className="text-center">Formula: <span className="font-bold">(Number of employees who left / Average number of employees) × 100</span></p>
       </div>
     </div>
   );
