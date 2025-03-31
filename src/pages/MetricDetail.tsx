@@ -17,10 +17,12 @@ const MetricDetail = () => {
   
   const [calculatedValue, setCalculatedValue] = useState<string | null>(null);
   const [calculationTimestamp, setCalculationTimestamp] = useState<string | null>(null);
+  const [addedToMetrics, setAddedToMetrics] = useState<boolean>(false);
   
   const handleCalculation = (value: string, timestamp: string | null) => {
     setCalculatedValue(value);
     setCalculationTimestamp(timestamp);
+    setAddedToMetrics(false); // Reset when recalculating
   };
   
   if (!metric) {
@@ -45,14 +47,15 @@ const MetricDetail = () => {
             
             <CardContent>
               {/* Display calculation result in a prominent box if available */}
-              {isEmployeeTurnoverMetric && calculatedValue && (
+              {isEmployeeTurnoverMetric && calculatedValue && calculatedValue !== "Invalid input" && (
                 <Alert className="mb-6 bg-[#539db5]/10 border-[#d8f225]">
-                  <AlertTitle className="text-3xl font-bold text-[#d8f225]">
+                  <AlertTitle className="text-4xl font-bold text-[#d8f225]">
                     {calculatedValue}
                   </AlertTitle>
                   {calculationTimestamp && (
                     <AlertDescription className="text-sm text-white">
                       Last calculated: {calculationTimestamp}
+                      {addedToMetrics && <span> • Added to VSME.B8.40 report</span>}
                     </AlertDescription>
                   )}
                 </Alert>
@@ -60,7 +63,9 @@ const MetricDetail = () => {
               
               {/* Employee Turnover Calculator */}
               {isEmployeeTurnoverMetric && (
-                <EmployeeTurnoverCalculator onCalculate={handleCalculation} />
+                <EmployeeTurnoverCalculator 
+                  onCalculate={handleCalculation} 
+                />
               )}
               
               <MetricDetails 
@@ -71,6 +76,7 @@ const MetricDetail = () => {
                 calculatedValue={calculatedValue}
                 calculationTimestamp={calculationTimestamp}
                 isCalculatorMetric={isEmployeeTurnoverMetric}
+                addedToMetrics={addedToMetrics}
               />
             </CardContent>
           </Card>

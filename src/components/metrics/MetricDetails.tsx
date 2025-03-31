@@ -9,6 +9,7 @@ interface MetricDetailsProps {
   calculatedValue: string | null;
   calculationTimestamp: string | null;
   isCalculatorMetric: boolean;
+  addedToMetrics?: boolean;
 }
 
 export const MetricDetails = ({ 
@@ -18,7 +19,8 @@ export const MetricDetails = ({
   value, 
   calculatedValue, 
   calculationTimestamp,
-  isCalculatorMetric
+  isCalculatorMetric,
+  addedToMetrics = false
 }: MetricDetailsProps) => {
   const cleanTitle = title.includes('(') 
     ? title.substring(0, title.indexOf('(')).trim() 
@@ -32,6 +34,12 @@ export const MetricDetails = ({
           {isCalculatorMetric && calculatedValue ? null : value}
         </p>
       </div>
+      
+      {addedToMetrics && calculationTimestamp && (
+        <div className="text-white/70 text-sm mb-4">
+          Added to VSME.B8.40 report • {calculationTimestamp}
+        </div>
+      )}
       
       <div className="space-y-4 mt-6">
         <div>

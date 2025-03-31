@@ -1,8 +1,10 @@
+
 import { useState } from "react";
-import { Calculator } from "lucide-react";
+import { Calculator, Check } from "lucide-react";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { useToast } from "@/hooks/use-toast";
 
 interface EmployeeTurnoverCalculatorProps {
   onCalculate: (value: string, timestamp: string | null) => void;
@@ -11,6 +13,9 @@ interface EmployeeTurnoverCalculatorProps {
 export const EmployeeTurnoverCalculator = ({ onCalculate }: EmployeeTurnoverCalculatorProps) => {
   const [employeesLeft, setEmployeesLeft] = useState<string>("");
   const [averageEmployees, setAverageEmployees] = useState<string>("");
+  const [calculatedValue, setCalculatedValue] = useState<string | null>(null);
+  const [addedToMetrics, setAddedToMetrics] = useState<boolean>(false);
+  const { toast } = useToast();
   
   const calculateTurnoverRate = () => {
     const left = parseFloat(employeesLeft);
@@ -18,10 +23,12 @@ export const EmployeeTurnoverCalculator = ({ onCalculate }: EmployeeTurnoverCalc
     
     if (isNaN(left) || isNaN(average) || average === 0) {
       onCalculate("Invalid input", null);
+      setCalculatedValue("Invalid input");
       return;
     }
     
     const turnoverRate = (left / average) * 100;
+    const result = turnoverRate.toFixed(1) + "%";
     
     // Set the current date and time
     const now = new Date();
@@ -35,7 +42,16 @@ export const EmployeeTurnoverCalculator = ({ onCalculate }: EmployeeTurnoverCalc
       minute: '2-digit'
     });
     
-    onCalculate(turnoverRate.toFixed(1) + "%", `${formattedDate} at ${formattedTime}`);
+    setCalculatedValue(result);
+    onCalculate(result, `${formattedDate} at ${formattedTime}`);
+  };
+  
+  const handleAddToMetrics = () => {
+    setAddedToMetrics(true);
+    toast({
+      title: "Added to Metrics",
+      description: `Employee Turnover Rate (${calculatedValue}) has been added to VSME.B8.40`,
+    });
   };
   
   return (
@@ -54,7 +70,7 @@ export const EmployeeTurnoverCalculator = ({ onCalculate }: EmployeeTurnoverCalc
         
         <div className="space-y-4">
           <div className="grid w-full gap-1.5">
-            <Label htmlFor="employeesLeft" className="text-[#00344d] font-medium">Number of employees who left during the reporting year</Label>
+            <Label htmlFor="employeesLeft" className="text-[#008099] font-medium">Number of employees who left during the reporting year</Label>
             <Input
               id="employeesLeft"
               type="number"
@@ -66,7 +82,7 @@ export const EmployeeTurnoverCalculator = ({ onCalculate }: EmployeeTurnoverCalc
           </div>
           
           <div className="grid w-full gap-1.5">
-            <Label htmlFor="averageEmployees" className="text-[#00344d] font-medium">Average number of employees during the reporting year</Label>
+            <Label htmlFor="averageEmployees" className="text-[#008099] font-medium">Average number of employees during the reporting year</Label>
             <Input
               id="averageEmployees"
               type="number"
@@ -79,17 +95,43 @@ export const EmployeeTurnoverCalculator = ({ onCalculate }: EmployeeTurnoverCalc
         </div>
       </div>
       
-      <div className="flex items-center gap-4">
+      <div className="flex flex-wrap items-center gap-4">
         <Button 
           onClick={calculateTurnoverRate}
           className="bg-[#00344d] hover:bg-[#002a3e] text-white font-medium"
         >
           Calculate
         </Button>
+        
+        {calculatedValue && calculatedValue !== "Invalid input" && (
+          <div className="flex items-center gap-2">
+            <span className="text-xl font-bold text-[#008099]">{calculatedValue}</span>
+            
+            {!addedToMetrics ? (
+              <Button 
+                onClick={handleAddToMetrics}
+                className="ml-4 bg-[#d8f225] hover:bg-[#c6e01d] text-[#00344d] font-medium"
+              >
+                Add to Metrics
+              </Button>
+            ) : (
+              <div className="flex items-center gap-1 ml-4">
+                <Check className="h-5 w-5 text-green-600" />
+                <span className="text-green-600 font-medium">Added to metrics</span>
+              </div>
+            )}
+          </div>
+        )}
       </div>
       
+      {calculatedValue && calculatedValue !== "Invalid input" && !addedToMetrics && (
+        <div className="mt-2 text-gray-500 text-sm">
+          This value will be added as a response to VSME.B8.40
+        </div>
+      )}
+      
       <div className="mt-4 p-3 bg-[#e3ecec] border border-[#008099]/60 rounded text-md text-[#00344d] font-medium">
-        <p className="text-center">Formula: <span className="font-bold">(Number of employees who left / Average number of employees) × 100</span></p>
+        <p className="text-center">Formula: <span className="font-bold bg-[#d8f225]/50 px-2 py-1 rounded">(Number of employees who left / Average number of employees) × 100</span></p>
       </div>
     </div>
   );
