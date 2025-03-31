@@ -65,11 +65,11 @@ const MetricDetail = () => {
     if (metric.id !== 3) return null; // Only show calculator for Employee Turnover Rate
     
     return (
-      <div className="mt-8 p-6 bg-[#00344d] border border-[#d8f225]/30 rounded-lg text-white">
+      <div className="mt-8 p-6 bg-[#539db5] border border-[#d8f225]/30 rounded-lg text-[#00344d]">
         <h3 className="font-semibold text-lg mb-4">Employee Turnover Calculator</h3>
         
         <div className="space-y-4 mb-6">
-          <div className="text-sm text-gray-200 mb-4">
+          <div className="text-sm text-[#00344d] mb-4">
             <p>According to VSME guidance:</p>
             <p className="mt-2">Employee turnover refers to employees who leave the undertaking voluntarily or due to dismissal, retirement, or death in service.</p>
             <p className="mt-2">An employee is defined as an individual who is in an employment relationship with the undertaking according to national law or practice.</p>
@@ -77,26 +77,26 @@ const MetricDetail = () => {
           
           <div className="space-y-4">
             <div className="grid w-full gap-1.5">
-              <Label htmlFor="employeesLeft" className="text-white">Number of employees who left during the reporting year</Label>
+              <Label htmlFor="employeesLeft" className="text-[#00344d] font-medium">Number of employees who left during the reporting year</Label>
               <Input
                 id="employeesLeft"
                 type="number"
                 value={employeesLeft}
                 onChange={(e) => setEmployeesLeft(e.target.value)}
                 placeholder="Enter number"
-                className="bg-[#003d59] border-[#d8f225]/30 text-white placeholder:text-gray-300"
+                className="bg-white border-[#00344d]/30 text-[#00344d] placeholder:text-[#00344d]/60"
               />
             </div>
             
             <div className="grid w-full gap-1.5">
-              <Label htmlFor="averageEmployees" className="text-white">Average number of employees during the reporting year</Label>
+              <Label htmlFor="averageEmployees" className="text-[#00344d] font-medium">Average number of employees during the reporting year</Label>
               <Input
                 id="averageEmployees"
                 type="number"
                 value={averageEmployees}
                 onChange={(e) => setAverageEmployees(e.target.value)}
                 placeholder="Enter number"
-                className="bg-[#003d59] border-[#d8f225]/30 text-white placeholder:text-gray-300"
+                className="bg-white border-[#00344d]/30 text-[#00344d] placeholder:text-[#00344d]/60"
               />
             </div>
           </div>
@@ -105,7 +105,7 @@ const MetricDetail = () => {
         <div className="flex items-center gap-4">
           <Button 
             onClick={calculateTurnoverRate}
-            className="bg-[#d8f225] hover:bg-[#c5de22] text-[#00344d] font-medium"
+            className="bg-[#00344d] hover:bg-[#002a3e] text-white font-medium"
           >
             Calculate
           </Button>
@@ -113,12 +113,12 @@ const MetricDetail = () => {
           {calculatedValue && (
             <div className="text-lg font-medium">
               <span>Turnover Rate: </span>
-              <span className="font-bold text-[#d8f225]">{calculatedValue}</span>
+              <span className="font-bold text-[#00344d]">{calculatedValue}</span>
             </div>
           )}
         </div>
         
-        <div className="mt-4 text-sm text-gray-300">
+        <div className="mt-4 text-sm text-[#00344d]/80">
           <p>Formula: (Number of employees who left / Average number of employees) × 100</p>
         </div>
       </div>
