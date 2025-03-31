@@ -193,7 +193,8 @@ export const CalculatedMetrics = () => {
             >
               <div className="flex items-center gap-4">
                 <div className="h-14 w-14 flex items-center justify-center rounded-full bg-[#e3ecec] dark:bg-white/10 border border-[#008099]/30 dark:border-white/20 group-hover:bg-[#d8f225] group-hover:border-[#d8f225] transition-colors duration-300">
-                  <metric.icon className="h-6 w-6 text-[#008099] dark:text-white group-hover:text-[#00344d] transition-colors duration-300" />
+                  {/* Render icon without passing any props */}
+                  <metric.icon />
                 </div>
                 <div>
                   <p className="text-xl font-medium text-[#00344d] dark:text-white/80 group-hover:text-[#00344d]">{metric.title}</p>

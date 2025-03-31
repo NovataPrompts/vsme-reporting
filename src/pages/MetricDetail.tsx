@@ -57,7 +57,8 @@ const MetricDetail = () => {
           <Card className="shadow-sm border-[#008099]/30">
             <CardHeader className="flex flex-row items-center gap-4">
               <div className="h-16 w-16 flex items-center justify-center rounded-full bg-[#e3ecec] border border-[#008099]/30">
-                <metric.icon className="h-8 w-8 text-[#008099]" />
+                {/* Render icon without passing className prop */}
+                <metric.icon />
               </div>
               <div>
                 <CardTitle 
