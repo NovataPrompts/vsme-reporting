@@ -1,7 +1,8 @@
 
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, Legend } from "recharts";
-import { ArrowUpRight, Users, Gauge, RotateCcw, AlertTriangle, Diversity, UserSquare2 } from "lucide-react";
+import { ArrowUpRight, Users, Gauge, RotateCcw, AlertTriangle, UserSquare2 } from "lucide-react";
+import { Diversity } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
 export const CalculatedMetrics = () => {
@@ -152,11 +153,11 @@ export const CalculatedMetrics = () => {
           {metrics.map((metric) => (
             <div 
               key={metric.id} 
-              className="metric-card flex items-center p-5 bg-white dark:bg-transparent border border-[#e3ecec] dark:border-gray-800 rounded-lg shadow-sm hover:shadow-md transition-shadow h-28"
+              className="group metric-card flex items-center p-5 bg-[#e3ecec] dark:bg-white/5 border border-[#008099]/30 dark:border-white/20 rounded-lg shadow-sm hover:shadow-md transition-all duration-300 h-28"
             >
               <div className="flex items-center gap-4">
-                <div className="h-14 w-14 rounded-full bg-[#008099]/10 dark:bg-white/10 flex items-center justify-center">
-                  <metric.icon className="h-6 w-6 text-[#008099] dark:text-white" />
+                <div className="h-14 w-14 flex items-center justify-center rounded-full bg-[#e3ecec] dark:bg-white/10 border border-[#008099]/30 dark:border-white/20 group-hover:bg-[#d8f225] group-hover:border-[#d8f225] transition-colors duration-300">
+                  <metric.icon className="h-6 w-6 text-[#008099] dark:text-white group-hover:text-[#00344d] transition-colors duration-300" />
                 </div>
                 <div>
                   <p className="text-sm font-medium text-[#00344d] dark:text-white/80">{metric.title}</p>
