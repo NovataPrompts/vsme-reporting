@@ -1,13 +1,30 @@
 
 import { NavLink } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { LogOut } from "lucide-react";
+import { LogOut, Moon, Sun } from "lucide-react";
+import { useState, useEffect } from "react";
 
 export const Footer = () => {
+  const [theme, setTheme] = useState(
+    localStorage.getItem('theme') || 
+    (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light')
+  );
+
   const handleLogout = () => {
     localStorage.removeItem("vsme-auth");
     window.location.href = "/password";
   };
+
+  const toggleTheme = () => {
+    const newTheme = theme === 'dark' ? 'light' : 'dark';
+    setTheme(newTheme);
+    localStorage.setItem('theme', newTheme);
+    document.documentElement.classList.toggle('dark', newTheme === 'dark');
+  };
+
+  useEffect(() => {
+    document.documentElement.classList.toggle('dark', theme === 'dark');
+  }, [theme]);
 
   return (
     <footer className="w-full py-6 mt-12 bg-primary text-white">
@@ -100,15 +117,29 @@ export const Footer = () => {
           <p className="text-sm text-white/60">
             © {new Date().getFullYear()} VSME Reporting. All rights reserved.
           </p>
-          <Button 
-            variant="outline" 
-            size="sm" 
-            className="mt-4 md:mt-0 border-white/20 text-white hover:bg-white/10 hover:text-white"
-            onClick={handleLogout}
-          >
-            <LogOut className="h-4 w-4 mr-2" />
-            Logout
-          </Button>
+          <div className="flex items-center space-x-2">
+            <Button 
+              variant="outline" 
+              size="sm" 
+              className="border-white/20 text-white hover:bg-white/10 hover:text-white"
+              onClick={toggleTheme}
+            >
+              {theme === 'dark' ? (
+                <Sun className="h-4 w-4" />
+              ) : (
+                <Moon className="h-4 w-4" />
+              )}
+            </Button>
+            <Button 
+              variant="outline" 
+              size="sm" 
+              className="border-white/20 text-white hover:bg-white/10 hover:text-white"
+              onClick={handleLogout}
+            >
+              <LogOut className="h-4 w-4 mr-2" />
+              Logout
+            </Button>
+          </div>
         </div>
       </div>
     </footer>
