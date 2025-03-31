@@ -165,7 +165,9 @@ const MetricDetail = () => {
             
             <CardContent>
               <div className="mt-2 mb-6">
-                <p className="text-3xl font-bold text-[#00344d]">{metric.value}</p>
+                <p className="text-3xl font-bold text-[#d8f225]">
+                  {metric.id === 3 && calculatedValue ? calculatedValue : metric.value}
+                </p>
               </div>
               
               <div className="space-y-4">
