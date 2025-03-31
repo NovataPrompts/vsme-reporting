@@ -10,7 +10,6 @@ import { MetricDetails } from "@/components/metrics/MetricDetails";
 import { EmployeeTurnoverCalculator } from "@/components/metrics/EmployeeTurnoverCalculator";
 import { MetricNotFound } from "@/components/metrics/MetricNotFound";
 import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
-import { Calculator } from "lucide-react";
 
 const MetricDetail = () => {
   const { id } = useParams();
@@ -48,12 +47,11 @@ const MetricDetail = () => {
               {/* Display calculation result in a prominent box if available */}
               {isEmployeeTurnoverMetric && calculatedValue && (
                 <Alert className="mb-6 bg-[#539db5]/10 border-[#d8f225]">
-                  <Calculator className="h-5 w-5 text-[#d8f225]" />
-                  <AlertTitle className="text-2xl font-bold text-[#d8f225]">
+                  <AlertTitle className="text-3xl font-bold text-[#d8f225]">
                     {calculatedValue}
                   </AlertTitle>
                   {calculationTimestamp && (
-                    <AlertDescription className="text-sm text-gray-500">
+                    <AlertDescription className="text-sm text-white">
                       Last calculated: {calculationTimestamp}
                     </AlertDescription>
                   )}
