@@ -56,6 +56,10 @@ const MetricDetail = () => {
     );
   }
 
+  const cleanTitle = metric.title.includes('(') 
+    ? metric.title.substring(0, metric.title.indexOf('(')).trim() 
+    : metric.title;
+
   const renderEmployeeTurnoverCalculator = () => {
     if (metric.id !== 3) return null; // Only show calculator for Employee Turnover Rate
     
@@ -132,22 +136,22 @@ const MetricDetail = () => {
 
           <Card className="shadow-sm border-[#008099]/30">
             <CardHeader className="flex flex-row items-center gap-4">
-              <div className="h-16 w-16 flex items-center justify-center rounded-full bg-[#e3ecec] border border-[#008099]/30">
+              <div className="h-16 w-16 flex items-center justify-center rounded-full bg-[#d8f225] border border-[#d8f225] text-[#00344d]">
                 <metric.icon />
               </div>
               <div>
                 <CardTitle 
-                  className="text-3xl font-bold flex items-center gap-4" 
+                  className="text-3xl font-bold" 
                   style={{ color: metric.titleColor || '#008099' }}
                 >
-                  {metric.title}
-                  <Badge 
-                    variant="outline" 
-                    className="text-lg px-3 py-1 bg-[#e3ecec] border-[#008099]/30 text-[#008099]"
-                  >
-                    {metric.reference}
-                  </Badge>
+                  {cleanTitle}
                 </CardTitle>
+                <Badge 
+                  variant="outline" 
+                  className="mt-2 text-lg px-3 py-1 bg-[#e3ecec] border-[#008099]/30 text-[#008099]"
+                >
+                  {metric.reference}
+                </Badge>
               </div>
             </CardHeader>
             
@@ -160,14 +164,14 @@ const MetricDetail = () => {
                 <div>
                   <h3 className="font-semibold text-lg mb-2">Description</h3>
                   <p className="text-gray-700 dark:text-gray-300">
-                    {metric.description || "This metric tracks " + metric.title.toLowerCase() + " across the organization."}
+                    {metric.description || "This metric tracks " + cleanTitle.toLowerCase() + " across the organization."}
                   </p>
                 </div>
                 
                 <div>
                   <h3 className="font-semibold text-lg mb-2">Calculation Method</h3>
                   <p className="text-gray-700 dark:text-gray-300">
-                    {metric.calculationMethod || "Standard calculation methodology for " + metric.title + " according to VSME guidelines."}
+                    {metric.calculationMethod || "Standard calculation methodology for " + cleanTitle + " according to VSME guidelines."}
                   </p>
                 </div>
                 
