@@ -38,14 +38,14 @@ export const DataSharingCard = () => {
       <div className="absolute -left-16 -top-16 w-48 h-48 bg-secondary/10 dark:bg-secondary/5 rounded-full blur-2xl"></div>
       
       <CardHeader>
-        <CardTitle className="text-2xl font-bold flex items-center justify-between text-primary dark:text-white">
+        <CardTitle className="text-2xl font-bold flex items-center justify-between text-[#008099] dark:text-white">
           <span>Data Sharing Hub</span>
           <span className="text-sm text-accent font-normal flex items-center gap-1 cursor-pointer hover:underline">
             Learn More
             <ArrowUpRight className="h-3 w-3" />
           </span>
         </CardTitle>
-        <CardDescription className="text-base">
+        <CardDescription className="text-base text-[#00344d]/80 dark:text-white/80">
           Share your sustainability data with partners, suppliers, and other stakeholders.
         </CardDescription>
       </CardHeader>
@@ -53,11 +53,11 @@ export const DataSharingCard = () => {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <Button 
             onClick={handleUploadClick}
-            className="group flex items-center justify-start gap-3 bg-white/50 dark:bg-white/5 hover:bg-white/60 dark:hover:bg-white/10 text-primary dark:text-white border border-gray-100 dark:border-white/10 rounded-lg transition-all-ease h-28 px-4"
+            className="group flex items-center justify-start gap-3 enhanced-tile h-28 px-4"
             variant="ghost"
           >
-            <div className="h-14 w-14 flex items-center justify-center rounded-full bg-white/70 dark:bg-white/10 border border-gray-100 dark:border-white/20 group-hover:bg-[#d8f225] group-hover:border-[#d8f225] transition-colors duration-300">
-              <Upload className="h-7 w-7 text-primary dark:text-white group-hover:text-[#00344d] transition-colors duration-300" />
+            <div className="h-14 w-14 flex items-center justify-center rounded-full bg-[#e3ecec] dark:bg-white/10 border border-[#008099]/30 dark:border-white/20 group-hover:bg-[#d8f225] group-hover:border-[#d8f225] transition-colors duration-300">
+              <Upload className="h-7 w-7 text-[#008099] dark:text-white group-hover:text-[#00344d] transition-colors duration-300" />
             </div>
             <div className="flex flex-col items-start">
               <span className="font-semibold text-lg">Upload Data</span>
@@ -67,11 +67,11 @@ export const DataSharingCard = () => {
           
           <Button 
             onClick={handleInviteClick}
-            className="group flex items-center justify-start gap-3 bg-white/50 dark:bg-white/5 hover:bg-white/60 dark:hover:bg-white/10 text-primary dark:text-white border border-gray-100 dark:border-white/10 rounded-lg transition-all-ease h-28 px-4"
+            className="group flex items-center justify-start gap-3 enhanced-tile h-28 px-4"
             variant="ghost"
           >
-            <div className="h-14 w-14 flex items-center justify-center rounded-full bg-white/70 dark:bg-white/10 border border-gray-100 dark:border-white/20 group-hover:bg-[#d8f225] group-hover:border-[#d8f225] transition-colors duration-300">
-              <MessageCirclePlus className="h-7 w-7 text-primary dark:text-white group-hover:text-[#00344d] transition-colors duration-300" />
+            <div className="h-14 w-14 flex items-center justify-center rounded-full bg-[#e3ecec] dark:bg-white/10 border border-[#008099]/30 dark:border-white/20 group-hover:bg-[#d8f225] group-hover:border-[#d8f225] transition-colors duration-300">
+              <MessageCirclePlus className="h-7 w-7 text-[#008099] dark:text-white group-hover:text-[#00344d] transition-colors duration-300" />
             </div>
             <div className="flex flex-col items-start">
               <span className="font-semibold text-lg">Invite Partners</span>
@@ -81,11 +81,11 @@ export const DataSharingCard = () => {
           
           <Button 
             onClick={handleShareClick}
-            className="group flex items-center justify-start gap-3 bg-white/50 dark:bg-white/5 hover:bg-white/60 dark:hover:bg-white/10 text-primary dark:text-white border border-gray-100 dark:border-white/10 rounded-lg transition-all-ease h-28 px-4"
+            className="group flex items-center justify-start gap-3 enhanced-tile h-28 px-4"
             variant="ghost"
           >
-            <div className="h-14 w-14 flex items-center justify-center rounded-full bg-white/70 dark:bg-white/10 border border-gray-100 dark:border-white/20 group-hover:bg-[#d8f225] group-hover:border-[#d8f225] transition-colors duration-300">
-              <Link className="h-7 w-7 text-primary dark:text-white group-hover:text-[#00344d] transition-colors duration-300" />
+            <div className="h-14 w-14 flex items-center justify-center rounded-full bg-[#e3ecec] dark:bg-white/10 border border-[#008099]/30 dark:border-white/20 group-hover:bg-[#d8f225] group-hover:border-[#d8f225] transition-colors duration-300">
+              <Link className="h-7 w-7 text-[#008099] dark:text-white group-hover:text-[#00344d] transition-colors duration-300" />
             </div>
             <div className="flex flex-col items-start">
               <span className="font-semibold text-lg">Share Reports</span>

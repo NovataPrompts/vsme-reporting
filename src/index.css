@@ -45,6 +45,12 @@
     --sidebar-accent-foreground: 240 5.9% 10%;
     --sidebar-border: 220 13% 91%;
     --sidebar-ring: 217.2 91.2% 59.8%;
+
+    /* Light mode specific tile colors */
+    --tile-bg: 185 20% 91%; /* #e3ecec */
+    --tile-text: 192 100% 30%; /* #008099 */
+    --tile-border: 192 100% 30% / 0.2;
+    --tile-hover: 192 100% 30% / 0.1;
   }
 
   .dark {
@@ -102,6 +108,24 @@
   
   .glass-panel {
     @apply bg-white/60 dark:bg-primary/60 backdrop-blur-lg border border-white/30 dark:border-white/10;
+  }
+
+  /* Enhanced styles for light mode tiles */
+  .enhanced-tile {
+    @apply bg-[#e3ecec] text-[#008099] border border-[#008099]/20 shadow-sm hover:shadow-md transition-all duration-200 dark:bg-white/5 dark:text-white dark:border-white/10;
+  }
+
+  .enhanced-tile-alt {
+    @apply bg-[#e3ecec] text-[#00344d] border border-[#00344d]/20 shadow-sm hover:shadow-md transition-all duration-200 dark:bg-white/5 dark:text-white dark:border-white/10;
+  }
+
+  /* Chart container enhancement for light mode */
+  .chart-container {
+    @apply bg-[#e3ecec]/80 rounded-lg border border-[#008099]/20 p-4 shadow-sm dark:bg-white/5 dark:border-white/10;
+  }
+  
+  .metric-card {
+    @apply bg-[#e3ecec] border border-[#008099]/20 rounded-lg p-4 shadow-sm hover:shadow-md transition-all duration-200 dark:bg-white/5 dark:border-white/10;
   }
 
   .transition-all-ease {

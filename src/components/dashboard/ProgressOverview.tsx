@@ -14,7 +14,7 @@ export const ProgressOverview = () => {
   return (
     <Card className="shadow-sm glass-card">
       <CardHeader className="pb-2">
-        <CardTitle className="text-2xl font-bold flex items-center justify-between">
+        <CardTitle className="text-2xl font-bold flex items-center justify-between text-[#008099] dark:text-white">
           <span>Report Completion</span>
           <span className="text-sm text-accent font-normal flex items-center gap-1 cursor-pointer hover:underline">
             View All
@@ -28,14 +28,16 @@ export const ProgressOverview = () => {
             <div key={item.id} className="space-y-2">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
-                  <div className="h-8 w-8 rounded-full bg-primary/10 dark:bg-white/10 flex items-center justify-center">
-                    <item.icon className="h-4 w-4 text-primary dark:text-white" />
+                  <div className="h-8 w-8 rounded-full bg-[#008099]/10 dark:bg-white/10 flex items-center justify-center">
+                    <item.icon className="h-4 w-4 text-[#008099] dark:text-white" />
                   </div>
-                  <span className="text-sm font-medium">{item.category}</span>
+                  <span className="text-sm font-medium text-[#00344d] dark:text-white">{item.category}</span>
                 </div>
-                <span className="text-sm font-medium">{item.progress}%</span>
+                <span className="text-sm font-medium text-[#008099] dark:text-white">{item.progress}%</span>
               </div>
-              <Progress value={item.progress} className="h-2" />
+              <Progress value={item.progress} className="h-2 bg-[#e3ecec] dark:bg-white/10">
+                <div className="h-full bg-[#008099] dark:bg-secondary rounded-full" style={{ width: `${item.progress}%` }} />
+              </Progress>
             </div>
           ))}
         </div>

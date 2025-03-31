@@ -1,3 +1,4 @@
+
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, Legend } from "recharts";
 import { ArrowUpRight, Users, Gauge, RotateCcw, AlertTriangle } from "lucide-react";
@@ -75,7 +76,7 @@ export const CalculatedMetrics = () => {
       <div className="absolute -left-16 -top-16 w-48 h-48 bg-secondary/10 dark:bg-secondary/5 rounded-full blur-2xl"></div>
       
       <CardHeader>
-        <CardTitle className="text-2xl font-bold flex items-center justify-between text-white">
+        <CardTitle className="text-2xl font-bold flex items-center justify-between text-[#008099] dark:text-white">
           <span>Calculated Metrics</span>
           <span 
             className="text-sm text-accent font-normal flex items-center gap-1 cursor-pointer hover:underline"
@@ -91,8 +92,8 @@ export const CalculatedMetrics = () => {
       </CardHeader>
       <CardContent>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
-          <div className="bg-white/30 dark:bg-white/5 p-4 rounded-lg border border-gray-100 dark:border-white/10">
-            <h3 className="text-lg font-medium mb-2">GHG Emissions by Scope</h3>
+          <div className="chart-container">
+            <h3 className="text-lg font-medium mb-2 text-[#008099] dark:text-white">GHG Emissions by Scope</h3>
             <div className="h-64">
               <ResponsiveContainer width="100%" height="100%">
                 <BarChart data={emissionsData} margin={{ top: 20, right: 20, left: -20, bottom: 5 }}>
@@ -109,8 +110,8 @@ export const CalculatedMetrics = () => {
             </div>
           </div>
 
-          <div className="bg-white/30 dark:bg-white/5 p-4 rounded-lg border border-gray-100 dark:border-white/10">
-            <h3 className="text-lg font-medium mb-2">Emissions Distribution</h3>
+          <div className="chart-container">
+            <h3 className="text-lg font-medium mb-2 text-[#008099] dark:text-white">Emissions Distribution</h3>
             <div className="h-64 flex items-center justify-center">
               <ResponsiveContainer width="100%" height="100%">
                 <PieChart>
@@ -139,15 +140,15 @@ export const CalculatedMetrics = () => {
           {metrics.map((metric) => (
             <div 
               key={metric.id} 
-              className="flex items-center p-4 rounded-lg bg-white/30 dark:bg-white/5 hover:bg-white/50 dark:hover:bg-white/10 transition-all-ease border border-gray-100 dark:border-white/10"
+              className="metric-card flex items-center"
             >
               <div className="flex items-center gap-3">
-                <div className="h-10 w-10 rounded-full bg-primary/10 dark:bg-white/10 flex items-center justify-center">
-                  <metric.icon className="h-5 w-5 text-primary dark:text-white" />
+                <div className="h-10 w-10 rounded-full bg-[#008099]/10 dark:bg-white/10 flex items-center justify-center">
+                  <metric.icon className="h-5 w-5 text-[#008099] dark:text-white" />
                 </div>
                 <div>
-                  <p className="text-sm font-medium">{metric.title}</p>
-                  <p className="text-xl font-semibold">{metric.value}</p>
+                  <p className="text-sm font-medium text-[#00344d] dark:text-white/80">{metric.title}</p>
+                  <p className="text-xl font-semibold text-[#008099] dark:text-white">{metric.value}</p>
                 </div>
               </div>
             </div>
