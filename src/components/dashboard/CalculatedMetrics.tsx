@@ -1,7 +1,3 @@
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, Legend } from "recharts";
-import { ArrowUpRight, Users, Gauge, RotateCcw, AlertTriangle, PersonStanding, UserSquare2, Calculator } from "lucide-react";
-import { useNavigate } from "react-router-dom";
 
 export const metrics = [
   {
@@ -9,42 +5,60 @@ export const metrics = [
     title: "Gender Diversity Ratio",
     value: "3:1 (75%)",
     icon: PersonStanding,
-    reference: "VSME.C5.60"
+    reference: "VSME.C5.60",
+    description: "Measures the gender balance across the organization's workforce.",
+    calculationMethod: "Ratio of female to male employees, calculated by total headcount.",
+    titleColor: "#00f5f3"
   },
   {
     id: 2,
     title: "GHG Intensity",
     value: "3.2 tCO₂e/M€",
     icon: Gauge,
-    reference: "VSME.B3.31"
+    reference: "VSME.B3.31",
+    description: "Measures greenhouse gas emissions relative to revenue.",
+    calculationMethod: "Total greenhouse gas emissions divided by total revenue in millions of euros.",
+    titleColor: "#00f5f3"
   },
   {
     id: 3,
     title: "Employee Turnover Rate",
     value: "14.8%",
     icon: RotateCcw,
-    reference: "VSME.B8.40"
+    reference: "VSME.B8.40",
+    description: "Percentage of employees who leave the organization in a given period.",
+    calculationMethod: "Number of employees who left divided by total number of employees, multiplied by 100.",
+    titleColor: "#00f5f3"
   },
   {
     id: 4,
     title: "Rate of Work-Related Accidents",
     value: "2.1%",
     icon: AlertTriangle,
-    reference: "VSME.B9.41a"
+    reference: "VSME.B9.41a",
+    description: "Frequency of work-related accidents within the organization.",
+    calculationMethod: "Number of work-related accidents divided by total employee hours worked, multiplied by 200,000.",
+    titleColor: "#00f5f3"
   },
   {
     id: 5,
     title: "Unadjusted Gender Pay Gap",
     value: "23.4%",
     icon: Users,
-    reference: "VSME.B10.42.b"
+    reference: "VSME.B10.42.b",
+    description: "Difference in average earnings between men and women in the organization.",
+    calculationMethod: "Median earnings of men minus median earnings of women, divided by median earnings of men.",
+    titleColor: "#00f5f3"
   },
   {
     id: 6,
     title: "Board Gender Ratio",
     value: "7:3 (70%:30%)",
     icon: UserSquare2,
-    reference: "VSME.C9.65"
+    reference: "VSME.C9.65",
+    description: "Gender composition of the organization's board of directors.",
+    calculationMethod: "Proportion of board members by gender, calculated by total board headcount.",
+    titleColor: "#00f5f3"
   }
 ];
 

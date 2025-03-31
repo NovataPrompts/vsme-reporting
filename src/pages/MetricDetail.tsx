@@ -60,7 +60,10 @@ const MetricDetail = () => {
                 <metric.icon className="h-8 w-8 text-[#008099]" />
               </div>
               <div>
-                <CardTitle className="text-2xl font-bold text-[#008099]">
+                <CardTitle 
+                  className="text-3xl font-bold" 
+                  style={{ color: metric.titleColor || '#008099' }}
+                >
                   {metric.title}
                 </CardTitle>
                 <p className="text-sm text-gray-500 mt-1">{metric.reference}</p>
