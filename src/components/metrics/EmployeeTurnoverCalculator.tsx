@@ -40,8 +40,11 @@ export const EmployeeTurnoverCalculator = ({ onCalculate }: EmployeeTurnoverCalc
   };
   
   return (
-    <div className="mt-8 p-6 bg-[#539db5] border border-[#d8f225]/30 rounded-lg text-[#00344d]">
-      <h3 className="font-semibold text-lg mb-4">Employee Turnover Calculator</h3>
+    <div className="mt-8 p-6 bg-white border border-[#008099] rounded-lg text-[#00344d]">
+      <div className="flex items-center gap-3 mb-4">
+        <Calculator className="h-6 w-6 text-[#008099]" />
+        <h3 className="font-semibold text-xl">Employee Turnover Calculator</h3>
+      </div>
       
       <div className="space-y-4 mb-6">
         <div className="text-sm text-[#00344d] mb-4">
@@ -59,7 +62,7 @@ export const EmployeeTurnoverCalculator = ({ onCalculate }: EmployeeTurnoverCalc
               value={employeesLeft}
               onChange={(e) => setEmployeesLeft(e.target.value)}
               placeholder="Enter number"
-              className="bg-white border-[#00344d]/30 text-[#00344d] placeholder:text-[#00344d]/60"
+              className="bg-[#e3ecec] border-[#008099] text-[#00344d] placeholder:text-[#00344d]/60"
             />
           </div>
           
@@ -71,7 +74,7 @@ export const EmployeeTurnoverCalculator = ({ onCalculate }: EmployeeTurnoverCalc
               value={averageEmployees}
               onChange={(e) => setAverageEmployees(e.target.value)}
               placeholder="Enter number"
-              className="bg-white border-[#00344d]/30 text-[#00344d] placeholder:text-[#00344d]/60"
+              className="bg-[#e3ecec] border-[#008099] text-[#00344d] placeholder:text-[#00344d]/60"
             />
           </div>
         </div>
@@ -86,8 +89,8 @@ export const EmployeeTurnoverCalculator = ({ onCalculate }: EmployeeTurnoverCalc
         </Button>
       </div>
       
-      <div className="mt-4 text-sm text-[#00344d]/80">
-        <p>Formula: (Number of employees who left / Average number of employees) × 100</p>
+      <div className="mt-4 p-3 bg-[#e3ecec] border border-[#008099]/60 rounded text-md text-[#00344d] font-medium">
+        <p className="text-center">Formula: <span className="font-bold">(Number of employees who left / Average number of employees) × 100</span></p>
       </div>
     </div>
   );
