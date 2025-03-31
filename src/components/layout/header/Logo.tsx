@@ -48,7 +48,7 @@ export const Logo = () => {
       <img 
         src={logoUrl}
         alt="Novata Logo" 
-        className={`h-16 w-auto ${!logoLoaded ? 'opacity-0' : 'opacity-100'} transition-opacity duration-300`}
+        className={`${isDarkMode ? 'h-16' : 'h-12'} w-auto ${!logoLoaded ? 'opacity-0' : 'opacity-100'} transition-opacity duration-300`}
       />
     </NavLink>
   );
