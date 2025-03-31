@@ -1,7 +1,7 @@
 
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, Legend } from "recharts";
-import { ArrowUpRight, Users, Gauge, RotateCcw, AlertTriangle } from "lucide-react";
+import { ArrowUpRight, Users, Gauge, RotateCcw, AlertTriangle, Diversity, UserSquare2 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
 export const CalculatedMetrics = () => {
@@ -31,6 +31,18 @@ export const CalculatedMetrics = () => {
       title: "Work-Related Accidents Rate",
       value: "2.1%",
       icon: AlertTriangle
+    },
+    {
+      id: 5,
+      title: "Diversity Ratio",
+      value: "3:1 (75%)",
+      icon: Diversity
+    },
+    {
+      id: 6,
+      title: "Board Gender Ratio (M:F)",
+      value: "7:3 (70%:30%)",
+      icon: UserSquare2
     }
   ];
 
@@ -136,19 +148,19 @@ export const CalculatedMetrics = () => {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
           {metrics.map((metric) => (
             <div 
               key={metric.id} 
-              className="metric-card flex items-center"
+              className="metric-card flex items-center p-5 bg-white dark:bg-transparent border border-[#e3ecec] dark:border-gray-800 rounded-lg shadow-sm hover:shadow-md transition-shadow h-28"
             >
-              <div className="flex items-center gap-3">
-                <div className="h-10 w-10 rounded-full bg-[#008099]/10 dark:bg-white/10 flex items-center justify-center">
-                  <metric.icon className="h-5 w-5 text-[#008099] dark:text-white" />
+              <div className="flex items-center gap-4">
+                <div className="h-14 w-14 rounded-full bg-[#008099]/10 dark:bg-white/10 flex items-center justify-center">
+                  <metric.icon className="h-6 w-6 text-[#008099] dark:text-white" />
                 </div>
                 <div>
                   <p className="text-sm font-medium text-[#00344d] dark:text-white/80">{metric.title}</p>
-                  <p className="text-xl font-semibold text-[#008099] dark:text-white">{metric.value}</p>
+                  <p className="text-2xl font-semibold text-[#008099] dark:text-white mt-1">{metric.value}</p>
                 </div>
               </div>
             </div>
