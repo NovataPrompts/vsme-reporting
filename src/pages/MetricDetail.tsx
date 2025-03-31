@@ -4,7 +4,7 @@ import { useParams } from "react-router-dom";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 import { Card, CardContent } from "@/components/ui/card";
-import { metrics } from "@/components/dashboard/CalculatedMetrics";
+import { metrics } from "@/components/dashboard/data/metricsData";
 import { MetricHeader } from "@/components/metrics/MetricHeader";
 import { MetricDetails } from "@/components/metrics/MetricDetails";
 import { EmployeeTurnoverCalculator } from "@/components/metrics/EmployeeTurnoverCalculator";
@@ -43,6 +43,11 @@ const MetricDetail = () => {
             />
             
             <CardContent>
+              {/* Move the calculator above the description section */}
+              {isEmployeeTurnoverMetric && (
+                <EmployeeTurnoverCalculator onCalculate={handleCalculation} />
+              )}
+              
               <MetricDetails 
                 description={metric.description}
                 calculationMethod={metric.calculationMethod}
@@ -52,11 +57,6 @@ const MetricDetail = () => {
                 calculationTimestamp={calculationTimestamp}
                 isCalculatorMetric={isEmployeeTurnoverMetric}
               />
-              
-              {/* Move the calculator above the description section */}
-              {isEmployeeTurnoverMetric && (
-                <EmployeeTurnoverCalculator onCalculate={handleCalculation} />
-              )}
             </CardContent>
           </Card>
         </div>
