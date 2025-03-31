@@ -1,13 +1,10 @@
 
+import React from 'react';
 import { Calculator } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { Metric } from "./data/metricsData";
 
-interface MetricCardProps {
-  metric: Metric;
-}
-
-export const MetricCard = ({ metric }: MetricCardProps) => {
+export const MetricCard = ({ metric }: { metric: Metric }) => {
   const navigate = useNavigate();
   
   // Extract the main title without the reference in parentheses
@@ -24,8 +21,8 @@ export const MetricCard = ({ metric }: MetricCardProps) => {
     navigate(`/metric/${metric.id}`);
   };
 
-  // Create a component that renders the icon
-  const IconComponent = metric.icon;
+  // Explicitly type the icon component to accept standard props
+  const IconComponent: React.ComponentType<{ className?: string }> = metric.icon;
 
   return (
     <div 
