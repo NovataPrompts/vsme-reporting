@@ -1,7 +1,7 @@
-
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 import { ArrowLeft } from "lucide-react";
 import { useNavigate, useParams } from "react-router-dom";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -9,7 +9,6 @@ import { metrics } from "@/components/dashboard/CalculatedMetrics";
 import { useState } from "react";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
-import { Form, FormControl, FormField, FormItem, FormLabel } from "@/components/ui/form";
 
 const MetricDetail = () => {
   const navigate = useNavigate();
@@ -134,17 +133,21 @@ const MetricDetail = () => {
           <Card className="shadow-sm border-[#008099]/30">
             <CardHeader className="flex flex-row items-center gap-4">
               <div className="h-16 w-16 flex items-center justify-center rounded-full bg-[#e3ecec] border border-[#008099]/30">
-                {/* Render icon without passing className prop */}
                 <metric.icon />
               </div>
               <div>
                 <CardTitle 
-                  className="text-3xl font-bold" 
+                  className="text-3xl font-bold flex items-center gap-4" 
                   style={{ color: metric.titleColor || '#008099' }}
                 >
                   {metric.title}
+                  <Badge 
+                    variant="outline" 
+                    className="text-lg px-3 py-1 bg-[#e3ecec] border-[#008099]/30 text-[#008099]"
+                  >
+                    {metric.reference}
+                  </Badge>
                 </CardTitle>
-                <p className="text-sm text-gray-500 mt-1">{metric.reference}</p>
               </div>
             </CardHeader>
             
