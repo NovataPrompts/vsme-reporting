@@ -1,3 +1,4 @@
+
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 import { Button } from "@/components/ui/button";
@@ -36,11 +37,11 @@ const Index = () => {
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center animate-slideUp">
                 <Button 
-                  onClick={() => navigate("/reports")}
+                  onClick={() => navigate("/welcome")}
                   className="bg-[#d8f225] hover:bg-[#d8f225]/90 text-[#00344d] rounded-full px-6 py-6 flex items-center gap-2"
                   size="lg"
                 >
-                  <span>Create New Report</span>
+                  <span>Get Started</span>
                   <ArrowRight className="h-5 w-5" />
                 </Button>
                 <Button 

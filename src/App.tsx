@@ -13,6 +13,7 @@ import CalculatedMetrics from "./pages/CalculatedMetrics";
 import MetricDetail from "./pages/MetricDetail";
 import Standards from "./pages/Standards";
 import Import from "./pages/Import";
+import Welcome from "./pages/Welcome";
 import NotFound from "./pages/NotFound";
 import PasswordProtected from "./pages/PasswordProtected";
 
@@ -30,6 +31,14 @@ const App = () => (
             element={
               <ProtectedRoute>
                 <Index />
+              </ProtectedRoute>
+            } 
+          />
+          <Route 
+            path="/welcome" 
+            element={
+              <ProtectedRoute>
+                <Welcome />
               </ProtectedRoute>
             } 
           />

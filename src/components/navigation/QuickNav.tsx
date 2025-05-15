@@ -1,6 +1,6 @@
 
 import { NavLink } from "react-router-dom";
-import { Home, LayoutDashboard, BookMarked } from "lucide-react";
+import { Home, LayoutDashboard, BookMarked, ListTodo } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 export const QuickNav = () => {
@@ -16,6 +16,17 @@ export const QuickNav = () => {
         >
           <Home className="w-5 h-5" />
           <span className="sr-only">Home</span>
+        </NavLink>
+        
+        <NavLink 
+          to="/welcome" 
+          className={({ isActive }) => cn(
+            "p-2 rounded-full transition-all duration-200 hover:bg-white/20", 
+            isActive ? "bg-white/20 text-secondary" : "text-white/80"
+          )}
+        >
+          <ListTodo className="w-5 h-5" />
+          <span className="sr-only">Get Started</span>
         </NavLink>
         
         <NavLink 

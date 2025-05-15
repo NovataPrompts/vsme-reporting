@@ -1,0 +1,119 @@
+
+import React from 'react';
+import { Header } from "@/components/layout/Header";
+import { Footer } from "@/components/layout/Footer";
+import { Card } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { FileText, BarChart3, Upload } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+
+const Welcome = () => {
+  const navigate = useNavigate();
+
+  return (
+    <div className="min-h-screen flex flex-col">
+      <Header />
+      
+      <main className="flex-1 pt-24 pb-12">
+        <div className="container mx-auto px-4 md:px-6">
+          <div className="text-center mb-12">
+            <h1 className="text-4xl font-bold mb-4">Welcome to VSME Sustainability Reporting</h1>
+            <p className="text-xl text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
+              Complete these three steps to create your sustainability report following the VSME Standard.
+            </p>
+          </div>
+          
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl mx-auto">
+            {/* Step 1: Upload Data */}
+            <Card className="relative overflow-hidden border-2 border-accent/20 hover:border-accent/80 transition-all duration-300 group">
+              <div className="absolute -right-4 -top-4 bg-accent/10 rounded-full w-24 h-24 group-hover:bg-accent/20 transition-all duration-300"></div>
+              <div className="p-6 flex flex-col items-center text-center h-full">
+                <div className="bg-accent/20 p-4 rounded-full mb-4 group-hover:bg-accent/30 transition-all duration-300">
+                  <Upload className="h-8 w-8 text-primary" />
+                </div>
+                <h2 className="text-2xl font-bold mb-2">Step 1</h2>
+                <h3 className="text-xl font-semibold mb-4">Upload Data</h3>
+                <p className="text-gray-600 dark:text-gray-300 mb-6 flex-1">
+                  Import your sustainability data from Novata or upload your own files in supported formats.
+                </p>
+                <Button 
+                  onClick={() => navigate("/import")}
+                  className="w-full bg-accent hover:bg-accent/90 text-primary"
+                >
+                  Start Data Import
+                </Button>
+              </div>
+            </Card>
+            
+            {/* Step 2: View Metrics */}
+            <Card className="relative overflow-hidden border-2 border-primary/20 hover:border-primary/80 transition-all duration-300 group">
+              <div className="absolute -right-4 -top-4 bg-primary/10 rounded-full w-24 h-24 group-hover:bg-primary/20 transition-all duration-300"></div>
+              <div className="p-6 flex flex-col items-center text-center h-full">
+                <div className="bg-primary/20 p-4 rounded-full mb-4 group-hover:bg-primary/30 transition-all duration-300">
+                  <BarChart3 className="h-8 w-8 text-primary" />
+                </div>
+                <h2 className="text-2xl font-bold mb-2">Step 2</h2>
+                <h3 className="text-xl font-semibold mb-4">View Metrics</h3>
+                <p className="text-gray-600 dark:text-gray-300 mb-6 flex-1">
+                  View, manage and calculate your sustainability metrics based on the VSME standard requirements.
+                </p>
+                <Button 
+                  onClick={() => navigate("/metrics")}
+                  className="w-full"
+                >
+                  Explore Metrics
+                </Button>
+              </div>
+            </Card>
+            
+            {/* Step 3: Generate Report */}
+            <Card className="relative overflow-hidden border-2 border-secondary/20 hover:border-secondary/80 transition-all duration-300 group">
+              <div className="absolute -right-4 -top-4 bg-secondary/10 rounded-full w-24 h-24 group-hover:bg-secondary/20 transition-all duration-300"></div>
+              <div className="p-6 flex flex-col items-center text-center h-full">
+                <div className="bg-secondary/20 p-4 rounded-full mb-4 group-hover:bg-secondary/30 transition-all duration-300">
+                  <FileText className="h-8 w-8 text-primary" />
+                </div>
+                <h2 className="text-2xl font-bold mb-2">Step 3</h2>
+                <h3 className="text-xl font-semibold mb-4">Generate Report</h3>
+                <p className="text-gray-600 dark:text-gray-300 mb-6 flex-1">
+                  Create beautiful, professional sustainability reports that are fully compliant with the VSME standard.
+                </p>
+                <Button 
+                  onClick={() => navigate("/reports")}
+                  className="w-full bg-secondary hover:bg-secondary/90 text-secondary-foreground"
+                >
+                  Create Report
+                </Button>
+              </div>
+            </Card>
+          </div>
+          
+          <div className="mt-16 text-center">
+            <h2 className="text-2xl font-bold mb-4">Ready to dive deeper?</h2>
+            <p className="text-lg text-gray-600 dark:text-gray-300 max-w-2xl mx-auto mb-6">
+              Explore the VSME standard or view your dashboard for a comprehensive overview.
+            </p>
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <Button
+                variant="outline"
+                onClick={() => navigate("/standards")}
+                className="border-2"
+              >
+                Learn About VSME Standard
+              </Button>
+              <Button
+                onClick={() => navigate("/dashboard")}
+              >
+                Go To Dashboard
+              </Button>
+            </div>
+          </div>
+        </div>
+      </main>
+      
+      <Footer />
+    </div>
+  );
+};
+
+export default Welcome;
