@@ -1,30 +1,12 @@
-
 import { NavLink } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { LogOut, Moon, Sun } from "lucide-react";
-import { useState, useEffect } from "react";
+import { LogOut } from "lucide-react";
 
 export const Footer = () => {
-  const [theme, setTheme] = useState(
-    localStorage.getItem('theme') || 
-    (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light')
-  );
-
   const handleLogout = () => {
     localStorage.removeItem("vsme-auth");
     window.location.href = "/password";
   };
-
-  const toggleTheme = () => {
-    const newTheme = theme === 'dark' ? 'light' : 'dark';
-    setTheme(newTheme);
-    localStorage.setItem('theme', newTheme);
-    document.documentElement.classList.toggle('dark', newTheme === 'dark');
-  };
-
-  useEffect(() => {
-    document.documentElement.classList.toggle('dark', theme === 'dark');
-  }, [theme]);
 
   return (
     <footer className="w-full py-6 mt-12 bg-primary text-white">
@@ -33,7 +15,7 @@ export const Footer = () => {
           <div className="space-y-3">
             <div className="flex items-center gap-2">
               <img 
-                src="/lovable-uploads/b05f0448-8c26-463d-b69b-98061b769e16.png" 
+                src="/lovable-uploads/dc0ec24e-33a6-4f08-b694-455ce8c649fb.png" 
                 alt="Novata Logo" 
                 className="h-11 w-auto" 
               />
@@ -117,19 +99,7 @@ export const Footer = () => {
           <p className="text-sm text-white/60">
             © {new Date().getFullYear()} VSME Reporting. All rights reserved.
           </p>
-          <div className="flex items-center space-x-2">
-            <Button 
-              variant="outline" 
-              size="sm" 
-              className="border-white/20 text-white hover:bg-white/10 hover:text-white"
-              onClick={toggleTheme}
-            >
-              {theme === 'dark' ? (
-                <Sun className="h-4 w-4" />
-              ) : (
-                <Moon className="h-4 w-4" />
-              )}
-            </Button>
+          <div className="flex items-center">
             <Button 
               variant="outline" 
               size="sm" 
