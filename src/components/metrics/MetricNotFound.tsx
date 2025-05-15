@@ -1,6 +1,5 @@
 
 import { Header } from "@/components/layout/Header";
-import { Footer } from "@/components/layout/Footer";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft } from "lucide-react";
 import { useNavigate } from "react-router-dom";
@@ -26,7 +25,6 @@ export const MetricNotFound = () => {
           <h1 className="text-3xl font-bold mb-6">Metric Not Found</h1>
         </div>
       </main>
-      <Footer />
     </div>
   );
 };
