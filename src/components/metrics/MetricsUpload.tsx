@@ -120,7 +120,7 @@ export const MetricsUpload = () => {
                   onChange={handleFileChange}
                   accept=".csv,.xlsx,.json"
                 />
-                <Button className="bg-accent hover:bg-accent/90 text-primary">
+                <Button className="bg-[#057cc1] hover:bg-[#057cc1]/90 text-white">
                   Browse Files
                 </Button>
               </div>
