@@ -1,5 +1,4 @@
 
-import { Header } from "@/components/layout/Header";
 import { VSMEMetricsSearch } from "@/components/metrics/VSMEMetricsSearch";
 import { VSMEMetricsTabs } from "@/components/metrics/VSMEMetricsTabs";
 import { VSMEMetricsDropdown } from "@/components/metrics/VSMEMetricsDropdown";
@@ -18,9 +17,7 @@ const Metrics = () => {
 
   return (
     <div className="min-h-screen flex flex-col">
-      <Header />
-      
-      <main className="flex-1 pt-24 pb-12">
+      <main className="flex-1 pt-12 pb-12">
         <div className="container mx-auto px-4 md:px-6">
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
             <div>
