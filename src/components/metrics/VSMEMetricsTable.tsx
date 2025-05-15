@@ -1,41 +1,24 @@
-
 import React, { useState } from "react";
 import { ChevronDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { 
-  Table, 
-  TableHeader, 
-  TableBody, 
-  TableHead, 
-  TableRow, 
-  TableCell 
-} from "@/components/ui/table";
+import { Table, TableHeader, TableBody, TableHead, TableRow, TableCell } from "@/components/ui/table";
 import { VSMEMetric } from "@/types/vsmeMetrics";
-import { 
-  Collapsible,
-  CollapsibleContent,
-  CollapsibleTrigger
-} from "@/components/ui/collapsible";
-
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 interface VSMEMetricsTableProps {
   metrics: VSMEMetric[];
   onLearnMore: (metricReference: string) => void;
   onSaveMetric: (metricReference: string) => void;
 }
-
 export const VSMEMetricsTable = ({
   metrics,
   onLearnMore,
-  onSaveMetric,
+  onSaveMetric
 }: VSMEMetricsTableProps) => {
   const [openMetric, setOpenMetric] = useState<string | null>(null);
-
   const toggleMetric = (metricRef: string) => {
     setOpenMetric(openMetric === metricRef ? null : metricRef);
   };
-
-  return (
-    <div className="overflow-x-auto">
+  return <div className="overflow-x-auto">
       <Table>
         <TableHeader>
           <TableRow>
@@ -50,9 +33,7 @@ export const VSMEMetricsTable = ({
           </TableRow>
         </TableHeader>
         <TableBody>
-          {metrics.length > 0 ? (
-            metrics.map((metric, index) => (
-              <React.Fragment key={`${metric.reference}-${index}`}>
+          {metrics.length > 0 ? metrics.map((metric, index) => <React.Fragment key={`${metric.reference}-${index}`}>
                 <TableRow className="hover:bg-muted/50">
                   <TableCell>{metric.module}</TableCell>
                   <TableCell>{metric.disclosure}</TableCell>
@@ -63,15 +44,9 @@ export const VSMEMetricsTable = ({
                   <TableCell>{metric.metric}</TableCell>
                   <TableCell className="text-right">
                     <div className="flex justify-end">
-                      <Collapsible 
-                        open={openMetric === metric.reference}
-                        onOpenChange={() => toggleMetric(metric.reference)}
-                      >
+                      <Collapsible open={openMetric === metric.reference} onOpenChange={() => toggleMetric(metric.reference)}>
                         <CollapsibleTrigger asChild>
-                          <Button 
-                            size="sm"
-                            className="h-8 w-8 p-0 bg-[#057cc1] hover:bg-[#057cc1]/90 text-white"
-                          >
+                          <Button size="sm" className="h-8 w-8 p-0 bg-[#057cc1] hover:bg-[#057cc1]/90 text-white">
                             <ChevronDown className="h-4 w-4" />
                             <span className="sr-only">View Details</span>
                           </Button>
@@ -84,7 +59,7 @@ export const VSMEMetricsTable = ({
                   <TableCell colSpan={8} className="p-0 border-0">
                     <Collapsible open={openMetric === metric.reference}>
                       <CollapsibleContent>
-                        <div className="bg-[#e3ecec] p-4 mx-4 mb-4 rounded-md">
+                        <div className="p-4 mx-4 mb-4 rounded-md bg-[ffffff] bg-slate-200">
                           <div className="grid grid-cols-2 gap-4">
                             <div>
                               <p className="text-sm font-medium mb-1 text-[#00344d]">Novata Metric Reference:</p>
@@ -113,9 +88,7 @@ export const VSMEMetricsTable = ({
                             <div>
                               <p className="text-sm font-medium mb-1 text-[#00344d]">Unit:</p>
                               <p className="text-sm text-[#00344d] mb-3 bg-white p-2 rounded">
-                                {metric.topic.includes("General") ? "N/A" : 
-                                 metric.topic.includes("Environment") ? "Tonnes CO2e" : 
-                                 metric.topic.includes("Social") ? "Count" : "EUR"}
+                                {metric.topic.includes("General") ? "N/A" : metric.topic.includes("Environment") ? "Tonnes CO2e" : metric.topic.includes("Social") ? "Count" : "EUR"}
                               </p>
                             </div>
                             <div>
@@ -132,17 +105,12 @@ export const VSMEMetricsTable = ({
                     </Collapsible>
                   </TableCell>
                 </TableRow>
-              </React.Fragment>
-            ))
-          ) : (
-            <TableRow>
+              </React.Fragment>) : <TableRow>
               <TableCell colSpan={8} className="h-24 text-center">
                 No metrics found
               </TableCell>
-            </TableRow>
-          )}
+            </TableRow>}
         </TableBody>
       </Table>
-    </div>
-  );
+    </div>;
 };
