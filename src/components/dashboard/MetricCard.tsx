@@ -22,7 +22,7 @@ export const MetricCard = ({ metric }: { metric: Metric }) => {
   };
 
   // Explicitly type the icon component to accept standard props
-  const IconComponent: React.ComponentType<{ className?: string }> = metric.icon;
+  const IconComponent = metric.icon as React.ComponentType<{ className?: string }>;
 
   return (
     <div 
@@ -32,7 +32,7 @@ export const MetricCard = ({ metric }: { metric: Metric }) => {
     >
       <div className="flex items-center gap-4">
         <div className="h-16 w-16 flex items-center justify-center rounded-full bg-[#e3ecec] dark:bg-white/10 border border-[#008099]/30 dark:border-white/20 group-hover:bg-[#d8f225] group-hover:border-[#d8f225] transition-colors duration-300">
-          {/* Render icon with proper JSX approach */}
+          {/* Use the IconComponent with explicit typing */}
           <IconComponent className="h-8 w-8" />
         </div>
         <div>
