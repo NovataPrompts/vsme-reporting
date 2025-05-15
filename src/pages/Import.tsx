@@ -43,8 +43,8 @@ const Import = () => {
             </div>
           </div>
           
-          {/* Go to Step 2 button at bottom left */}
-          <div className="mt-12 flex justify-start">
+          {/* Go to Step 2 button at bottom right */}
+          <div className="mt-12 flex justify-end">
             <Button 
               onClick={() => navigate("/metrics")} 
               className="bg-[#057cc0] hover:bg-[#057cc0]/90 text-white flex items-center gap-2"
