@@ -1,6 +1,5 @@
 
 import { Header } from "@/components/layout/Header";
-import { Footer } from "@/components/layout/Footer";
 import { ProgressOverview } from "@/components/dashboard/ProgressOverview";
 import { DataSharingCard } from "@/components/dashboard/DataSharingCard";
 import { CalculatedMetrics } from "@/components/dashboard/CalculatedMetrics";
@@ -34,8 +33,6 @@ const Dashboard = () => {
           </div>
         </section>
       </main>
-      
-      <Footer />
     </div>
   );
 };

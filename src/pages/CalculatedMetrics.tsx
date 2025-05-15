@@ -1,6 +1,5 @@
 
 import { Header } from "@/components/layout/Header";
-import { Footer } from "@/components/layout/Footer";
 import { CalculatedMetrics as CalculatedMetricsComponent } from "@/components/dashboard/CalculatedMetrics";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft } from "lucide-react";
@@ -34,8 +33,6 @@ const CalculatedMetrics = () => {
           <CalculatedMetricsComponent />
         </div>
       </main>
-      
-      <Footer />
     </div>
   );
 };

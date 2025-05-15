@@ -1,12 +1,11 @@
 import React, { useState } from 'react';
 import { Header } from "@/components/layout/Header";
-import { Footer } from "@/components/layout/Footer";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Search, PlusCircle } from "lucide-react";
-import { useToast } from "@/components/ui/use-toast";
+import { useToast } from "@/hooks/use-toast";
 import { 
   Table, 
   TableHeader, 
@@ -169,8 +168,6 @@ const Reports = () => {
           </Tabs>
         </div>
       </main>
-      
-      <Footer />
     </div>
   );
 };

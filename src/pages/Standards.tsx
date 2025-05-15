@@ -1,6 +1,4 @@
-
 import { Header } from "@/components/layout/Header";
-import { Footer } from "@/components/layout/Footer";
 import { useToast } from "@/hooks/use-toast";
 import { AboutVSME } from "@/components/standards/AboutVSME";
 import { StandardsOutline } from "@/components/standards/StandardsOutline";
@@ -140,8 +138,6 @@ const Standards = () => {
           </div>
         </div>
       </main>
-      
-      <Footer />
     </div>
   );
 };

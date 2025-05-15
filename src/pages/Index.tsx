@@ -1,6 +1,4 @@
-
 import { Header } from "@/components/layout/Header";
-import { Footer } from "@/components/layout/Footer";
 import { Button } from "@/components/ui/button";
 import { ArrowRight, LineChart, FileText, Share2 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
@@ -104,8 +102,6 @@ const Index = () => {
           </div>
         </section>
       </main>
-      
-      <Footer />
     </div>
   );
 };

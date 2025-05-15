@@ -1,8 +1,6 @@
-
 import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { Header } from "@/components/layout/Header";
-import { Footer } from "@/components/layout/Footer";
 import { Card, CardContent } from "@/components/ui/card";
 import { metrics } from "@/components/dashboard/data/metricsData";
 import { MetricHeader } from "@/components/metrics/MetricHeader";
@@ -114,8 +112,6 @@ const MetricDetail = () => {
           </Card>
         </div>
       </main>
-      
-      <Footer />
     </div>
   );
 };

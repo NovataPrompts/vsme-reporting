@@ -1,7 +1,6 @@
 
 import React from 'react';
 import { Header } from "@/components/layout/Header";
-import { Footer } from "@/components/layout/Footer";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { FileText, BarChart3, Upload } from "lucide-react";
@@ -108,8 +107,6 @@ const Welcome = () => {
           </div>
         </div>
       </main>
-      
-      <Footer />
     </div>
   );
 };

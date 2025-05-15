@@ -1,6 +1,5 @@
 
 import { Header } from "@/components/layout/Header";
-import { Footer } from "@/components/layout/Footer";
 import { VSMEMetricsSearch } from "@/components/metrics/VSMEMetricsSearch";
 import { VSMEMetricsTabs } from "@/components/metrics/VSMEMetricsTabs";
 import { VSMEMetricsDropdown } from "@/components/metrics/VSMEMetricsDropdown";
@@ -51,8 +50,6 @@ const Metrics = () => {
           </div>
         </div>
       </main>
-      
-      <Footer />
     </div>
   );
 };

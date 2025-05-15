@@ -1,6 +1,5 @@
 
 import { Header } from "@/components/layout/Header";
-import { Footer } from "@/components/layout/Footer";
 import { MetricsUpload } from "@/components/metrics/MetricsUpload";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -79,8 +78,6 @@ const Import = () => {
           </div>
         </div>
       </main>
-      
-      <Footer />
     </div>
   );
 };
