@@ -25,11 +25,10 @@ const Welcome = () => {
           
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl mx-auto">
             {/* Step 1: Upload Data */}
-            <Card className="relative overflow-hidden border-2 border-accent/20 hover:border-accent/80 transition-all duration-300 group">
-              <div className="absolute -right-4 -top-4 bg-accent/10 rounded-full w-24 h-24 group-hover:bg-accent/20 transition-all duration-300"></div>
+            <Card className="border-2 border-[#077bc0]/20 hover:border-[#077bc0]/80 transition-all duration-300 group">
               <div className="p-6 flex flex-col items-center text-center h-full">
-                <div className="bg-accent/20 p-4 rounded-full mb-4 group-hover:bg-accent/30 transition-all duration-300">
-                  <Upload className="h-8 w-8 text-primary" />
+                <div className="bg-[#077bc0]/20 p-4 rounded-full mb-4 group-hover:bg-[#077bc0]/30 transition-all duration-300">
+                  <Upload className="h-8 w-8 text-[#077bc0]" />
                 </div>
                 <h2 className="text-2xl font-bold mb-2">Step 1</h2>
                 <h3 className="text-xl font-semibold mb-4">Upload Data</h3>
@@ -38,7 +37,7 @@ const Welcome = () => {
                 </p>
                 <Button 
                   onClick={() => navigate("/import")}
-                  className="w-full bg-accent hover:bg-accent/90 text-primary"
+                  className="w-full bg-[#077bc0] hover:bg-[#077bc0]/90 text-white"
                 >
                   Start Data Import
                 </Button>
@@ -46,11 +45,10 @@ const Welcome = () => {
             </Card>
             
             {/* Step 2: View Metrics */}
-            <Card className="relative overflow-hidden border-2 border-primary/20 hover:border-primary/80 transition-all duration-300 group">
-              <div className="absolute -right-4 -top-4 bg-primary/10 rounded-full w-24 h-24 group-hover:bg-primary/20 transition-all duration-300"></div>
+            <Card className="border-2 border-[#077bc0]/20 hover:border-[#077bc0]/80 transition-all duration-300 group">
               <div className="p-6 flex flex-col items-center text-center h-full">
-                <div className="bg-primary/20 p-4 rounded-full mb-4 group-hover:bg-primary/30 transition-all duration-300">
-                  <BarChart3 className="h-8 w-8 text-primary" />
+                <div className="bg-[#077bc0]/20 p-4 rounded-full mb-4 group-hover:bg-[#077bc0]/30 transition-all duration-300">
+                  <BarChart3 className="h-8 w-8 text-[#077bc0]" />
                 </div>
                 <h2 className="text-2xl font-bold mb-2">Step 2</h2>
                 <h3 className="text-xl font-semibold mb-4">View Metrics</h3>
@@ -59,7 +57,7 @@ const Welcome = () => {
                 </p>
                 <Button 
                   onClick={() => navigate("/metrics")}
-                  className="w-full"
+                  className="w-full bg-[#077bc0] hover:bg-[#077bc0]/90 text-white"
                 >
                   Explore Metrics
                 </Button>
@@ -67,11 +65,10 @@ const Welcome = () => {
             </Card>
             
             {/* Step 3: Generate Report */}
-            <Card className="relative overflow-hidden border-2 border-secondary/20 hover:border-secondary/80 transition-all duration-300 group">
-              <div className="absolute -right-4 -top-4 bg-secondary/10 rounded-full w-24 h-24 group-hover:bg-secondary/20 transition-all duration-300"></div>
+            <Card className="border-2 border-[#077bc0]/20 hover:border-[#077bc0]/80 transition-all duration-300 group">
               <div className="p-6 flex flex-col items-center text-center h-full">
-                <div className="bg-secondary/20 p-4 rounded-full mb-4 group-hover:bg-secondary/30 transition-all duration-300">
-                  <FileText className="h-8 w-8 text-primary" />
+                <div className="bg-[#077bc0]/20 p-4 rounded-full mb-4 group-hover:bg-[#077bc0]/30 transition-all duration-300">
+                  <FileText className="h-8 w-8 text-[#077bc0]" />
                 </div>
                 <h2 className="text-2xl font-bold mb-2">Step 3</h2>
                 <h3 className="text-xl font-semibold mb-4">Generate Report</h3>
@@ -80,7 +77,7 @@ const Welcome = () => {
                 </p>
                 <Button 
                   onClick={() => navigate("/reports")}
-                  className="w-full bg-secondary hover:bg-secondary/90 text-secondary-foreground"
+                  className="w-full bg-[#077bc0] hover:bg-[#077bc0]/90 text-white"
                 >
                   Create Report
                 </Button>
@@ -97,12 +94,13 @@ const Welcome = () => {
               <Button
                 variant="outline"
                 onClick={() => navigate("/standards")}
-                className="border-2"
+                className="border-2 border-[#077bc0]"
               >
                 Learn About VSME Standard
               </Button>
               <Button
                 onClick={() => navigate("/dashboard")}
+                className="bg-[#077bc0] hover:bg-[#077bc0]/90 text-white"
               >
                 Go To Dashboard
               </Button>
