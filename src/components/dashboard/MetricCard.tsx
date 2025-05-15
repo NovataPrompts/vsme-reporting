@@ -4,6 +4,10 @@ import { Calculator } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { Metric } from "./data/metricsData";
 
+interface IconProps {
+  className?: string;
+}
+
 export const MetricCard = ({ metric }: { metric: Metric }) => {
   const navigate = useNavigate();
   
@@ -22,7 +26,7 @@ export const MetricCard = ({ metric }: { metric: Metric }) => {
   };
 
   // Explicitly type the icon component to accept standard props
-  const IconComponent = metric.icon as React.ComponentType<{ className?: string }>;
+  const IconComponent = metric.icon as React.ComponentType<IconProps>;
 
   return (
     <div 

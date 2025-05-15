@@ -10,9 +10,11 @@ import { StandardsHeader } from "@/components/standards/StandardsHeader";
 import { StandardsHelp } from "@/components/standards/StandardsHelp";
 import { Button } from "@/components/ui/button";
 import { ArrowRight } from "lucide-react";
+import { useEffect, useState } from "react";
 
 const Standards = () => {
   const { toast } = useToast();
+  const [iframeLoaded, setIframeLoaded] = useState(false);
 
   const handleDownload = () => {
     window.open("https://www.efrag.org/sites/default/files/sites/webpublishing/SiteAssets/VSME%20Standard.pdf", "_blank");
@@ -95,13 +97,14 @@ const Standards = () => {
                     This timeline is an estimation based on the average time to complete each CSRD segment
                   </p>
                   
-                  {/* Iframe showing the current metrics page */}
-                  <div className="border border-gray-200 rounded-lg overflow-hidden shadow-md">
+                  {/* Iframe showing the metrics page */}
+                  <div className="border border-gray-200 rounded-lg overflow-hidden shadow-md bg-white">
                     <iframe 
                       src="/metrics" 
-                      className="w-full h-[600px]" 
+                      className={`w-full h-[600px] transition-opacity duration-300 ${iframeLoaded ? 'opacity-100' : 'opacity-0'}`}
                       title="Metrics Dashboard"
                       style={{ border: "none" }}
+                      onLoad={() => setIframeLoaded(true)}
                     ></iframe>
                   </div>
                   
