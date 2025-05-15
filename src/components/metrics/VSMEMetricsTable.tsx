@@ -62,7 +62,7 @@ export const VSMEMetricsTable = ({
                       <CollapsibleContent>
                         <div className="p-4 mx-4 mb-4 rounded-md bg-[ffffff] bg-slate-200">
                           {/* Add metric name as title */}
-                          <h3 className="text-lg font-semibold mb-3 text-[#00344d]">{metric.metric}</h3>
+                          <h3 className="text-lg font-semibold mb-3 text-[#057cc1]">{metric.metric}</h3>
                           <div className="grid grid-cols-2 gap-4">
                             <div>
                               <p className="text-sm font-medium mb-1 text-[#00344d]">Novata Metric Reference:</p>
