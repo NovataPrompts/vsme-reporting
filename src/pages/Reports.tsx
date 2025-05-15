@@ -117,50 +117,53 @@ const Reports = () => {
           </div>
           
           {/* Report Options Boxes */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl mx-auto mb-8">
             {/* Export Box */}
-            <Card className="shadow-sm hover:shadow-md transition-shadow cursor-pointer" onClick={handleExportClick}>
-              <CardHeader className="pb-2">
-                <CardTitle className="flex items-center gap-2 text-[#057cc1]">
-                  <FileSpreadsheet className="h-5 w-5" />
-                  <span>Generate Export</span>
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-gray-600 dark:text-gray-300 text-sm">
+            <Card className="border-2 border-[#077bc0]/20 hover:border-[#077bc0]/80 transition-all duration-300 group">
+              <div className="p-6 flex flex-col items-center text-center h-full" onClick={handleExportClick}>
+                <div className="bg-[#077bc0]/20 p-4 rounded-full mb-4 group-hover:bg-[#077bc0]/30 transition-all duration-300">
+                  <FileSpreadsheet className="h-8 w-8 text-[#077bc0]" />
+                </div>
+                <h3 className="text-xl font-semibold mb-4">Generate Export</h3>
+                <p className="text-gray-600 dark:text-gray-300 mb-6 flex-1">
                   Simple, structured data file in .xlsx or .csv format
                 </p>
-              </CardContent>
+                <Button onClick={handleExportClick} className="w-full bg-[#077bc0] hover:bg-[#077bc0]/90 text-white">
+                  Export Data
+                </Button>
+              </div>
             </Card>
 
             {/* Generate Report Box */}
-            <Card className="shadow-sm hover:shadow-md transition-shadow cursor-pointer" onClick={handleGenerateReportClick}>
-              <CardHeader className="pb-2">
-                <CardTitle className="flex items-center gap-2 text-[#057cc1]">
-                  <FileText className="h-5 w-5" />
-                  <span>Generate Report</span>
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-gray-600 dark:text-gray-300 text-sm">
+            <Card className="border-2 border-[#077bc0]/20 hover:border-[#077bc0]/80 transition-all duration-300 group">
+              <div className="p-6 flex flex-col items-center text-center h-full" onClick={handleGenerateReportClick}>
+                <div className="bg-[#077bc0]/20 p-4 rounded-full mb-4 group-hover:bg-[#077bc0]/30 transition-all duration-300">
+                  <FileText className="h-8 w-8 text-[#077bc0]" />
+                </div>
+                <h3 className="text-xl font-semibold mb-4">Generate Report</h3>
+                <p className="text-gray-600 dark:text-gray-300 mb-6 flex-1">
                   Generate a full VSME compliant report for .docx, .pdf, or google sheets
                 </p>
-              </CardContent>
+                <Button onClick={handleGenerateReportClick} className="w-full bg-[#077bc0] hover:bg-[#077bc0]/90 text-white">
+                  Create Report
+                </Button>
+              </div>
             </Card>
 
             {/* Share Report Box */}
-            <Card className="shadow-sm hover:shadow-md transition-shadow cursor-pointer" onClick={handleShareReportClick}>
-              <CardHeader className="pb-2">
-                <CardTitle className="flex items-center gap-2 text-[#057cc1]">
-                  <Share className="h-5 w-5" />
-                  <span>Share my VSME Report</span>
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-gray-600 dark:text-gray-300 text-sm">
+            <Card className="border-2 border-[#077bc0]/20 hover:border-[#077bc0]/80 transition-all duration-300 group">
+              <div className="p-6 flex flex-col items-center text-center h-full" onClick={handleShareReportClick}>
+                <div className="bg-[#077bc0]/20 p-4 rounded-full mb-4 group-hover:bg-[#077bc0]/30 transition-all duration-300">
+                  <Share className="h-8 w-8 text-[#077bc0]" />
+                </div>
+                <h3 className="text-xl font-semibold mb-4">Share my VSME Report</h3>
+                <p className="text-gray-600 dark:text-gray-300 mb-6 flex-1">
                   Generate a link to privately invite partners, suppliers, or board members to view your report
                 </p>
-              </CardContent>
+                <Button onClick={handleShareReportClick} className="w-full bg-[#077bc0] hover:bg-[#077bc0]/90 text-white">
+                  Share Report
+                </Button>
+              </div>
             </Card>
           </div>
           
