@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Header } from "@/components/layout/Header";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -68,11 +67,7 @@ const Reports = () => {
   };
 
   const handleGenerateReportClick = () => {
-    toast({
-      title: "Report Generation",
-      description: "Your VSME compliant report is being generated.",
-      duration: 3000,
-    });
+    setDialogOpen(true);
   };
 
   const handleShareReportClick = () => {
@@ -136,7 +131,7 @@ const Reports = () => {
 
             {/* Generate Report Box */}
             <Card className="border-2 border-[#077bc0]/20 hover:border-[#077bc0]/80 transition-all duration-300 group">
-              <div className="p-6 flex flex-col items-center text-center h-full" onClick={handleGenerateReportClick}>
+              <div className="p-6 flex flex-col items-center text-center h-full">
                 <div className="bg-[#077bc0]/20 p-4 rounded-full mb-4 group-hover:bg-[#077bc0]/30 transition-all duration-300">
                   <FileText className="h-8 w-8 text-[#077bc0]" />
                 </div>
