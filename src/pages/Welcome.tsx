@@ -71,20 +71,7 @@ const Welcome = () => {
             </Card>
           </div>
           
-          <div className="mt-16 text-center">
-            
-            <p className="text-lg text-gray-600 dark:text-gray-300 max-w-2xl mx-auto mb-6">
-              Explore the VSME standard or view your dashboard for a comprehensive overview.
-            </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Button variant="outline" onClick={() => navigate("/standards")} className="border-2 border-[#077bc0]">
-                Learn About VSME Standard
-              </Button>
-              <Button onClick={() => navigate("/dashboard")} className="bg-[#077bc0] hover:bg-[#077bc0]/90 text-white">
-                Go To Dashboard
-              </Button>
-            </div>
-          </div>
+          
         </div>
       </main>
     </div>;
