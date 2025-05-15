@@ -17,8 +17,8 @@ const Welcome = () => {
       <main className="flex-1 pt-24 pb-12">
         <div className="container mx-auto px-4 md:px-6">
           <div className="mb-12">
-            <h1 className="text-4xl font-bold mb-4">Welcome to VSME Sustainability Reporting</h1>
-            <p className="text-xl text-gray-600 dark:text-gray-300 max-w-2xl">
+            <h1 className="text-2xl font-bold mb-4">Welcome to VSME Sustainability Reporting</h1>
+            <p className="text-base text-gray-600 dark:text-gray-300 max-w-2xl">
               Complete these three steps to create your sustainability report following the VSME Standard.
             </p>
           </div>
