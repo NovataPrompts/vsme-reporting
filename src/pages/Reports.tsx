@@ -14,17 +14,59 @@ import {
   TableRow, 
   TableCell
 } from "@/components/ui/table";
+import { 
+  Dialog, 
+  DialogContent, 
+  DialogHeader, 
+  DialogTitle, 
+  DialogDescription,
+  DialogFooter,
+} from "@/components/ui/dialog";
+import { 
+  Form, 
+  FormControl, 
+  FormField, 
+  FormItem, 
+  FormLabel, 
+  FormMessage 
+} from "@/components/ui/form";
+import { z } from "zod";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+
+const reportSchema = z.object({
+  title: z.string().min(3, "Title must be at least 3 characters"),
+  description: z.string().min(10, "Description must be at least 10 characters"),
+});
+
+type ReportFormValues = z.infer<typeof reportSchema>;
 
 const Reports = () => {
   const { toast } = useToast();
   const [searchQuery, setSearchQuery] = useState("");
+  const [dialogOpen, setDialogOpen] = useState(false);
+
+  const form = useForm<ReportFormValues>({
+    resolver: zodResolver(reportSchema),
+    defaultValues: {
+      title: "",
+      description: "",
+    },
+  });
 
   const handleCreateReport = () => {
+    setDialogOpen(true);
+  };
+
+  const onSubmit = (data: ReportFormValues) => {
     toast({
-      title: "Create New Report",
-      description: "The report creation wizard will be available soon.",
+      title: "Report Created",
+      description: `${data.title} has been created successfully.`,
       duration: 3000,
     });
+    
+    setDialogOpen(false);
+    form.reset();
   };
 
   return (
@@ -168,6 +210,61 @@ const Reports = () => {
           </Tabs>
         </div>
       </main>
+
+      {/* Create Report Dialog */}
+      <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
+        <DialogContent className="sm:max-w-[500px]">
+          <DialogHeader>
+            <DialogTitle>Create New Report</DialogTitle>
+            <DialogDescription>
+              Enter the details for your new sustainability report.
+            </DialogDescription>
+          </DialogHeader>
+          
+          <Form {...form}>
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4 py-4">
+              <FormField
+                control={form.control}
+                name="title"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Report Title</FormLabel>
+                    <FormControl>
+                      <Input placeholder="Annual Sustainability Report 2024" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="description"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Description</FormLabel>
+                    <FormControl>
+                      <Input placeholder="Comprehensive review of our sustainability initiatives" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              
+              <DialogFooter className="pt-4">
+                <Button 
+                  type="button" 
+                  variant="outline" 
+                  onClick={() => setDialogOpen(false)}
+                >
+                  Cancel
+                </Button>
+                <Button type="submit">Create Report</Button>
+              </DialogFooter>
+            </form>
+          </Form>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
