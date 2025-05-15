@@ -70,7 +70,7 @@ export const VSMEMetricsTable = ({
                         <CollapsibleTrigger asChild>
                           <Button 
                             size="sm"
-                            className="h-8 w-8 p-0 bg-accent hover:bg-accent/90 text-primary"
+                            className="h-8 w-8 p-0 bg-[#057cc1] hover:bg-[#057cc1]/90 text-white"
                           >
                             <ChevronDown className="h-4 w-4" />
                             <span className="sr-only">View Details</span>
