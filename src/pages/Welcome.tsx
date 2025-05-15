@@ -1,16 +1,12 @@
-
 import React from 'react';
 import { Header } from "@/components/layout/Header";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { FileText, BarChart3, Upload } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-
 const Welcome = () => {
   const navigate = useNavigate();
-
-  return (
-    <div className="min-h-screen flex flex-col">
+  return <div className="min-h-screen flex flex-col">
       <Header />
       
       <main className="flex-1 pt-24 pb-12">
@@ -34,10 +30,7 @@ const Welcome = () => {
                 <p className="text-gray-600 dark:text-gray-300 mb-6 flex-1">
                   Import your sustainability data from Novata or upload your own files in supported formats.
                 </p>
-                <Button 
-                  onClick={() => navigate("/import")}
-                  className="w-full bg-[#077bc0] hover:bg-[#077bc0]/90 text-white"
-                >
+                <Button onClick={() => navigate("/import")} className="w-full bg-[#077bc0] hover:bg-[#077bc0]/90 text-white">
                   Start Data Import
                 </Button>
               </div>
@@ -54,10 +47,7 @@ const Welcome = () => {
                 <p className="text-gray-600 dark:text-gray-300 mb-6 flex-1">
                   View, manage and calculate your sustainability metrics based on the VSME standard requirements.
                 </p>
-                <Button 
-                  onClick={() => navigate("/metrics")}
-                  className="w-full bg-[#077bc0] hover:bg-[#077bc0]/90 text-white"
-                >
+                <Button onClick={() => navigate("/metrics")} className="w-full bg-[#077bc0] hover:bg-[#077bc0]/90 text-white">
                   Explore Metrics
                 </Button>
               </div>
@@ -74,10 +64,7 @@ const Welcome = () => {
                 <p className="text-gray-600 dark:text-gray-300 mb-6 flex-1">
                   Create beautiful, professional sustainability reports that are fully compliant with the VSME standard.
                 </p>
-                <Button 
-                  onClick={() => navigate("/reports")}
-                  className="w-full bg-[#077bc0] hover:bg-[#077bc0]/90 text-white"
-                >
+                <Button onClick={() => navigate("/reports")} className="w-full bg-[#077bc0] hover:bg-[#077bc0]/90 text-white">
                   Create Report
                 </Button>
               </div>
@@ -85,30 +72,21 @@ const Welcome = () => {
           </div>
           
           <div className="mt-16 text-center">
-            <h2 className="text-2xl font-bold mb-4">Ready to dive deeper?</h2>
+            
             <p className="text-lg text-gray-600 dark:text-gray-300 max-w-2xl mx-auto mb-6">
               Explore the VSME standard or view your dashboard for a comprehensive overview.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Button
-                variant="outline"
-                onClick={() => navigate("/standards")}
-                className="border-2 border-[#077bc0]"
-              >
+              <Button variant="outline" onClick={() => navigate("/standards")} className="border-2 border-[#077bc0]">
                 Learn About VSME Standard
               </Button>
-              <Button
-                onClick={() => navigate("/dashboard")}
-                className="bg-[#077bc0] hover:bg-[#077bc0]/90 text-white"
-              >
+              <Button onClick={() => navigate("/dashboard")} className="bg-[#077bc0] hover:bg-[#077bc0]/90 text-white">
                 Go To Dashboard
               </Button>
             </div>
           </div>
         </div>
       </main>
-    </div>
-  );
+    </div>;
 };
-
 export default Welcome;
