@@ -1,10 +1,11 @@
+
 import React, { useState } from 'react';
 import { Header } from "@/components/layout/Header";
-import { Card, CardContent } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Search, PlusCircle } from "lucide-react";
+import { Search, PlusCircle, FileSpreadsheet, FileText, Share } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { 
   Table, 
@@ -58,6 +59,30 @@ const Reports = () => {
     setDialogOpen(true);
   };
 
+  const handleExportClick = () => {
+    toast({
+      title: "Export Started",
+      description: "Your data is being exported to an Excel file.",
+      duration: 3000,
+    });
+  };
+
+  const handleGenerateReportClick = () => {
+    toast({
+      title: "Report Generation",
+      description: "Your VSME compliant report is being generated.",
+      duration: 3000,
+    });
+  };
+
+  const handleShareReportClick = () => {
+    toast({
+      title: "Share Report",
+      description: "A private sharing link is being generated.",
+      duration: 3000,
+    });
+  };
+
   const onSubmit = (data: ReportFormValues) => {
     toast({
       title: "Report Created",
@@ -89,6 +114,54 @@ const Reports = () => {
               <PlusCircle className="h-4 w-4" />
               <span>Create New Report</span>
             </Button>
+          </div>
+          
+          {/* Report Options Boxes */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+            {/* Export Box */}
+            <Card className="shadow-sm hover:shadow-md transition-shadow cursor-pointer" onClick={handleExportClick}>
+              <CardHeader className="pb-2">
+                <CardTitle className="flex items-center gap-2 text-[#057cc1]">
+                  <FileSpreadsheet className="h-5 w-5" />
+                  <span>Generate Export</span>
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-gray-600 dark:text-gray-300 text-sm">
+                  Simple, structured data file in .xlsx or .csv format
+                </p>
+              </CardContent>
+            </Card>
+
+            {/* Generate Report Box */}
+            <Card className="shadow-sm hover:shadow-md transition-shadow cursor-pointer" onClick={handleGenerateReportClick}>
+              <CardHeader className="pb-2">
+                <CardTitle className="flex items-center gap-2 text-[#057cc1]">
+                  <FileText className="h-5 w-5" />
+                  <span>Generate Report</span>
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-gray-600 dark:text-gray-300 text-sm">
+                  Generate a full VSME compliant report for .docx, .pdf, or google sheets
+                </p>
+              </CardContent>
+            </Card>
+
+            {/* Share Report Box */}
+            <Card className="shadow-sm hover:shadow-md transition-shadow cursor-pointer" onClick={handleShareReportClick}>
+              <CardHeader className="pb-2">
+                <CardTitle className="flex items-center gap-2 text-[#057cc1]">
+                  <Share className="h-5 w-5" />
+                  <span>Share my VSME Report</span>
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-gray-600 dark:text-gray-300 text-sm">
+                  Generate a link to privately invite partners, suppliers, or board members to view your report
+                </p>
+              </CardContent>
+            </Card>
           </div>
           
           <div className="mb-6">
