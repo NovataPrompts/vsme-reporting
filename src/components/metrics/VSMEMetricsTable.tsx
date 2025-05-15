@@ -1,6 +1,6 @@
 
 import React, { useState } from "react";
-import { ChevronDown, Info } from "lucide-react";
+import { ChevronDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { 
   Table, 
@@ -62,16 +62,7 @@ export const VSMEMetricsTable = ({
                   <TableCell>{metric.reference}</TableCell>
                   <TableCell>{metric.metric}</TableCell>
                   <TableCell className="text-right">
-                    <div className="flex justify-end gap-2">
-                      <Button 
-                        variant="ghost" 
-                        size="sm"
-                        className="h-8 w-8 p-0"
-                        onClick={() => onLearnMore(metric.reference)}
-                      >
-                        <Info className="h-4 w-4" />
-                        <span className="sr-only">Learn More</span>
-                      </Button>
+                    <div className="flex justify-end">
                       <Collapsible 
                         open={openMetric === metric.reference}
                         onOpenChange={() => toggleMetric(metric.reference)}
