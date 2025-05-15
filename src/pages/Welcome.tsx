@@ -2,7 +2,7 @@
 import React from 'react';
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { FileText, BarChart3, Upload } from "lucide-react";
+import { FileText, BarChart3, Upload, ChevronRight } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
 const Welcome = () => {
@@ -68,6 +68,17 @@ const Welcome = () => {
                 </Button>
               </div>
             </Card>
+          </div>
+          
+          {/* Go to Step 2 button at bottom left */}
+          <div className="mt-12 flex justify-start">
+            <Button 
+              onClick={() => navigate("/metrics")} 
+              className="bg-[#057cc0] hover:bg-[#057cc0]/90 text-white flex items-center gap-2"
+            >
+              Go to Step 2 View Metrics
+              <ChevronRight className="h-4 w-4" />
+            </Button>
           </div>
         </div>
       </main>
