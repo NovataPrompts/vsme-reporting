@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Header } from "@/components/layout/Header";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -14,13 +13,11 @@ import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
-
 const reportSchema = z.object({
   title: z.string().min(3, "Title must be at least 3 characters"),
   description: z.string().min(10, "Description must be at least 10 characters")
 });
 type ReportFormValues = z.infer<typeof reportSchema>;
-
 const Reports = () => {
   const {
     toast
@@ -34,7 +31,6 @@ const Reports = () => {
       description: ""
     }
   });
-  
   const handleExportClick = () => {
     toast({
       title: "Export Started",
@@ -42,11 +38,9 @@ const Reports = () => {
       duration: 3000
     });
   };
-  
   const handleGenerateReportClick = () => {
     setDialogOpen(true);
   };
-  
   const handleShareReportClick = () => {
     toast({
       title: "Share Report",
@@ -54,7 +48,6 @@ const Reports = () => {
       duration: 3000
     });
   };
-  
   const onSubmit = (data: ReportFormValues) => {
     toast({
       title: "Report Created",
@@ -64,7 +57,6 @@ const Reports = () => {
     setDialogOpen(false);
     form.reset();
   };
-  
   return <div className="min-h-screen flex flex-col">
       <Header />
       
@@ -85,7 +77,7 @@ const Reports = () => {
                 <div className="bg-[#077bc0]/20 p-4 rounded-full mb-4 group-hover:bg-[#077bc0]/30 transition-all duration-300">
                   <FileSpreadsheet className="h-8 w-8 text-[#077bc0]" />
                 </div>
-                <h3 className="text-xl font-semibold mb-4">Generate Export</h3>
+                <h3 className="text-xl font-semibold mb-4">Export Data</h3>
                 <p className="text-gray-600 dark:text-gray-300 mb-6 flex-1">
                   Simple, structured data file in .xlsx or .csv format
                 </p>
@@ -287,5 +279,4 @@ const Reports = () => {
       </Dialog>
     </div>;
 };
-
 export default Reports;
