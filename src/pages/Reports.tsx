@@ -1,11 +1,10 @@
-
 import React, { useState } from 'react';
 import { Header } from "@/components/layout/Header";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Search, PlusCircle, FileSpreadsheet, FileText, Share } from "lucide-react";
+import { Search, PlusCircle, FileSpreadsheet, FileText, Share, ChevronDown } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { Table, TableHeader, TableBody, TableHead, TableRow, TableCell } from "@/components/ui/table";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
@@ -13,6 +12,7 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 
 const reportSchema = z.object({
   title: z.string().min(3, "Title must be at least 3 characters"),
@@ -75,6 +75,29 @@ const Reports = () => {
               </p>
             </div>
             
+            <div className="flex gap-2">
+              <Button onClick={handleCreateReport} className="flex items-center gap-2">
+                <PlusCircle className="h-4 w-4" />
+                <span>Create Report</span>
+              </Button>
+              
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="outline" className="flex items-center gap-2 rounded-full bg-muted hover:bg-muted/90">
+                    <span>More Options</span>
+                    <ChevronDown className="h-4 w-4" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="w-48">
+                  <DropdownMenuItem onClick={handleExportClick}>
+                    Export Data
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={handleShareReportClick}>
+                    Share Report
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </div>
           </div>
           
           {/* Report Options Boxes */}
