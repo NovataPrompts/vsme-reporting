@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -74,6 +75,22 @@ const Reports = () => {
     { id: "2", title: "Q2 Carbon Emissions Report" },
     { id: "3", title: "Supply Chain Assessment" }
   ];
+  
+  const handleStatusChange = (reportId: string, newStatus: string) => {
+    toast({
+      title: "Status Updated",
+      description: `Report status has been updated to ${newStatus}`,
+      duration: 3000
+    });
+  };
+  
+  const handleEditClick = (reportId: string) => {
+    toast({
+      title: "Editing Report",
+      description: "Opening report editor",
+      duration: 3000
+    });
+  };
   
   const handleExportClick = () => {
     toast({
@@ -260,10 +277,9 @@ const Reports = () => {
                     <TableHeader>
                       <TableRow>
                         <TableHead>Title</TableHead>
-                        <TableHead>Description</TableHead>
                         <TableHead>Date Created</TableHead>
                         <TableHead>Status</TableHead>
-                        <TableHead className="w-24">Actions</TableHead>
+                        <TableHead className="w-40">Actions</TableHead>
                       </TableRow>
                     </TableHeader>
                     <TableBody>
@@ -271,11 +287,42 @@ const Reports = () => {
                         sampleReports.map(report => (
                           <TableRow key={report.id}>
                             <TableCell>{report.title}</TableCell>
-                            <TableCell>{report.description}</TableCell>
                             <TableCell>{report.dateCreated}</TableCell>
-                            <TableCell>{report.status}</TableCell>
+                            <TableCell>
+                              <DropdownMenu>
+                                <DropdownMenuTrigger asChild>
+                                  <Button 
+                                    variant="outline" 
+                                    className="rounded-full bg-[#f9fafb] hover:bg-[#f9fafb] flex gap-1 items-center px-3 py-1 h-auto text-xs border border-gray-200"
+                                  >
+                                    {report.status}
+                                    <ChevronDown className="h-3 w-3 opacity-50" />
+                                  </Button>
+                                </DropdownMenuTrigger>
+                                <DropdownMenuContent align="start">
+                                  <DropdownMenuItem onClick={() => handleStatusChange(report.id, 'Draft')}>
+                                    Draft
+                                  </DropdownMenuItem>
+                                  <DropdownMenuItem onClick={() => handleStatusChange(report.id, 'Published')}>
+                                    Published
+                                  </DropdownMenuItem>
+                                  <DropdownMenuItem onClick={() => handleStatusChange(report.id, 'Archived')}>
+                                    Archived
+                                  </DropdownMenuItem>
+                                </DropdownMenuContent>
+                              </DropdownMenu>
+                            </TableCell>
                             <TableCell>
                               <div className="action-buttons flex space-x-1 justify-end">
+                                <Button 
+                                  onClick={() => handleEditClick(report.id)}
+                                  variant="action"
+                                  size="actionIcon"
+                                  className="bg-[#077bc0] text-white hover:bg-[#077bc0]/90"
+                                  title="Edit Report"
+                                >
+                                  <Edit className="h-full w-full" />
+                                </Button>
                                 <Button 
                                   onClick={() => handleActionClick('pdf', report.id)}
                                   variant="action"
@@ -322,7 +369,7 @@ const Reports = () => {
                         ))
                       ) : (
                         <TableRow>
-                          <TableCell colSpan={5}>
+                          <TableCell colSpan={4}>
                             <div className="text-center py-8 text-gray-500">
                               <p>No reports available</p>
                               <p className="text-sm mt-2">Create your first report to get started</p>
@@ -343,10 +390,9 @@ const Reports = () => {
                     <TableHeader>
                       <TableRow>
                         <TableHead>Title</TableHead>
-                        <TableHead>Description</TableHead>
                         <TableHead>Date Created</TableHead>
                         <TableHead>Status</TableHead>
-                        <TableHead className="w-24">Actions</TableHead>
+                        <TableHead className="w-40">Actions</TableHead>
                       </TableRow>
                     </TableHeader>
                     <TableBody>
@@ -354,11 +400,42 @@ const Reports = () => {
                         sampleReports.filter(r => r.status === 'Published').map(report => (
                           <TableRow key={report.id}>
                             <TableCell>{report.title}</TableCell>
-                            <TableCell>{report.description}</TableCell>
                             <TableCell>{report.dateCreated}</TableCell>
-                            <TableCell>{report.status}</TableCell>
+                            <TableCell>
+                              <DropdownMenu>
+                                <DropdownMenuTrigger asChild>
+                                  <Button 
+                                    variant="outline" 
+                                    className="rounded-full bg-[#f9fafb] hover:bg-[#f9fafb] flex gap-1 items-center px-3 py-1 h-auto text-xs border border-gray-200"
+                                  >
+                                    {report.status}
+                                    <ChevronDown className="h-3 w-3 opacity-50" />
+                                  </Button>
+                                </DropdownMenuTrigger>
+                                <DropdownMenuContent align="start">
+                                  <DropdownMenuItem onClick={() => handleStatusChange(report.id, 'Draft')}>
+                                    Draft
+                                  </DropdownMenuItem>
+                                  <DropdownMenuItem onClick={() => handleStatusChange(report.id, 'Published')}>
+                                    Published
+                                  </DropdownMenuItem>
+                                  <DropdownMenuItem onClick={() => handleStatusChange(report.id, 'Archived')}>
+                                    Archived
+                                  </DropdownMenuItem>
+                                </DropdownMenuContent>
+                              </DropdownMenu>
+                            </TableCell>
                             <TableCell>
                               <div className="action-buttons flex space-x-1 justify-end">
+                                <Button 
+                                  onClick={() => handleEditClick(report.id)}
+                                  variant="action"
+                                  size="actionIcon"
+                                  className="bg-[#077bc0] text-white hover:bg-[#077bc0]/90"
+                                  title="Edit Report"
+                                >
+                                  <Edit className="h-full w-full" />
+                                </Button>
                                 <Button 
                                   onClick={() => handleActionClick('pdf', report.id)}
                                   variant="action"
@@ -405,7 +482,7 @@ const Reports = () => {
                         ))
                       ) : (
                         <TableRow>
-                          <TableCell colSpan={5}>
+                          <TableCell colSpan={4}>
                             <div className="text-center py-8 text-gray-500">
                               <p>No published reports available</p>
                             </div>
@@ -425,10 +502,9 @@ const Reports = () => {
                     <TableHeader>
                       <TableRow>
                         <TableHead>Title</TableHead>
-                        <TableHead>Description</TableHead>
                         <TableHead>Date Created</TableHead>
                         <TableHead>Status</TableHead>
-                        <TableHead className="w-24">Actions</TableHead>
+                        <TableHead className="w-40">Actions</TableHead>
                       </TableRow>
                     </TableHeader>
                     <TableBody>
@@ -436,11 +512,42 @@ const Reports = () => {
                         sampleReports.filter(r => r.status === 'Draft').map(report => (
                           <TableRow key={report.id}>
                             <TableCell>{report.title}</TableCell>
-                            <TableCell>{report.description}</TableCell>
                             <TableCell>{report.dateCreated}</TableCell>
-                            <TableCell>{report.status}</TableCell>
+                            <TableCell>
+                              <DropdownMenu>
+                                <DropdownMenuTrigger asChild>
+                                  <Button 
+                                    variant="outline" 
+                                    className="rounded-full bg-[#f9fafb] hover:bg-[#f9fafb] flex gap-1 items-center px-3 py-1 h-auto text-xs border border-gray-200"
+                                  >
+                                    {report.status}
+                                    <ChevronDown className="h-3 w-3 opacity-50" />
+                                  </Button>
+                                </DropdownMenuTrigger>
+                                <DropdownMenuContent align="start">
+                                  <DropdownMenuItem onClick={() => handleStatusChange(report.id, 'Draft')}>
+                                    Draft
+                                  </DropdownMenuItem>
+                                  <DropdownMenuItem onClick={() => handleStatusChange(report.id, 'Published')}>
+                                    Published
+                                  </DropdownMenuItem>
+                                  <DropdownMenuItem onClick={() => handleStatusChange(report.id, 'Archived')}>
+                                    Archived
+                                  </DropdownMenuItem>
+                                </DropdownMenuContent>
+                              </DropdownMenu>
+                            </TableCell>
                             <TableCell>
                               <div className="action-buttons flex space-x-1 justify-end">
+                                <Button 
+                                  onClick={() => handleEditClick(report.id)}
+                                  variant="action"
+                                  size="actionIcon"
+                                  className="bg-[#077bc0] text-white hover:bg-[#077bc0]/90"
+                                  title="Edit Report"
+                                >
+                                  <Edit className="h-full w-full" />
+                                </Button>
                                 <Button 
                                   onClick={() => handleActionClick('pdf', report.id)}
                                   variant="action"
@@ -487,7 +594,7 @@ const Reports = () => {
                         ))
                       ) : (
                         <TableRow>
-                          <TableCell colSpan={5}>
+                          <TableCell colSpan={4}>
                             <div className="text-center py-8 text-gray-500">
                               <p>No draft reports available</p>
                             </div>
@@ -507,10 +614,9 @@ const Reports = () => {
                     <TableHeader>
                       <TableRow>
                         <TableHead>Title</TableHead>
-                        <TableHead>Description</TableHead>
                         <TableHead>Date Created</TableHead>
                         <TableHead>Status</TableHead>
-                        <TableHead className="w-24">Actions</TableHead>
+                        <TableHead className="w-40">Actions</TableHead>
                       </TableRow>
                     </TableHeader>
                     <TableBody>
@@ -518,11 +624,42 @@ const Reports = () => {
                         sampleReports.filter(r => r.status === 'Archived').map(report => (
                           <TableRow key={report.id}>
                             <TableCell>{report.title}</TableCell>
-                            <TableCell>{report.description}</TableCell>
                             <TableCell>{report.dateCreated}</TableCell>
-                            <TableCell>{report.status}</TableCell>
+                            <TableCell>
+                              <DropdownMenu>
+                                <DropdownMenuTrigger asChild>
+                                  <Button 
+                                    variant="outline" 
+                                    className="rounded-full bg-[#f9fafb] hover:bg-[#f9fafb] flex gap-1 items-center px-3 py-1 h-auto text-xs border border-gray-200"
+                                  >
+                                    {report.status}
+                                    <ChevronDown className="h-3 w-3 opacity-50" />
+                                  </Button>
+                                </DropdownMenuTrigger>
+                                <DropdownMenuContent align="start">
+                                  <DropdownMenuItem onClick={() => handleStatusChange(report.id, 'Draft')}>
+                                    Draft
+                                  </DropdownMenuItem>
+                                  <DropdownMenuItem onClick={() => handleStatusChange(report.id, 'Published')}>
+                                    Published
+                                  </DropdownMenuItem>
+                                  <DropdownMenuItem onClick={() => handleStatusChange(report.id, 'Archived')}>
+                                    Archived
+                                  </DropdownMenuItem>
+                                </DropdownMenuContent>
+                              </DropdownMenu>
+                            </TableCell>
                             <TableCell>
                               <div className="action-buttons flex space-x-1 justify-end">
+                                <Button 
+                                  onClick={() => handleEditClick(report.id)}
+                                  variant="action"
+                                  size="actionIcon"
+                                  className="bg-[#077bc0] text-white hover:bg-[#077bc0]/90"
+                                  title="Edit Report"
+                                >
+                                  <Edit className="h-full w-full" />
+                                </Button>
                                 <Button 
                                   onClick={() => handleActionClick('pdf', report.id)}
                                   variant="action"
@@ -569,7 +706,7 @@ const Reports = () => {
                         ))
                       ) : (
                         <TableRow>
-                          <TableCell colSpan={5}>
+                          <TableCell colSpan={4}>
                             <div className="text-center py-8 text-gray-500">
                               <p>No archived reports available</p>
                             </div>
@@ -740,3 +877,4 @@ const Reports = () => {
     </div>;
 };
 export default Reports;
+
