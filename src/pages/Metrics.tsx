@@ -34,7 +34,7 @@ const Metrics = () => {
             </div>
           </div>
           
-          <div className="mb-8">
+          <div id="metrics-content" className="mb-8">
             <VSMEMetricsSearch
               searchQuery={searchQuery}
               onSearchChange={setSearchQuery}

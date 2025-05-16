@@ -17,6 +17,10 @@ const Import = () => {
     });
   };
   
+  const goToMetrics = () => {
+    navigate("/metrics#metrics-content");
+  };
+  
   return <div className="min-h-screen flex flex-col">
       <main className="flex-1 pt-12 pb-12">
         <div className="container mx-auto px-4 md:px-6">
@@ -35,7 +39,7 @@ const Import = () => {
           
           {/* Go to Step 2 button at bottom right */}
           <div className="mt-12 flex justify-end">
-            <Button onClick={() => navigate("/metrics")} className="bg-[#057cc0] hover:bg-[#057cc0]/90 text-white flex items-center gap-2">
+            <Button onClick={goToMetrics} className="bg-[#057cc0] hover:bg-[#057cc0]/90 text-white flex items-center gap-2">
               Go to Step 2 <ChevronRight className="h-4 w-4" /> View Metrics
             </Button>
           </div>
