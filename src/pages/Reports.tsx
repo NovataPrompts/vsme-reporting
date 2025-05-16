@@ -13,24 +13,31 @@ import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+
 const reportSchema = z.object({
   title: z.string().min(3, "Title must be at least 3 characters"),
+  companyName: z.string().min(2, "Company name must be at least 2 characters"),
   description: z.string().min(10, "Description must be at least 10 characters")
 });
+
 type ReportFormValues = z.infer<typeof reportSchema>;
+
 const Reports = () => {
   const {
     toast
   } = useToast();
   const [searchQuery, setSearchQuery] = useState("");
   const [dialogOpen, setDialogOpen] = useState(false);
+  
   const form = useForm<ReportFormValues>({
     resolver: zodResolver(reportSchema),
     defaultValues: {
       title: "",
+      companyName: "",
       description: ""
     }
   });
+  
   const handleExportClick = () => {
     toast({
       title: "Export Started",
@@ -38,9 +45,11 @@ const Reports = () => {
       duration: 3000
     });
   };
+  
   const handleGenerateReportClick = () => {
     setDialogOpen(true);
   };
+  
   const handleShareReportClick = () => {
     toast({
       title: "Share Report",
@@ -48,6 +57,7 @@ const Reports = () => {
       duration: 3000
     });
   };
+  
   const onSubmit = (data: ReportFormValues) => {
     toast({
       title: "Report Created",
@@ -57,6 +67,7 @@ const Reports = () => {
     setDialogOpen(false);
     form.reset();
   };
+  
   return <div className="min-h-screen flex flex-col">
       <Header />
       
@@ -253,6 +264,16 @@ const Reports = () => {
                     <FormLabel>Report Title</FormLabel>
                     <FormControl>
                       <Input placeholder="Annual Sustainability Report 2024" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>} />
+
+              <FormField control={form.control} name="companyName" render={({
+              field
+            }) => <FormItem>
+                    <FormLabel>Company Name</FormLabel>
+                    <FormControl>
+                      <Input placeholder="Your Company Name" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>} />
