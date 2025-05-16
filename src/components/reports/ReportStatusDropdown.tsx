@@ -20,18 +20,32 @@ const ReportStatusDropdown = ({
   reportId, 
   onStatusChange 
 }: ReportStatusDropdownProps) => {
+  // Define status-based styling
+  const getStatusStyle = (currentStatus: string) => {
+    switch (currentStatus) {
+      case 'Published':
+        return "bg-[#ebf7ed] text-[#147c30] border-[#a0e0b2]";
+      case 'Draft':
+        return "bg-[#f9fafb] text-gray-700 border-gray-200";
+      case 'Archived':
+        return "bg-[#f3f4f6] text-gray-500 border-gray-300";
+      default:
+        return "bg-[#f9fafb] border-gray-200";
+    }
+  };
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Button 
           variant="outline" 
-          className="rounded-full bg-[#f9fafb] hover:bg-[#f9fafb] flex gap-1 items-center px-3 py-1 h-auto text-xs border border-gray-200"
+          className={`rounded-full flex gap-1 items-center px-3 py-1 h-auto text-xs ${getStatusStyle(status)}`}
         >
           {status}
           <ChevronDown className="h-3 w-3 opacity-50" />
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="start">
+      <DropdownMenuContent align="start" className="bg-white">
         <DropdownMenuItem onClick={() => onStatusChange(reportId, 'Draft')}>
           Draft
         </DropdownMenuItem>

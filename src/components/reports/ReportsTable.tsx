@@ -53,7 +53,8 @@ const ReportsTable = ({
                   </TableCell>
                   <TableCell>
                     <ReportActionButtons 
-                      reportId={report.id} 
+                      reportId={report.id}
+                      status={report.status} 
                       onEditClick={onEditClick} 
                       onActionClick={onActionClick} 
                     />
