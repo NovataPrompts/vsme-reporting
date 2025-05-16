@@ -43,11 +43,11 @@ export const Header = () => {
           <DesktopNavigation />
           <div className="flex items-center gap-2">
             <ImportButton />
-            <MobileMenuToggle isOpen={mobileMenuOpen} onClick={toggleMobileMenu} />
+            <MobileMenuToggle isOpen={mobileMenuOpen} onToggle={toggleMobileMenu} />
           </div>
         </div>
       </div>
-      <MobileNavigation isOpen={mobileMenuOpen} />
+      <MobileNavigation isOpen={mobileMenuOpen} onClose={toggleMobileMenu} />
     </header>
   );
 };
