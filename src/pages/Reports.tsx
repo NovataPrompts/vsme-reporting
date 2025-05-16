@@ -289,10 +289,20 @@ const Reports = () => {
                   </FormItem>} />
               
               <DialogFooter className="pt-4">
-                <Button type="button" variant="outline" onClick={() => setDialogOpen(false)}>
+                <Button 
+                  type="button" 
+                  variant="outline" 
+                  onClick={() => setDialogOpen(false)}
+                  className="hover:bg-[#f3f5f7]"
+                >
                   Cancel
                 </Button>
-                <Button type="submit">Create Report</Button>
+                <Button 
+                  type="submit"
+                  className="bg-[#057cc1] hover:bg-[#057cc1]/90"
+                >
+                  Create Report
+                </Button>
               </DialogFooter>
             </form>
           </Form>
