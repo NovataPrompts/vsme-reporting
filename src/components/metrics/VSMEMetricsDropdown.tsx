@@ -48,7 +48,7 @@ export const VSMEMetricsDropdown = ({
           </DropdownMenuTrigger>
           <DropdownMenuContent align="start" alignOffset={-2} className="w-48">
             <DropdownMenuItem 
-              className="flex items-center gap-2 cursor-pointer"
+              className="flex items-center gap-2 cursor-pointer hover:bg-[#f3f5f7]"
               onClick={() => navigate("/metrics/calculated")}
             >
               <Calculator className="h-4 w-4" />
