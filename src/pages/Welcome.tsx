@@ -22,9 +22,7 @@ const Welcome = () => {
                 </div>
                 <h2 className="text-2xl font-bold mb-2">Step 1</h2>
                 <h3 className="text-xl font-semibold mb-4">Upload Data</h3>
-                <p className="text-gray-600 dark:text-gray-300 mb-6 flex-1">
-                  Import your sustainability data from Novata or upload your own files in supported formats.
-                </p>
+                <p className="text-gray-600 dark:text-gray-300 mb-6 flex-1">Import your sustainability data from Novata.</p>
                 <Button onClick={() => navigate("/import")} className="w-full bg-[#077bc0] hover:bg-[#077bc0]/90 text-white">
                   Start Data Import
                 </Button>
@@ -56,9 +54,7 @@ const Welcome = () => {
                 </div>
                 <h2 className="text-2xl font-bold mb-2">Step 3</h2>
                 <h3 className="text-xl font-semibold mb-4">Generate Report</h3>
-                <p className="text-gray-600 dark:text-gray-300 mb-6 flex-1">
-                  Create beautiful, professional sustainability reports that are fully compliant with the VSME standard.
-                </p>
+                <p className="text-gray-600 dark:text-gray-300 mb-6 flex-1">Create compliant, professional sustainability reports that are fully compliant with the VSME standard.</p>
                 <Button onClick={() => navigate("/reports")} className="w-full bg-[#077bc0] hover:bg-[#077bc0]/90 text-white">
                   Create Report
                 </Button>
