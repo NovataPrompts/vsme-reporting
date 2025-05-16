@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Header } from "@/components/layout/Header";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -33,9 +34,7 @@ const Reports = () => {
       description: ""
     }
   });
-  const handleCreateReport = () => {
-    setDialogOpen(true);
-  };
+  
   const handleExportClick = () => {
     toast({
       title: "Export Started",
@@ -43,9 +42,11 @@ const Reports = () => {
       duration: 3000
     });
   };
+  
   const handleGenerateReportClick = () => {
     setDialogOpen(true);
   };
+  
   const handleShareReportClick = () => {
     toast({
       title: "Share Report",
@@ -53,6 +54,7 @@ const Reports = () => {
       duration: 3000
     });
   };
+  
   const onSubmit = (data: ReportFormValues) => {
     toast({
       title: "Report Created",
@@ -62,42 +64,17 @@ const Reports = () => {
     setDialogOpen(false);
     form.reset();
   };
+  
   return <div className="min-h-screen flex flex-col">
       <Header />
       
       <main className="flex-1 pt-12 pb-12">
         <div className="container mx-auto px-4 md:px-6">
-          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
-            <div>
-              <h1 className="text-2xl font-bold mb-2">Reports</h1>
-              <p className="text-base text-gray-600 dark:text-gray-300">
-                Create, manage, and share your sustainability reports
-              </p>
-            </div>
-            
-            <div className="flex gap-2">
-              <Button onClick={handleCreateReport} className="flex items-center gap-2">
-                <PlusCircle className="h-4 w-4" />
-                <span>Create Report</span>
-              </Button>
-              
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button variant="outline" className="flex items-center gap-2 rounded-full bg-muted hover:bg-muted/90">
-                    <span>More Options</span>
-                    <ChevronDown className="h-4 w-4" />
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" className="w-48">
-                  <DropdownMenuItem onClick={handleExportClick}>
-                    Export Data
-                  </DropdownMenuItem>
-                  <DropdownMenuItem onClick={handleShareReportClick}>
-                    Share Report
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
-            </div>
+          <div className="mb-8">
+            <h1 className="text-2xl font-bold mb-2">Reports</h1>
+            <p className="text-base text-gray-600 dark:text-gray-300">
+              Create, manage, and share your sustainability reports
+            </p>
           </div>
           
           {/* Report Options Boxes */}
