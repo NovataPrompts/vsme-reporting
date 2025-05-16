@@ -16,7 +16,8 @@ import {
   Trash2,
   ArrowDownFromLine,
   File,
-  LetterText
+  LetterText,
+  Database
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { Table, TableHeader, TableBody, TableHead, TableRow, TableCell } from "@/components/ui/table";
@@ -186,25 +187,9 @@ const Reports = () => {
             </p>
           </div>
           
-          {/* Report Options Boxes */}
+          {/* Report Options Boxes - SWAPPED ORDER */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl mx-auto mb-8">
-            {/* Export Box */}
-            <Card className="border-2 border-[#077bc0]/20 hover:border-[#077bc0]/80 transition-all duration-300 group">
-              <div className="p-6 flex flex-col items-center text-center h-full" onClick={handleExportClick}>
-                <div className="bg-[#077bc0]/20 p-4 rounded-full mb-4 group-hover:bg-[#077bc0]/30 transition-all duration-300">
-                  <FileSpreadsheet className="h-8 w-8 text-[#077bc0]" />
-                </div>
-                <h3 className="text-xl font-semibold mb-4">Export Data</h3>
-                <p className="text-gray-600 dark:text-gray-300 mb-6 flex-1">
-                  Simple, structured data file in .xlsx or .csv format
-                </p>
-                <Button onClick={handleExportClick} className="w-full bg-[#077bc0] hover:bg-[#077bc0]/90 text-white">
-                  Export Data
-                </Button>
-              </div>
-            </Card>
-
-            {/* Generate Report Box */}
+            {/* Generate Report Box - NOW FIRST */}
             <Card className="border-2 border-[#077bc0]/20 hover:border-[#077bc0]/80 transition-all duration-300 group">
               <div className="p-6 flex flex-col items-center text-center h-full">
                 <div className="bg-[#077bc0]/20 p-4 rounded-full mb-4 group-hover:bg-[#077bc0]/30 transition-all duration-300">
@@ -220,7 +205,23 @@ const Reports = () => {
               </div>
             </Card>
 
-            {/* Share Report Box */}
+            {/* Export Box - NOW SECOND WITH DATABASE ICON */}
+            <Card className="border-2 border-[#077bc0]/20 hover:border-[#077bc0]/80 transition-all duration-300 group">
+              <div className="p-6 flex flex-col items-center text-center h-full" onClick={handleExportClick}>
+                <div className="bg-[#077bc0]/20 p-4 rounded-full mb-4 group-hover:bg-[#077bc0]/30 transition-all duration-300">
+                  <Database className="h-8 w-8 text-[#077bc0]" />
+                </div>
+                <h3 className="text-xl font-semibold mb-4">Export Data</h3>
+                <p className="text-gray-600 dark:text-gray-300 mb-6 flex-1">
+                  Simple, structured data file in .xlsx or .csv format
+                </p>
+                <Button onClick={handleExportClick} className="w-full bg-[#077bc0] hover:bg-[#077bc0]/90 text-white">
+                  Export Data
+                </Button>
+              </div>
+            </Card>
+
+            {/* Share Report Box - UNCHANGED */}
             <Card className="border-2 border-[#077bc0]/20 hover:border-[#077bc0]/80 transition-all duration-300 group">
               <div className="p-6 flex flex-col items-center text-center h-full">
                 <div className="bg-[#077bc0]/20 p-4 rounded-full mb-4 group-hover:bg-[#077bc0]/30 transition-all duration-300">
