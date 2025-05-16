@@ -125,7 +125,7 @@ const ShareReportDialog = ({
                   type="button"
                   variant={shareType === "iframe" ? "default" : "outline"}
                   onClick={() => setShareType("iframe")}
-                  className={`flex-1 ${shareType === "iframe" ? "bg-[#057cc1] hover:bg-[#057cc1]/90" : ""}`}
+                  className={`flex-1 ${shareType === "iframe" ? "bg-[#057cc1] hover:bg-[#057cc1]/90" : "hover:bg-[#f9fafb]"}`}
                 >
                   <Share2 className="mr-2 h-4 w-4" />
                   Embed Code
@@ -143,7 +143,7 @@ const ShareReportDialog = ({
                 type="button" 
                 variant="outline" 
                 onClick={() => onOpenChange(false)}
-                className="hover:bg-[#f3f5f7]"
+                className="hover:bg-[#f9fafb]"
               >
                 Cancel
               </Button>
