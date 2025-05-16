@@ -12,11 +12,13 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+
 const reportSchema = z.object({
   title: z.string().min(3, "Title must be at least 3 characters"),
   description: z.string().min(10, "Description must be at least 10 characters")
 });
 type ReportFormValues = z.infer<typeof reportSchema>;
+
 const Reports = () => {
   const {
     toast
@@ -66,8 +68,8 @@ const Reports = () => {
         <div className="container mx-auto px-4 md:px-6">
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
             <div>
-              <h1 className="text-3xl font-bold mb-2">Reports</h1>
-              <p className="text-gray-600 dark:text-gray-300">
+              <h1 className="text-2xl font-bold mb-2">Reports</h1>
+              <p className="text-base text-gray-600 dark:text-gray-300">
                 Create, manage, and share your sustainability reports
               </p>
             </div>
@@ -284,4 +286,5 @@ const Reports = () => {
       </Dialog>
     </div>;
 };
+
 export default Reports;
