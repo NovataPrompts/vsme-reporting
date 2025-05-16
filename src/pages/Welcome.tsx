@@ -1,10 +1,8 @@
-
 import React from 'react';
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { FileText, BarChart3, Upload } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-
 const Welcome = () => {
   const navigate = useNavigate();
   return <div className="min-h-screen flex flex-col">
@@ -12,9 +10,7 @@ const Welcome = () => {
         <div className="container mx-auto px-4 md:px-6">
           <div className="mb-6">
             <h1 className="text-2xl font-bold mb-2">Welcome to VSME Sustainability Reporting</h1>
-            <p className="text-base text-gray-600 dark:text-gray-300 max-w-2xl">
-              Complete these three steps to create your sustainability report following the VSME Standard.
-            </p>
+            <p className="text-base text-gray-600 dark:text-gray-300 max-w-2xl">Complete these three steps to create your VSME report.</p>
           </div>
           
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl mx-auto">
