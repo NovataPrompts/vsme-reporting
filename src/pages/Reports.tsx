@@ -1,10 +1,9 @@
-
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Search, PlusCircle, FileSpreadsheet, FileText, Share, ChevronDown, Link, Embed } from "lucide-react";
+import { Search, PlusCircle, FileSpreadsheet, FileText, Share, ChevronDown, Link, Share2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { Table, TableHeader, TableBody, TableHead, TableRow, TableCell } from "@/components/ui/table";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
@@ -397,7 +396,7 @@ const Reports = () => {
                     onClick={() => setShareType("iframe")}
                     className={`flex-1 ${shareType === "iframe" ? "bg-[#057cc1] hover:bg-[#057cc1]/90" : ""}`}
                   >
-                    <Embed className="mr-2 h-4 w-4" />
+                    <Share2 className="mr-2 h-4 w-4" />
                     Embed Code
                   </Button>
                 </div>
