@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { Logo } from "./header/Logo";
 import { DesktopNavigation } from "./header/DesktopNavigation";
@@ -5,11 +6,13 @@ import { MobileNavigation } from "./header/MobileNavigation";
 import { ImportButton } from "./header/ImportButton";
 import { MobileMenuToggle } from "./header/MobileMenuToggle";
 import { useLocation } from "react-router-dom";
+
 export const Header = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const location = useLocation();
   const isReportsPage = location.pathname === "/reports";
+  
   useEffect(() => {
     const handleScroll = () => {
       if (window.scrollY > 10) {
@@ -27,8 +30,24 @@ export const Header = () => {
     document.documentElement.classList.remove("dark");
     localStorage.setItem("theme", "light");
   }, []);
+  
   const toggleMobileMenu = () => {
     setMobileMenuOpen(!mobileMenuOpen);
   };
-  return;
+  
+  return (
+    <header className={`fixed top-0 inset-x-0 z-50 bg-white ${isScrolled ? 'shadow-md' : ''}`}>
+      <div className="container mx-auto px-4 md:px-6">
+        <div className="flex items-center justify-between h-16">
+          <Logo />
+          <DesktopNavigation />
+          <div className="flex items-center gap-2">
+            <ImportButton />
+            <MobileMenuToggle open={mobileMenuOpen} onClick={toggleMobileMenu} />
+          </div>
+        </div>
+      </div>
+      <MobileNavigation open={mobileMenuOpen} />
+    </header>
+  );
 };
