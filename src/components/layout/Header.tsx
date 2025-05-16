@@ -40,14 +40,14 @@ export const Header = () => {
       <div className="container mx-auto px-4 md:px-6">
         <div className="flex items-center justify-between h-16">
           <Logo />
-          <DesktopNavigation />
+          {!isReportsPage && <DesktopNavigation />}
           <div className="flex items-center gap-2">
-            <ImportButton />
-            <MobileMenuToggle isOpen={mobileMenuOpen} onToggle={toggleMobileMenu} />
+            {!isReportsPage && <ImportButton />}
+            {!isReportsPage && <MobileMenuToggle isOpen={mobileMenuOpen} onToggle={toggleMobileMenu} />}
           </div>
         </div>
       </div>
-      <MobileNavigation isOpen={mobileMenuOpen} onClose={toggleMobileMenu} />
+      {!isReportsPage && <MobileNavigation isOpen={mobileMenuOpen} onClose={toggleMobileMenu} />}
     </header>
   );
 };
