@@ -46,10 +46,13 @@ export const VSMEMetricsDropdown = ({
               <ChevronDown className="h-4 w-4" />
             </Button>
           </DropdownMenuTrigger>
-          <DropdownMenuContent align="start" alignOffset={-2} className="w-48">
+          <DropdownMenuContent align="start" alignOffset={-2} className="w-48 bg-white">
             <DropdownMenuItem 
               className="flex items-center gap-2 cursor-pointer hover:bg-[#f3f5f7]"
               onClick={() => navigate("/metrics/calculated")}
+              style={{ 
+                "&:hover": { backgroundColor: "#f3f5f7" } 
+              }}
             >
               <Calculator className="h-4 w-4" />
               <span>Calculated Metrics</span>
