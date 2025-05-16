@@ -1,15 +1,14 @@
-
 import { MetricsUpload } from "@/components/metrics/MetricsUpload";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { ArrowRight, ChevronRight } from "lucide-react";
 import { useToast } from "@/components/ui/use-toast";
 import { useNavigate } from "react-router-dom";
-
 const Import = () => {
-  const { toast } = useToast();
+  const {
+    toast
+  } = useToast();
   const navigate = useNavigate();
-  
   const handleLearnMore = (topic: string) => {
     toast({
       title: "Learn More",
@@ -17,7 +16,6 @@ const Import = () => {
       duration: 3000
     });
   };
-  
   return <div className="min-h-screen flex flex-col">
       <main className="flex-1 pt-12 pb-12">
         <div className="container mx-auto px-4 md:px-6">
@@ -35,20 +33,12 @@ const Import = () => {
               <MetricsUpload />
             </div>
             
-            <div>
-              <Card className="shadow-sm">
-                
-                
-              </Card>
-            </div>
+            
           </div>
           
           {/* Go to Step 2 button at bottom right */}
           <div className="mt-12 flex justify-end">
-            <Button 
-              onClick={() => navigate("/metrics")} 
-              className="bg-[#057cc0] hover:bg-[#057cc0]/90 text-white flex items-center gap-2"
-            >
+            <Button onClick={() => navigate("/metrics")} className="bg-[#057cc0] hover:bg-[#057cc0]/90 text-white flex items-center gap-2">
               Go to Step 2 <ChevronRight className="h-4 w-4" /> View Metrics
             </Button>
           </div>
@@ -56,5 +46,4 @@ const Import = () => {
       </main>
     </div>;
 };
-
 export default Import;
