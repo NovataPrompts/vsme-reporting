@@ -1,9 +1,10 @@
+
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Search, PlusCircle, FileSpreadsheet, FileText, Share, ChevronDown, Link, Share2 } from "lucide-react";
+import { Search, PlusCircle, FileSpreadsheet, FileText, Share, ChevronDown, Link, Share2, Edit, Trash2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { Table, TableHeader, TableBody, TableHead, TableRow, TableCell } from "@/components/ui/table";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
@@ -183,8 +184,9 @@ const Reports = () => {
                       <TableRow>
                         <TableHead>Title</TableHead>
                         <TableHead>Description</TableHead>
-                        <TableHead>Date</TableHead>
+                        <TableHead>Date Created</TableHead>
                         <TableHead>Status</TableHead>
+                        <TableHead className="w-24">Actions</TableHead>
                       </TableRow>
                     </TableHeader>
                     <TableBody>
@@ -208,8 +210,9 @@ const Reports = () => {
                       <TableRow>
                         <TableHead>Title</TableHead>
                         <TableHead>Description</TableHead>
-                        <TableHead>Date</TableHead>
+                        <TableHead>Date Created</TableHead>
                         <TableHead>Status</TableHead>
+                        <TableHead className="w-24">Actions</TableHead>
                       </TableRow>
                     </TableHeader>
                     <TableBody>
@@ -232,8 +235,9 @@ const Reports = () => {
                       <TableRow>
                         <TableHead>Title</TableHead>
                         <TableHead>Description</TableHead>
-                        <TableHead>Date</TableHead>
+                        <TableHead>Date Created</TableHead>
                         <TableHead>Status</TableHead>
+                        <TableHead className="w-24">Actions</TableHead>
                       </TableRow>
                     </TableHeader>
                     <TableBody>
@@ -256,8 +260,9 @@ const Reports = () => {
                       <TableRow>
                         <TableHead>Title</TableHead>
                         <TableHead>Description</TableHead>
-                        <TableHead>Date</TableHead>
+                        <TableHead>Date Created</TableHead>
                         <TableHead>Status</TableHead>
+                        <TableHead className="w-24">Actions</TableHead>
                       </TableRow>
                     </TableHeader>
                     <TableBody>
