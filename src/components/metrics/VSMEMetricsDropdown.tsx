@@ -46,7 +46,7 @@ export const VSMEMetricsDropdown = ({
               <ChevronDown className="h-4 w-4" />
             </Button>
           </DropdownMenuTrigger>
-          <DropdownMenuContent align="end" className="w-48">
+          <DropdownMenuContent align="start" alignOffset={-2} className="w-48">
             <DropdownMenuItem 
               className="flex items-center gap-2 cursor-pointer"
               onClick={() => navigate("/metrics/calculated")}
