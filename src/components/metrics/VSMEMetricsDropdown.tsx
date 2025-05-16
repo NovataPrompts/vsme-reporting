@@ -27,7 +27,7 @@ export const VSMEMetricsDropdown = () => {
       
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
-          <Button variant="outline" className="flex items-center gap-2 bg-[#057cc1] text-white hover:bg-white hover:text-[#057cc1] border-[#057cc1] focus:ring-0 focus:ring-offset-0 focus-visible:ring-0 focus-visible:outline-none">
+          <Button variant="outline" className="flex items-center gap-2 rounded-full bg-slate-100 hover:bg-slate-200 text-[#057cc1] border-[#057cc1] focus:ring-0 focus:ring-offset-0 focus-visible:ring-0 focus-visible:outline-none">
             <span>More Options</span>
             <ChevronDown className="h-4 w-4" />
           </Button>
