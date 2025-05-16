@@ -1,10 +1,23 @@
-
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Search, PlusCircle, FileSpreadsheet, FileText, Share, ChevronDown, Link, Share2, Edit, Trash2 } from "lucide-react";
+import { 
+  Search, 
+  PlusCircle, 
+  FileSpreadsheet, 
+  FileText, 
+  Share, 
+  ChevronDown, 
+  Link, 
+  Share2, 
+  Edit, 
+  Trash2,
+  ArrowDownFromLine,
+  File,
+  LetterText
+} from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { Table, TableHeader, TableBody, TableHead, TableRow, TableCell } from "@/components/ui/table";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
@@ -100,9 +113,72 @@ const Reports = () => {
     shareForm.reset();
   };
   
+  // Sample data for demonstration - this would come from your API or state management
+  const sampleReports = [
+    { 
+      id: "1", 
+      title: "Annual Sustainability Report 2023", 
+      description: "Comprehensive overview of our sustainability initiatives for 2023",
+      dateCreated: "2023-12-15",
+      status: "Published"
+    },
+    { 
+      id: "2", 
+      title: "Q2 Carbon Emissions Report", 
+      description: "Detailed analysis of Q2 carbon emissions data",
+      dateCreated: "2024-04-10",
+      status: "Draft"
+    },
+    { 
+      id: "3", 
+      title: "Supply Chain Assessment", 
+      description: "Environmental impact assessment of our supply chain",
+      dateCreated: "2024-03-22",
+      status: "Published"
+    }
+  ];
+  
+  const handleActionClick = (action: string, reportId: string) => {
+    const report = sampleReports.find(r => r.id === reportId);
+    
+    switch(action) {
+      case 'pdf':
+        toast({
+          title: "Downloading PDF",
+          description: `${report?.title} is being downloaded as a PDF.`,
+          duration: 3000
+        });
+        break;
+      case 'google':
+        toast({
+          title: "Opening in Google Docs",
+          description: `${report?.title} is being opened in Google Docs.`,
+          duration: 3000
+        });
+        break;
+      case 'word':
+        toast({
+          title: "Downloading Word Document",
+          description: `${report?.title} is being downloaded as a Word document.`,
+          duration: 3000
+        });
+        break;
+      case 'share':
+        setShareDialogOpen(true);
+        shareForm.setValue('reportId', reportId);
+        break;
+      case 'embed':
+        setShareDialogOpen(true);
+        setShareType("iframe");
+        shareForm.setValue('reportId', reportId);
+        break;
+    }
+  };
+  
   return <div className="min-h-screen flex flex-col">
       <main className="flex-1 pt-12 pb-12">
         <div className="container mx-auto px-4 md:px-6">
+          
           <div className="mb-8">
             <h1 className="text-2xl font-bold mb-2">Reports</h1>
             <p className="text-base text-gray-600 dark:text-gray-300">
@@ -190,14 +266,71 @@ const Reports = () => {
                       </TableRow>
                     </TableHeader>
                     <TableBody>
-                      {/* Empty table body - no rows */}
+                      {sampleReports.length > 0 ? (
+                        sampleReports.map(report => (
+                          <TableRow key={report.id}>
+                            <TableCell>{report.title}</TableCell>
+                            <TableCell>{report.description}</TableCell>
+                            <TableCell>{report.dateCreated}</TableCell>
+                            <TableCell>{report.status}</TableCell>
+                            <TableCell>
+                              <div className="action-buttons flex space-x-1 justify-end">
+                                <Button 
+                                  onClick={() => handleActionClick('pdf', report.id)}
+                                  variant="action"
+                                  size="actionIcon"
+                                  title="Download PDF"
+                                >
+                                  <ArrowDownFromLine className="h-full w-full" />
+                                </Button>
+                                <Button 
+                                  onClick={() => handleActionClick('google', report.id)}
+                                  variant="action"
+                                  size="actionIcon"
+                                  title="Open in Google Docs"
+                                >
+                                  <File className="h-full w-full" />
+                                </Button>
+                                <Button 
+                                  onClick={() => handleActionClick('word', report.id)}
+                                  variant="action"
+                                  size="actionIcon"
+                                  title="Download Word Document"
+                                >
+                                  <LetterText className="h-full w-full" />
+                                </Button>
+                                <Button 
+                                  onClick={() => handleActionClick('share', report.id)}
+                                  variant="action" 
+                                  size="actionIcon"
+                                  title="Share Link"
+                                >
+                                  <Link className="h-full w-full" />
+                                </Button>
+                                <Button 
+                                  onClick={() => handleActionClick('embed', report.id)}
+                                  variant="action"
+                                  size="actionIcon"
+                                  title="Embed Code"
+                                >
+                                  <Share2 className="h-full w-full" />
+                                </Button>
+                              </div>
+                            </TableCell>
+                          </TableRow>
+                        ))
+                      ) : (
+                        <TableRow>
+                          <TableCell colSpan={5}>
+                            <div className="text-center py-8 text-gray-500">
+                              <p>No reports available</p>
+                              <p className="text-sm mt-2">Create your first report to get started</p>
+                            </div>
+                          </TableCell>
+                        </TableRow>
+                      )}
                     </TableBody>
                   </Table>
-                  
-                  <div className="text-center py-8 text-gray-500">
-                    <p>No reports available</p>
-                    <p className="text-sm mt-2">Create your first report to get started</p>
-                  </div>
                 </CardContent>
               </Card>
             </TabsContent>
@@ -216,13 +349,70 @@ const Reports = () => {
                       </TableRow>
                     </TableHeader>
                     <TableBody>
-                      {/* Empty table body - no rows */}
+                      {sampleReports.filter(r => r.status === 'Published').length > 0 ? (
+                        sampleReports.filter(r => r.status === 'Published').map(report => (
+                          <TableRow key={report.id}>
+                            <TableCell>{report.title}</TableCell>
+                            <TableCell>{report.description}</TableCell>
+                            <TableCell>{report.dateCreated}</TableCell>
+                            <TableCell>{report.status}</TableCell>
+                            <TableCell>
+                              <div className="action-buttons flex space-x-1 justify-end">
+                                <Button 
+                                  onClick={() => handleActionClick('pdf', report.id)}
+                                  variant="action"
+                                  size="actionIcon"
+                                  title="Download PDF"
+                                >
+                                  <ArrowDownFromLine className="h-full w-full" />
+                                </Button>
+                                <Button 
+                                  onClick={() => handleActionClick('google', report.id)}
+                                  variant="action"
+                                  size="actionIcon"
+                                  title="Open in Google Docs"
+                                >
+                                  <File className="h-full w-full" />
+                                </Button>
+                                <Button 
+                                  onClick={() => handleActionClick('word', report.id)}
+                                  variant="action"
+                                  size="actionIcon"
+                                  title="Download Word Document"
+                                >
+                                  <LetterText className="h-full w-full" />
+                                </Button>
+                                <Button 
+                                  onClick={() => handleActionClick('share', report.id)}
+                                  variant="action" 
+                                  size="actionIcon"
+                                  title="Share Link"
+                                >
+                                  <Link className="h-full w-full" />
+                                </Button>
+                                <Button 
+                                  onClick={() => handleActionClick('embed', report.id)}
+                                  variant="action"
+                                  size="actionIcon"
+                                  title="Embed Code"
+                                >
+                                  <Share2 className="h-full w-full" />
+                                </Button>
+                              </div>
+                            </TableCell>
+                          </TableRow>
+                        ))
+                      ) : (
+                        <TableRow>
+                          <TableCell colSpan={5}>
+                            <div className="text-center py-8 text-gray-500">
+                              <p>No published reports available</p>
+                            </div>
+                          </TableCell>
+                        </TableRow>
+                      )}
                     </TableBody>
                   </Table>
-                  
-                  <div className="text-center py-8 text-gray-500">
-                    <p>No published reports available</p>
-                  </div>
                 </CardContent>
               </Card>
             </TabsContent>
@@ -241,13 +431,70 @@ const Reports = () => {
                       </TableRow>
                     </TableHeader>
                     <TableBody>
-                      {/* Empty table body - no rows */}
+                      {sampleReports.filter(r => r.status === 'Draft').length > 0 ? (
+                        sampleReports.filter(r => r.status === 'Draft').map(report => (
+                          <TableRow key={report.id}>
+                            <TableCell>{report.title}</TableCell>
+                            <TableCell>{report.description}</TableCell>
+                            <TableCell>{report.dateCreated}</TableCell>
+                            <TableCell>{report.status}</TableCell>
+                            <TableCell>
+                              <div className="action-buttons flex space-x-1 justify-end">
+                                <Button 
+                                  onClick={() => handleActionClick('pdf', report.id)}
+                                  variant="action"
+                                  size="actionIcon"
+                                  title="Download PDF"
+                                >
+                                  <ArrowDownFromLine className="h-full w-full" />
+                                </Button>
+                                <Button 
+                                  onClick={() => handleActionClick('google', report.id)}
+                                  variant="action"
+                                  size="actionIcon"
+                                  title="Open in Google Docs"
+                                >
+                                  <File className="h-full w-full" />
+                                </Button>
+                                <Button 
+                                  onClick={() => handleActionClick('word', report.id)}
+                                  variant="action"
+                                  size="actionIcon"
+                                  title="Download Word Document"
+                                >
+                                  <LetterText className="h-full w-full" />
+                                </Button>
+                                <Button 
+                                  onClick={() => handleActionClick('share', report.id)}
+                                  variant="action" 
+                                  size="actionIcon"
+                                  title="Share Link"
+                                >
+                                  <Link className="h-full w-full" />
+                                </Button>
+                                <Button 
+                                  onClick={() => handleActionClick('embed', report.id)}
+                                  variant="action"
+                                  size="actionIcon"
+                                  title="Embed Code"
+                                >
+                                  <Share2 className="h-full w-full" />
+                                </Button>
+                              </div>
+                            </TableCell>
+                          </TableRow>
+                        ))
+                      ) : (
+                        <TableRow>
+                          <TableCell colSpan={5}>
+                            <div className="text-center py-8 text-gray-500">
+                              <p>No draft reports available</p>
+                            </div>
+                          </TableCell>
+                        </TableRow>
+                      )}
                     </TableBody>
                   </Table>
-                  
-                  <div className="text-center py-8 text-gray-500">
-                    <p>No draft reports available</p>
-                  </div>
                 </CardContent>
               </Card>
             </TabsContent>
@@ -266,13 +513,70 @@ const Reports = () => {
                       </TableRow>
                     </TableHeader>
                     <TableBody>
-                      {/* Empty table body - no rows */}
+                      {sampleReports.filter(r => r.status === 'Archived').length > 0 ? (
+                        sampleReports.filter(r => r.status === 'Archived').map(report => (
+                          <TableRow key={report.id}>
+                            <TableCell>{report.title}</TableCell>
+                            <TableCell>{report.description}</TableCell>
+                            <TableCell>{report.dateCreated}</TableCell>
+                            <TableCell>{report.status}</TableCell>
+                            <TableCell>
+                              <div className="action-buttons flex space-x-1 justify-end">
+                                <Button 
+                                  onClick={() => handleActionClick('pdf', report.id)}
+                                  variant="action"
+                                  size="actionIcon"
+                                  title="Download PDF"
+                                >
+                                  <ArrowDownFromLine className="h-full w-full" />
+                                </Button>
+                                <Button 
+                                  onClick={() => handleActionClick('google', report.id)}
+                                  variant="action"
+                                  size="actionIcon"
+                                  title="Open in Google Docs"
+                                >
+                                  <File className="h-full w-full" />
+                                </Button>
+                                <Button 
+                                  onClick={() => handleActionClick('word', report.id)}
+                                  variant="action"
+                                  size="actionIcon"
+                                  title="Download Word Document"
+                                >
+                                  <LetterText className="h-full w-full" />
+                                </Button>
+                                <Button 
+                                  onClick={() => handleActionClick('share', report.id)}
+                                  variant="action" 
+                                  size="actionIcon"
+                                  title="Share Link"
+                                >
+                                  <Link className="h-full w-full" />
+                                </Button>
+                                <Button 
+                                  onClick={() => handleActionClick('embed', report.id)}
+                                  variant="action"
+                                  size="actionIcon"
+                                  title="Embed Code"
+                                >
+                                  <Share2 className="h-full w-full" />
+                                </Button>
+                              </div>
+                            </TableCell>
+                          </TableRow>
+                        ))
+                      ) : (
+                        <TableRow>
+                          <TableCell colSpan={5}>
+                            <div className="text-center py-8 text-gray-500">
+                              <p>No archived reports available</p>
+                            </div>
+                          </TableCell>
+                        </TableRow>
+                      )}
                     </TableBody>
                   </Table>
-                  
-                  <div className="text-center py-8 text-gray-500">
-                    <p>No archived reports available</p>
-                  </div>
                 </CardContent>
               </Card>
             </TabsContent>
