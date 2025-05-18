@@ -46,13 +46,22 @@ const ReportStatusDropdown = ({
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="start" className="bg-white">
-        <DropdownMenuItem onClick={() => onStatusChange(reportId, 'Draft')}>
+        <DropdownMenuItem 
+          onClick={() => onStatusChange(reportId, 'Draft')}
+          className="hover:bg-[#057cc1] hover:text-white"
+        >
           Draft
         </DropdownMenuItem>
-        <DropdownMenuItem onClick={() => onStatusChange(reportId, 'Published')}>
+        <DropdownMenuItem 
+          onClick={() => onStatusChange(reportId, 'Published')}
+          className="hover:bg-[#057cc1] hover:text-white"
+        >
           Published
         </DropdownMenuItem>
-        <DropdownMenuItem onClick={() => onStatusChange(reportId, 'Archived')}>
+        <DropdownMenuItem 
+          onClick={() => onStatusChange(reportId, 'Archived')}
+          className="hover:bg-[#057cc1] hover:text-white"
+        >
           Archived
         </DropdownMenuItem>
       </DropdownMenuContent>
