@@ -1,5 +1,4 @@
-
-import { RotateCcw, RefreshCcwDot } from 'lucide-react';
+import { CirclePercent, Factory, HandShake, HeartPlus, RefreshCcwDot, UsersRound } from 'lucide-react';
 
 const PersonStanding = () => null;
 const Gauge = () => null;
@@ -23,7 +22,7 @@ export const metrics: Metric[] = [
     id: 1,
     title: "Gender Diversity Ratio (VSME.C5.60)",
     value: "3:1 (75%)",
-    icon: PersonStanding,
+    icon: HandShake,
     reference: "VSME.C5.60",
     description: "Measures the gender balance across the organization's workforce.",
     calculationMethod: "Ratio of female to male employees, calculated by total headcount.",
@@ -33,7 +32,7 @@ export const metrics: Metric[] = [
     id: 2,
     title: "GHG Intensity (VSME.B3.31)",
     value: "3.2 tCO₂e/M€",
-    icon: Gauge,
+    icon: Factory,
     reference: "VSME.B3.31",
     description: "Measures greenhouse gas emissions relative to revenue.",
     calculationMethod: "Total greenhouse gas emissions divided by total revenue in millions of euros.",
@@ -53,7 +52,7 @@ export const metrics: Metric[] = [
     id: 4,
     title: "Rate of Work-Related Accidents (VSME.B9.41a)",
     value: "2.1%",
-    icon: AlertTriangle,
+    icon: HeartPlus,
     reference: "VSME.B9.41a",
     description: "Frequency of work-related accidents within the organization.",
     calculationMethod: "Number of work-related accidents divided by total employee hours worked, multiplied by 200,000.",
@@ -63,7 +62,7 @@ export const metrics: Metric[] = [
     id: 5,
     title: "Unadjusted Gender Pay Gap (VSME.B10.42.b)",
     value: "23.4%",
-    icon: Users,
+    icon: UsersRound,
     reference: "VSME.B10.42.b",
     description: "Difference in average earnings between men and women in the organization.",
     calculationMethod: "Median earnings of men minus median earnings of women, divided by median earnings of men.",
@@ -73,7 +72,7 @@ export const metrics: Metric[] = [
     id: 6,
     title: "Board Gender Ratio (VSME.C9.65)",
     value: "7:3 (70%:30%)",
-    icon: UserSquare2,
+    icon: CirclePercent,
     reference: "VSME.C9.65",
     description: "Gender composition of the organization's board of directors.",
     calculationMethod: "Proportion of board members by gender, calculated by total board headcount.",
@@ -89,4 +88,3 @@ export const emissionsData = [
 
 // Updated colors as requested
 export const COLORS = ['#00344d', '#008099', '#539db5'];
-

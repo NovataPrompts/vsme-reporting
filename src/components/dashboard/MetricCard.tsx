@@ -25,8 +25,8 @@ export const MetricCard = ({ metric }: { metric: Metric }) => {
     navigate(`/metric/${metric.id}`);
   };
 
-  // Explicitly type the icon component to accept standard props
-  const IconComponent = metric.icon as React.ComponentType<IconProps>;
+  // Get the icon component
+  const IconComponent = metric.icon;
 
   return (
     <div 
@@ -36,7 +36,7 @@ export const MetricCard = ({ metric }: { metric: Metric }) => {
     >
       <div className="flex items-center gap-4">
         <div className="h-16 w-16 flex items-center justify-center">
-          {/* Use the IconComponent with explicit typing */}
+          {/* Render the icon component */}
           <IconComponent className="h-8 w-8" />
         </div>
         <div>
