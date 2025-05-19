@@ -35,7 +35,7 @@ export const MetricCard = ({ metric }: { metric: Metric }) => {
       onClick={handleMetricClick}
     >
       <div className="flex items-center gap-4">
-        <div className="h-16 w-16 flex items-center justify-center rounded-full bg-[#e3ecec] dark:bg-white/10 border border-[#008099]/30 dark:border-white/20 group-hover:bg-[#d8f225] group-hover:border-[#d8f225] transition-colors duration-300">
+        <div className="h-16 w-16 flex items-center justify-center">
           {/* Use the IconComponent with explicit typing */}
           <IconComponent className="h-8 w-8" />
         </div>
@@ -47,7 +47,7 @@ export const MetricCard = ({ metric }: { metric: Metric }) => {
       
       <div className="absolute bottom-3 right-3">
         <div 
-          className="p-1.5 rounded-full bg-white/80 dark:bg-gray-800/80 hover:bg-[#d8f225] cursor-pointer transition-colors duration-300 flex items-center justify-center"
+          className="p-1.5 rounded-full bg-white/80 dark:bg-gray-800/80 hover:bg-white cursor-pointer transition-colors duration-300 flex items-center justify-center"
           onClick={(e) => {
             e.stopPropagation();
             navigate("/metrics/calculated");

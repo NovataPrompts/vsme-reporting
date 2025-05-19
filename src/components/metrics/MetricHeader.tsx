@@ -34,7 +34,7 @@ export const MetricHeader = ({ icon: Icon, title, reference, titleColor = '#0080
       </div>
 
       <CardHeader className="flex flex-row items-center gap-4">
-        <div className="h-16 w-16 flex items-center justify-center rounded-full bg-[#d8f225] border border-[#d8f225] text-[#00344d]">
+        <div className="h-16 w-16 flex items-center justify-center rounded-full bg-[#e3ecec] border border-[#008099]/30 text-[#00344d]">
           <Icon />
         </div>
         <div>
