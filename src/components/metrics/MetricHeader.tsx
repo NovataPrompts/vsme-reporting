@@ -25,7 +25,7 @@ export const MetricHeader = ({ icon: Icon, title, reference, titleColor = '#0080
       <div className="flex items-center mb-6">
         <Button 
           variant="ghost" 
-          className="mr-2 hover:bg-opacity-10 hover:bg-gray-400" 
+          className="mr-2 hover:bg-gray-200 dark:hover:bg-gray-700" 
           onClick={() => navigate("/metrics/calculated")}
         >
           <ArrowLeft className="h-4 w-4 mr-2" />
