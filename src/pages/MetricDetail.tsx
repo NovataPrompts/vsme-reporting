@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { Header } from "@/components/layout/Header";
@@ -75,8 +76,8 @@ const MetricDetail = () => {
             <CardContent>
               {/* Display calculation result in a prominent box if available */}
               {hasMetricCalculator && calculatedValue && calculatedValue !== "Invalid input" && calculatedValue !== "Error in calculation" && (
-                <Alert className="mb-6 bg-[#539db5]/10 border-[#d8f225]">
-                  <AlertTitle className="text-4xl font-bold text-[#d8f225]">
+                <Alert className="mb-6 bg-[#539db5]/10 border-[#077bc0]">
+                  <AlertTitle className="text-4xl font-bold text-[#077bc0]">
                     {calculatedValue}
                   </AlertTitle>
                   {calculationTimestamp && (

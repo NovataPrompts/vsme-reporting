@@ -31,7 +31,7 @@ export const MetricDetails = ({
       {/* Only show the default value if it's NOT a calculator metric or if a value has been calculated */}
       {!isCalculatorMetric && (
         <div className="mt-2 mb-2">
-          <p className="text-3xl font-bold text-[#d8f225]">
+          <p className="text-3xl font-bold text-[#077bc0]">
             {value}
           </p>
         </div>
@@ -39,7 +39,7 @@ export const MetricDetails = ({
       
       {isCalculatorMetric && calculatedValue && (
         <div className="mt-2 mb-2">
-          <p className="text-3xl font-bold text-[#d8f225]">
+          <p className="text-3xl font-bold text-[#077bc0]">
             {calculatedValue}
           </p>
         </div>

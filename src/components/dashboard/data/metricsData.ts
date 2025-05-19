@@ -27,7 +27,7 @@ export const metrics: Metric[] = [
     reference: "VSME.C5.60",
     description: "Measures the gender balance across the organization's workforce.",
     calculationMethod: "Ratio of female to male employees, calculated by total headcount.",
-    titleColor: "#00f5f3"
+    titleColor: "#077bc0"
   },
   {
     id: 2,
@@ -37,7 +37,7 @@ export const metrics: Metric[] = [
     reference: "VSME.B3.31",
     description: "Measures greenhouse gas emissions relative to revenue.",
     calculationMethod: "Total greenhouse gas emissions divided by total revenue in millions of euros.",
-    titleColor: "#00f5f3"
+    titleColor: "#077bc0"
   },
   {
     id: 3,
@@ -47,7 +47,7 @@ export const metrics: Metric[] = [
     reference: "VSME.B8.40",
     description: "Percentage of employees who leave the organization in a given period.",
     calculationMethod: "Number of employees who left divided by total number of employees, multiplied by 100.",
-    titleColor: "#00f5f3"
+    titleColor: "#077bc0"
   },
   {
     id: 4,
@@ -57,7 +57,7 @@ export const metrics: Metric[] = [
     reference: "VSME.B9.41a",
     description: "Frequency of work-related accidents within the organization.",
     calculationMethod: "Number of work-related accidents divided by total employee hours worked, multiplied by 200,000.",
-    titleColor: "#00f5f3"
+    titleColor: "#077bc0"
   },
   {
     id: 5,
@@ -67,7 +67,7 @@ export const metrics: Metric[] = [
     reference: "VSME.B10.42.b",
     description: "Difference in average earnings between men and women in the organization.",
     calculationMethod: "Median earnings of men minus median earnings of women, divided by median earnings of men.",
-    titleColor: "#00f5f3"
+    titleColor: "#077bc0"
   },
   {
     id: 6,
@@ -77,7 +77,7 @@ export const metrics: Metric[] = [
     reference: "VSME.C9.65",
     description: "Gender composition of the organization's board of directors.",
     calculationMethod: "Proportion of board members by gender, calculated by total board headcount.",
-    titleColor: "#00f5f3"
+    titleColor: "#077bc0"
   }
 ];
 

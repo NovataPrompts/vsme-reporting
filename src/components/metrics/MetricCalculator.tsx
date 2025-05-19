@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { Calculator, Check } from "lucide-react";
 import { Label } from "@/components/ui/label";
@@ -146,7 +147,7 @@ export const MetricCalculator = ({
             {!isAddedToMetrics ? (
               <Button 
                 onClick={handleAddToMetrics}
-                className="ml-4 bg-[#d8f225] hover:bg-[#c6e01d] text-[#00344d] font-medium"
+                className="ml-4 bg-[#077bc0] hover:bg-[#056aa6] text-white font-medium"
               >
                 Add to Metrics
               </Button>
@@ -166,7 +167,7 @@ export const MetricCalculator = ({
         </div>
       )}
       
-      <div className="mt-4 p-3 bg-[#d8f225] border border-[#008099]/60 rounded text-md text-[#00344d] font-medium">
+      <div className="mt-4 p-3 bg-[#077bc0] border border-[#008099]/60 rounded text-md text-white font-medium">
         <p className="text-center">Formula: <span className="font-bold">{config.formulaDescription}</span></p>
       </div>
     </div>
