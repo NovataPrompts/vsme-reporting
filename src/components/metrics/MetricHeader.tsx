@@ -4,9 +4,10 @@ import { Button } from "@/components/ui/button";
 import { ArrowLeft } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { CardHeader, CardTitle } from "@/components/ui/card";
+import { LucideIcon } from "lucide-react";
 
 interface MetricHeaderProps {
-  icon: React.ElementType;
+  icon: LucideIcon;  // Updated to LucideIcon type
   title: string;
   reference: string;
   titleColor?: string;
@@ -55,3 +56,4 @@ export const MetricHeader = ({ icon: Icon, title, reference, titleColor = '#0080
     </>
   );
 };
+

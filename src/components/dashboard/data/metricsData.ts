@@ -1,5 +1,6 @@
 
 import { CirclePercent, Factory, Handshake, HeartPulse, RefreshCcwDot, UsersRound } from 'lucide-react';
+import { LucideIcon } from 'lucide-react';
 
 const PersonStanding = () => null;
 const Gauge = () => null;
@@ -11,7 +12,7 @@ export interface Metric {
   id: number;
   title: string;
   value: string;
-  icon: React.FC;
+  icon: LucideIcon;  // Updated type to LucideIcon which properly supports props
   reference: string;
   description: string;
   calculationMethod: string;
@@ -89,3 +90,4 @@ export const emissionsData = [
 
 // Updated colors as requested
 export const COLORS = ['#00344d', '#008099', '#539db5'];
+

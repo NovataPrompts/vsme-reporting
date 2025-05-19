@@ -1,8 +1,8 @@
 
 import React from 'react';
-import { Calculator } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { Metric } from "./data/metricsData";
+import { Calculator } from "lucide-react";
 
 export const MetricCard = ({ metric }: { metric: Metric }) => {
   const navigate = useNavigate();
@@ -32,7 +32,7 @@ export const MetricCard = ({ metric }: { metric: Metric }) => {
     >
       <div className="flex items-center gap-4">
         <div className="h-16 w-16 flex items-center justify-center">
-          {/* Fix: Cast the IconComponent to a JSX element with the props properly typed */}
+          {/* Now the IconComponent properly accepts these props */}
           <IconComponent strokeWidth={1.5} size={32} className="text-[#008099] dark:text-white" />
         </div>
         <div>
@@ -56,3 +56,4 @@ export const MetricCard = ({ metric }: { metric: Metric }) => {
     </div>
   );
 };
+
