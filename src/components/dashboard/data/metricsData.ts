@@ -1,4 +1,5 @@
-import { CirclePercent, Factory, HandShake, HeartPlus, RefreshCcwDot, UsersRound } from 'lucide-react';
+
+import { CirclePercent, Factory, Handshake, HeartPulse, RefreshCcwDot, UsersRound } from 'lucide-react';
 
 const PersonStanding = () => null;
 const Gauge = () => null;
@@ -22,7 +23,7 @@ export const metrics: Metric[] = [
     id: 1,
     title: "Gender Diversity Ratio (VSME.C5.60)",
     value: "3:1 (75%)",
-    icon: HandShake,
+    icon: Handshake,
     reference: "VSME.C5.60",
     description: "Measures the gender balance across the organization's workforce.",
     calculationMethod: "Ratio of female to male employees, calculated by total headcount.",
@@ -52,7 +53,7 @@ export const metrics: Metric[] = [
     id: 4,
     title: "Rate of Work-Related Accidents (VSME.B9.41a)",
     value: "2.1%",
-    icon: HeartPlus,
+    icon: HeartPulse,
     reference: "VSME.B9.41a",
     description: "Frequency of work-related accidents within the organization.",
     calculationMethod: "Number of work-related accidents divided by total employee hours worked, multiplied by 200,000.",
