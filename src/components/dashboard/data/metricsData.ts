@@ -1,3 +1,4 @@
+
 import { RotateCcw, RefreshCcwDot } from 'lucide-react';
 
 const PersonStanding = () => null;
@@ -86,4 +87,6 @@ export const emissionsData = [
   { name: 'Scope 3', value: 1595 },
 ];
 
-export const COLORS = ['#00f5f3', '#d8f225', '#539db5'];
+// Updated colors as requested
+export const COLORS = ['#00344d', '#008099', '#539db5'];
+
