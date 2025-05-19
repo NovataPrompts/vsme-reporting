@@ -1,5 +1,4 @@
 
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft } from "lucide-react";
 import { useNavigate } from "react-router-dom";
@@ -45,15 +44,9 @@ export const MetricHeader = ({ icon: Icon, title, reference, titleColor = '#0080
           >
             {cleanTitle}
           </CardTitle>
-          <Badge 
-            variant="outline" 
-            className="mt-2 text-lg px-3 py-1 bg-[#e3ecec] border-[#008099]/30 text-[#008099]"
-          >
-            {reference}
-          </Badge>
+          <p className="mt-2 text-[#00344d] text-lg font-medium">{reference}</p>
         </div>
       </CardHeader>
     </>
   );
 };
-

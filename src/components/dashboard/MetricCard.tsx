@@ -32,12 +32,12 @@ export const MetricCard = ({ metric }: { metric: Metric }) => {
     >
       <div className="flex items-center gap-4">
         <div className="h-16 w-16 flex items-center justify-center">
-          {/* Now the IconComponent properly accepts these props */}
           <IconComponent strokeWidth={1.5} size={32} className="text-[#008099] dark:text-white" />
         </div>
         <div>
           <p className="text-xl font-medium text-[#00344d] dark:text-white/80 group-hover:text-[#00344d]">{mainTitle}</p>
           <p className="text-2xl font-semibold text-[#008099] dark:text-white mt-1 group-hover:text-[#00344d]">{mainValue}</p>
+          <p className="text-sm text-[#00344d] dark:text-white/60 mt-0.5">{metric.reference}</p>
         </div>
       </div>
       
@@ -56,4 +56,3 @@ export const MetricCard = ({ metric }: { metric: Metric }) => {
     </div>
   );
 };
-
