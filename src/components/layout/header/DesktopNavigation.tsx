@@ -5,7 +5,7 @@ export const DesktopNavigation = () => {
   return (
     <nav className="hidden md:flex items-center space-x-1">
       <NavLink 
-        to="/" 
+        to="/welcome" 
         className={({ isActive }) => `px-4 py-2 rounded-md transition-all-ease ${
           isActive 
             ? "text-secondary font-medium" 

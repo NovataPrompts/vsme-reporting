@@ -23,7 +23,7 @@ export const MobileNavigation = ({ isOpen, onClose }: MobileNavigationProps) => 
     <div className="md:hidden glass-panel mt-2 py-4 animate-slideUp">
       <nav className="flex flex-col space-y-2 px-4">
         <NavLink 
-          to="/" 
+          to="/welcome" 
           className={({ isActive }) => `px-4 py-2 rounded-md transition-all-ease ${
             isActive 
               ? "text-secondary font-medium" 

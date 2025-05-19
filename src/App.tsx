@@ -3,9 +3,8 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { ProtectedRoute } from "./components/auth/ProtectedRoute";
-import Index from "./pages/Index";
 import Dashboard from "./pages/Dashboard";
 import Reports from "./pages/Reports";
 import Metrics from "./pages/Metrics";
@@ -27,11 +26,7 @@ const App = () => (
         <Routes>
           <Route 
             path="/" 
-            element={
-              <ProtectedRoute>
-                <Index />
-              </ProtectedRoute>
-            } 
+            element={<Navigate to="/welcome" replace />} 
           />
           <Route 
             path="/welcome" 
