@@ -1,6 +1,6 @@
 
 import { useState } from "react";
-import { Calculator, Check } from "lucide-react";
+import { Calculator, Check, Save } from "lucide-react";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -140,21 +140,22 @@ export const MetricCalculator = ({
           Calculate
         </Button>
         
+        <Button
+          onClick={handleAddToMetrics}
+          disabled={!calculatedValue || calculatedValue === "Invalid input" || calculatedValue === "Error in calculation" || isAddedToMetrics}
+          className="bg-[#077bc0] hover:bg-[#056aa6] text-white font-medium"
+        >
+          <Save className="mr-2 h-4 w-4" /> Save to Metrics
+        </Button>
+        
         {calculatedValue && calculatedValue !== "Invalid input" && calculatedValue !== "Error in calculation" && (
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 ml-2">
             <span className="text-xl font-bold text-[#008099]">{calculatedValue}</span>
             
-            {!isAddedToMetrics ? (
-              <Button 
-                onClick={handleAddToMetrics}
-                className="ml-4 bg-[#077bc0] hover:bg-[#056aa6] text-white font-medium"
-              >
-                Add to Metrics
-              </Button>
-            ) : (
-              <div className="flex items-center gap-1 ml-4">
+            {isAddedToMetrics && (
+              <div className="flex items-center gap-1 ml-2">
                 <Check className="h-5 w-5 text-green-600" />
-                <span className="text-green-600 font-medium">Added to metrics</span>
+                <span className="text-green-600 font-medium">Saved to metrics</span>
               </div>
             )}
           </div>
