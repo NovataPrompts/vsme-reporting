@@ -25,7 +25,7 @@ export const VSMEMetricsTabs = ({
       <TabsList className="flex flex-wrap">
         {topics.map(topic => (
           <TabsTrigger key={topic} value={getTabId(topic)} className="whitespace-nowrap">
-            {topic}
+            {topic.replace("Enviornment", "Environment")}
           </TabsTrigger>
         ))}
       </TabsList>
