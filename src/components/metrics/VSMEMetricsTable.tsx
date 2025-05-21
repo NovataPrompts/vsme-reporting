@@ -117,37 +117,37 @@ export const VSMEMetricsTable = ({
                           <div className="grid grid-cols-2 gap-4">
                             <div>
                               <p className="text-sm font-medium mb-1 text-[#00344d]">Novata Metric Reference:</p>
-                              <p className="text-sm text-[#00344d] mb-3 bg-white p-2 rounded border border-slate-200">
+                              <p className="text-sm text-[#00344d] mb-3">
                                 {metric.novataReference || "N/A"}
                               </p>
                             </div>
                             <div>
                               <p className="text-sm font-medium mb-1 text-[#00344d]">VSME Metric Reference:</p>
-                              <p className="text-sm text-[#00344d] mb-3 bg-white p-2 rounded border border-slate-200">
+                              <p className="text-sm text-[#00344d] mb-3">
                                 {metric.reference}
                               </p>
                             </div>
                             <div className="col-span-2">
                               <p className="text-sm font-medium mb-1 text-[#00344d]">Definition:</p>
-                              <p className="text-sm text-[#00344d] mb-3 bg-white p-2 rounded border border-slate-200">
+                              <p className="text-sm text-[#00344d] mb-3">
                                 {metric.definition || "No definition provided"}
                               </p>
                             </div>
                             <div className="col-span-2">
                               <p className="text-sm font-medium mb-1 text-[#00344d]">Question:</p>
-                              <p className="text-sm text-[#00344d] mb-3 bg-white p-2 rounded border border-slate-200 whitespace-pre-line">
+                              <p className="text-sm text-[#00344d] mb-3 whitespace-pre-line">
                                 {metric.question || "No question provided"}
                               </p>
                             </div>
                             <div>
                               <p className="text-sm font-medium mb-1 text-[#00344d]">Input Type:</p>
-                              <p className="text-sm text-[#00344d] mb-3 bg-white p-2 rounded border border-slate-200">
+                              <p className="text-sm text-[#00344d] mb-3">
                                 {metric.inputType || "Not specified"}
                               </p>
                             </div>
                             <div>
                               <p className="text-sm font-medium mb-1 text-[#00344d]">Unit:</p>
-                              <p className="text-sm text-[#00344d] mb-3 bg-white p-2 rounded border border-slate-200">
+                              <p className="text-sm text-[#00344d] mb-3">
                                 {metric.unit || "N/A"}
                               </p>
                             </div>
@@ -193,3 +193,4 @@ export const VSMEMetricsTable = ({
       </Table>
     </div>;
 };
+
