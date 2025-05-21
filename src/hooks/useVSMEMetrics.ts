@@ -21,7 +21,9 @@ export const useVSMEMetrics = () => {
         metric.topic.toLowerCase().includes(searchQuery.toLowerCase()) ||
         metric.section.toLowerCase().includes(searchQuery.toLowerCase()) ||
         metric.metric.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        metric.reference.toLowerCase().includes(searchQuery.toLowerCase())
+        metric.reference.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        metric.novataReference?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        (metric.definition ? metric.definition.toLowerCase().includes(searchQuery.toLowerCase()) : false)
       )
     : [];
 
@@ -32,17 +34,21 @@ export const useVSMEMetrics = () => {
   });
 
   const handleSaveMetric = (metricReference: string) => {
+    // Find the metric to include in the message
+    const metric = vsmeMetricsData.find(m => m.reference === metricReference);
     toast({
       title: "Metric Saved",
-      description: `Metric ${metricReference} data has been saved successfully.`,
+      description: `${metric?.metric || metricReference} data has been saved successfully.`,
       duration: 3000,
     });
   };
 
   const handleLearnMore = (metricReference: string) => {
+    // Find the metric to include in the message
+    const metric = vsmeMetricsData.find(m => m.reference === metricReference);
     toast({
       title: "Learn More",
-      description: `Additional information about metric ${metricReference} will be available soon.`,
+      description: `Additional information about ${metric?.metric || metricReference} will be available soon.`,
       duration: 3000,
     });
   };
@@ -59,6 +65,20 @@ export const useVSMEMetrics = () => {
     }
   }, []);
 
+  const handleImportMetrics = (newMetrics: VSMEMetric[]) => {
+    // This function would normally update the metrics in a real application
+    // For now we'll just show a success message
+    const now = new Date().toISOString();
+    localStorage.setItem('metricsLastUpdated', now);
+    setLastUpdated(now);
+    
+    toast({
+      title: "Metrics Imported",
+      description: `${newMetrics.length} metrics have been successfully imported.`,
+      duration: 3000,
+    });
+  };
+
   return {
     searchQuery,
     setSearchQuery,
@@ -69,6 +89,7 @@ export const useVSMEMetrics = () => {
     handleSaveMetric,
     handleLearnMore,
     goToImport,
-    lastUpdated
+    lastUpdated,
+    handleImportMetrics
   };
 };

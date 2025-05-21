@@ -22,49 +22,6 @@ export const VSMEMetricsTable = ({
   const toggleMetric = (metricRef: string) => {
     setOpenMetric(openMetric === metricRef ? null : metricRef);
   };
-
-  // Function to get Novata reference mapping for VSME metrics
-  const getNovataReference = (vsmeRef: string): string => {
-    // This would ideally come from a mapping table or API
-    // For now we'll return placeholder values based on topic
-    if (vsmeRef.includes("B3")) return "ENV-1";
-    if (vsmeRef.includes("B8") || vsmeRef.includes("B9") || vsmeRef.includes("B10")) return "SOC-" + vsmeRef.split('.')[2];
-    if (vsmeRef.includes("B11")) return "GOV-1";
-    return "N/A";
-  };
-  
-  // Function to get input type based on metric
-  const getInputType = (metric: VSMEMetric): string => {
-    if (metric.metric.includes("Rate") || 
-        metric.metric.includes("Percentage") || 
-        metric.metric.includes("Total") ||
-        metric.metric.includes("Amount") ||
-        metric.metric.includes("Number")) {
-      return "Numeric";
-    }
-    if (metric.metric.includes("Option") || metric.metric.includes("Type")) {
-      return "Select";
-    }
-    return "Text";
-  };
-  
-  // Function to determine appropriate unit for the metric
-  const getMetricUnit = (metric: VSMEMetric): string => {
-    if (metric.metric.includes("GHG") || metric.metric.includes("Emissions")) return "tCO₂e";
-    if (metric.metric.includes("Percentage") || metric.metric.includes("Rate")) return "%";
-    if (metric.metric.includes("Euro") || metric.metric.includes("€")) return "EUR";
-    if (metric.metric.toLowerCase().includes("area")) return "hectares";
-    if (metric.topic.includes("Environment") && !metric.metric.toLowerCase().includes("area")) return "tonnes";
-    if (metric.topic.includes("Social") && 
-        (metric.metric.includes("Count") || metric.metric.includes("Number"))) return "count";
-    return "N/A";
-  };
-  
-  // Function to get a definition for the metric
-  const getMetricDefinition = (metric: VSMEMetric): string => {
-    // This would ideally come from a more detailed database
-    return `This metric represents the ${metric.metric.toLowerCase()} as defined in the VSME Standard under ${metric.module} module, disclosure ${metric.disclosure}, section ${metric.section}.`;
-  };
   
   return <div className="overflow-x-auto">
       <Table>
@@ -74,7 +31,7 @@ export const VSMEMetricsTable = ({
             <TableHead className="w-24">Disclosure</TableHead>
             <TableHead className="w-32">Topic</TableHead>
             <TableHead className="w-48">Section</TableHead>
-            <TableHead className="w-48">Sub-Section</TableHead>
+            <TableHead className="w-40">Sub-Section</TableHead>
             <TableHead className="w-32">Reference</TableHead>
             <TableHead>Metric</TableHead>
             <TableHead className="w-36 text-right">Actions</TableHead>
@@ -130,7 +87,13 @@ export const VSMEMetricsTable = ({
                             <div>
                               <p className="text-sm font-medium mb-1 text-[#00344d]">Novata Metric Reference:</p>
                               <p className="text-sm text-[#00344d] mb-3 bg-white p-2 rounded border border-slate-200">
-                                {getNovataReference(metric.reference)}
+                                {metric.novataReference || "N/A"}
+                              </p>
+                            </div>
+                            <div>
+                              <p className="text-sm font-medium mb-1 text-[#00344d]">Order:</p>
+                              <p className="text-sm text-[#00344d] mb-3 bg-white p-2 rounded border border-slate-200">
+                                {metric.order || "N/A"}
                               </p>
                             </div>
                             <div>
@@ -139,42 +102,49 @@ export const VSMEMetricsTable = ({
                                 {metric.reference}
                               </p>
                             </div>
+                            <div>
+                              <p className="text-sm font-medium mb-1 text-[#00344d]">Details:</p>
+                              <p className="text-sm text-[#00344d] mb-3 bg-white p-2 rounded border border-slate-200">
+                                {metric.disclosure}.{metric.number}{metric.paragraph ? `.${metric.paragraph}` : ""}{metric.subParagraph ? `.${metric.subParagraph}` : ""}
+                              </p>
+                            </div>
                             <div className="col-span-2">
                               <p className="text-sm font-medium mb-1 text-[#00344d]">Definition:</p>
                               <p className="text-sm text-[#00344d] mb-3 bg-white p-2 rounded border border-slate-200">
-                                {getMetricDefinition(metric)}
+                                {metric.definition || "No definition provided"}
                               </p>
                             </div>
                             <div className="col-span-2">
                               <p className="text-sm font-medium mb-1 text-[#00344d]">Question:</p>
-                              <p className="text-sm text-[#00344d] mb-3 bg-white p-2 rounded border border-slate-200">
-                                What is your organization's {metric.metric.toLowerCase()}?
+                              <p className="text-sm text-[#00344d] mb-3 bg-white p-2 rounded border border-slate-200 whitespace-pre-line">
+                                {metric.question || "No question provided"}
                               </p>
                             </div>
                             <div>
                               <p className="text-sm font-medium mb-1 text-[#00344d]">Input Type:</p>
                               <p className="text-sm text-[#00344d] mb-3 bg-white p-2 rounded border border-slate-200">
-                                {getInputType(metric)}
+                                {metric.inputType || "Not specified"}
                               </p>
                             </div>
                             <div>
                               <p className="text-sm font-medium mb-1 text-[#00344d]">Unit:</p>
                               <p className="text-sm text-[#00344d] mb-3 bg-white p-2 rounded border border-slate-200">
-                                {getMetricUnit(metric)}
+                                {metric.unit || "N/A"}
                               </p>
                             </div>
                             <div>
                               <p className="text-sm font-medium mb-1 text-[#00344d]">Response:</p>
                               <p className="text-sm text-[#00344d] mb-3 bg-white p-2 rounded border border-slate-200">
-                                Not provided
+                                {metric.response || "Not provided"}
                               </p>
                             </div>
                             <div>
                               <p className="text-sm font-medium mb-1 text-[#00344d]">Last Updated:</p>
                               <p className="text-sm text-[#00344d] mb-3 bg-white p-2 rounded border border-slate-200">
-                                {localStorage.getItem('metricsLastUpdated') 
-                                  ? new Date(localStorage.getItem('metricsLastUpdated')!).toLocaleDateString() 
-                                  : 'Never'}
+                                {metric.lastUpdated || 
+                                  (localStorage.getItem('metricsLastUpdated') 
+                                    ? new Date(localStorage.getItem('metricsLastUpdated')!).toLocaleDateString() 
+                                    : 'Never')}
                               </p>
                             </div>
                             <div className="col-span-2 mt-2">

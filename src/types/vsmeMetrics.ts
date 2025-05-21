@@ -7,7 +7,11 @@ export interface VSMEMetric {
   subSection: string;
   reference: string;
   metric: string;
-  novataReference?: string;
+  novataReference: string;
+  order?: number;
+  number?: string;
+  paragraph?: string;
+  subParagraph?: string;
   definition?: string;
   question?: string;
   inputType?: string;
@@ -17,3 +21,5 @@ export interface VSMEMetric {
 }
 
 export type Module = 'Basic' | 'Advanced' | 'Comprehensive';
+
+export type InputType = 'Multiple Choice' | 'Boolean' | 'Multi-Select' | 'Tabular' | 'Text' | 'Decimal' | 'Integer';
