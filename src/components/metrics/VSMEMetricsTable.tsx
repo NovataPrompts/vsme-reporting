@@ -91,21 +91,9 @@ export const VSMEMetricsTable = ({
                               </p>
                             </div>
                             <div>
-                              <p className="text-sm font-medium mb-1 text-[#00344d]">Order:</p>
-                              <p className="text-sm text-[#00344d] mb-3 bg-white p-2 rounded border border-slate-200">
-                                {metric.order || "N/A"}
-                              </p>
-                            </div>
-                            <div>
                               <p className="text-sm font-medium mb-1 text-[#00344d]">VSME Metric Reference:</p>
                               <p className="text-sm text-[#00344d] mb-3 bg-white p-2 rounded border border-slate-200">
                                 {metric.reference}
-                              </p>
-                            </div>
-                            <div>
-                              <p className="text-sm font-medium mb-1 text-[#00344d]">Details:</p>
-                              <p className="text-sm text-[#00344d] mb-3 bg-white p-2 rounded border border-slate-200">
-                                {metric.disclosure}.{metric.number}{metric.paragraph ? `.${metric.paragraph}` : ""}{metric.subParagraph ? `.${metric.subParagraph}` : ""}
                               </p>
                             </div>
                             <div className="col-span-2">

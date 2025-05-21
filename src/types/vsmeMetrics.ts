@@ -7,7 +7,7 @@ export interface VSMEMetric {
   subSection: string;
   reference: string;
   metric: string;
-  novataReference: string;
+  novataReference?: string;  // Making novataReference optional
   order?: number;
   number?: string;
   paragraph?: string;
