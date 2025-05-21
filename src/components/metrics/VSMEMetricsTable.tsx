@@ -126,15 +126,6 @@ export const VSMEMetricsTable = ({
                                 {metric.response || "Not provided"}
                               </p>
                             </div>
-                            <div>
-                              <p className="text-sm font-medium mb-1 text-[#00344d]">Last Updated:</p>
-                              <p className="text-sm text-[#00344d] mb-3 bg-white p-2 rounded border border-slate-200">
-                                {metric.lastUpdated || 
-                                  (localStorage.getItem('metricsLastUpdated') 
-                                    ? new Date(localStorage.getItem('metricsLastUpdated')!).toLocaleDateString() 
-                                    : 'Never')}
-                              </p>
-                            </div>
                             <div className="col-span-2 mt-2">
                               <Button 
                                 className="bg-[#057cc1] hover:bg-[#057cc1]/90 text-white"
