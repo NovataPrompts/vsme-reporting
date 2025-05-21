@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { ChevronDown, Info, Save } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -175,7 +174,7 @@ export const VSMEMetricsTable = ({
                                 onClick={() => onSaveMetric(metric.reference)}
                               >
                                 <Save className="h-4 w-4 mr-2" />
-                                Enter Data for this Metric
+                                Save Metric Response
                               </Button>
                             </div>
                           </div>
@@ -193,4 +192,3 @@ export const VSMEMetricsTable = ({
       </Table>
     </div>;
 };
-
