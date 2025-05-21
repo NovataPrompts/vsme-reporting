@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import { ChevronDown, Info, Save } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -152,8 +153,8 @@ export const VSMEMetricsTable = ({
                             </div>
                             <div>
                               <p className="text-sm font-medium mb-1 text-[#00344d]">Response:</p>
-                              <Input
-                                className="text-sm text-[#00344d] mb-3 bg-white p-2 rounded border border-slate-200"
+                              <Textarea
+                                className="text-sm text-[#00344d] mb-3 bg-white p-2 rounded border border-slate-200 min-h-[80px]"
                                 value={getResponse(metric)}
                                 onChange={(e) => handleResponseChange(metric.reference, e.target.value)}
                                 placeholder="Enter response here..."
