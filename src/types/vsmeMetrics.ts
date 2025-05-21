@@ -17,6 +17,7 @@ export interface VSMEMetric {
   inputType?: string;
   unit?: string;
   response?: string;
+  formattedResponse?: string;
   lastUpdated?: string;
 }
 
