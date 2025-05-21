@@ -1,12 +1,15 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { vsmeMetricsData } from "@/data/vsmeMetricsData";
 import { VSMEMetric } from "@/types/vsmeMetrics";
+import { useNavigate } from "react-router-dom";
 
 export const useVSMEMetrics = () => {
   const { toast } = useToast();
   const [searchQuery, setSearchQuery] = useState("");
+  const navigate = useNavigate();
+  const [lastUpdated, setLastUpdated] = useState<string | null>(null);
   
   // Get unique topics for filtering
   const topics = Array.from(new Set(vsmeMetricsData.map(metric => metric.topic)));
@@ -44,6 +47,18 @@ export const useVSMEMetrics = () => {
     });
   };
 
+  const goToImport = () => {
+    navigate("/import");
+  };
+
+  // Check if metrics have been updated
+  useEffect(() => {
+    const metricsLastUpdated = localStorage.getItem('metricsLastUpdated');
+    if (metricsLastUpdated) {
+      setLastUpdated(metricsLastUpdated);
+    }
+  }, []);
+
   return {
     searchQuery,
     setSearchQuery,
@@ -52,6 +67,8 @@ export const useVSMEMetrics = () => {
     filteredMetrics,
     metricsByTopic,
     handleSaveMetric,
-    handleLearnMore
+    handleLearnMore,
+    goToImport,
+    lastUpdated
   };
 };
