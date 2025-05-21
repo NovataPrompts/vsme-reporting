@@ -1,12 +1,11 @@
 
 import React, { useState } from "react";
-import { ChevronDown, Info, Save } from "lucide-react";
+import { ChevronDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Table, TableHeader, TableBody, TableHead, TableRow, TableCell } from "@/components/ui/table";
 import { VSMEMetric } from "@/types/vsmeMetrics";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { Textarea } from "@/components/ui/textarea";
-import { Input } from "@/components/ui/input";
 
 interface VSMEMetricsTableProps {
   metrics: VSMEMetric[];
@@ -65,7 +64,7 @@ export const VSMEMetricsTable = ({
             <TableHead className="w-40">Sub-Section</TableHead>
             <TableHead className="w-32">Reference</TableHead>
             <TableHead>Metric</TableHead>
-            <TableHead className="w-36 text-right">Actions</TableHead>
+            <TableHead className="w-20 text-right">Actions</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -79,24 +78,7 @@ export const VSMEMetricsTable = ({
                   <TableCell>{metric.reference}</TableCell>
                   <TableCell>{metric.metric}</TableCell>
                   <TableCell className="text-right">
-                    <div className="flex justify-end gap-2">
-                      <Button 
-                        size="sm" 
-                        variant="outline" 
-                        className="h-8 w-8 p-0"
-                        onClick={() => onLearnMore(metric.reference)}
-                      >
-                        <Info className="h-4 w-4" />
-                        <span className="sr-only">Learn More</span>
-                      </Button>
-                      <Button 
-                        size="sm" 
-                        className="h-8 w-8 p-0 bg-accent hover:bg-accent/90 text-primary"
-                        onClick={() => onSaveMetric(metric.reference)}
-                      >
-                        <Save className="h-4 w-4" />
-                        <span className="sr-only">Save Metric</span>
-                      </Button>
+                    <div className="flex justify-end">
                       <Collapsible open={openMetric === metric.reference} onOpenChange={() => toggleMetric(metric.reference)}>
                         <CollapsibleTrigger asChild>
                           <Button size="sm" className="h-8 w-8 p-0 bg-[#057cc1] hover:bg-[#057cc1]/90 text-white">
@@ -174,7 +156,6 @@ export const VSMEMetricsTable = ({
                                 className="bg-[#057cc1] hover:bg-[#057cc1]/90 text-white"
                                 onClick={() => onSaveMetric(metric.reference)}
                               >
-                                <Save className="h-4 w-4 mr-2" />
                                 Save Metric Response
                               </Button>
                             </div>
