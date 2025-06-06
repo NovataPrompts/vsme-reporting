@@ -1,5 +1,5 @@
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { VSMEMetric } from "@/types/vsmeMetrics";
 import { useNavigate } from "react-router-dom";
@@ -20,10 +20,14 @@ export const useVSMEMetrics = () => {
     };
     
     fetchMetrics();
-  }, []);
+  }, [loadStaticMetrics]);
   
   // Get unique topics for filtering
-  const topics = Array.from(new Set(metrics.map(metric => metric.topic).filter(Boolean)));
+  const topics = Array.from(new Set(
+    metrics
+      .map(metric => metric.topic)
+      .filter((topic): topic is string => Boolean(topic))
+  ));
   
   // Filter metrics based on search query
   const filteredMetrics = searchQuery
@@ -43,27 +47,27 @@ export const useVSMEMetrics = () => {
     metricsByTopic[topic] = metrics.filter(metric => metric.topic === topic);
   });
 
-  const handleSaveMetric = (metricReference: string) => {
+  const handleSaveMetric = useCallback((metricReference: string) => {
     const metric = metrics.find(m => m.novataReference === metricReference);
     toast({
       title: "Metric Saved",
       description: `${metric?.metric || metricReference} data has been saved successfully.`,
       duration: 3000,
     });
-  };
+  }, [metrics, toast]);
 
-  const handleLearnMore = (metricReference: string) => {
+  const handleLearnMore = useCallback((metricReference: string) => {
     const metric = metrics.find(m => m.novataReference === metricReference);
     toast({
       title: "Learn More",
       description: `Additional information about ${metric?.metric || metricReference} will be available soon.`,
       duration: 3000,
     });
-  };
+  }, [metrics, toast]);
 
-  const goToImport = () => {
+  const goToImport = useCallback(() => {
     navigate("/import");
-  };
+  }, [navigate]);
 
   // Check if metrics have been updated
   useEffect(() => {
@@ -73,7 +77,7 @@ export const useVSMEMetrics = () => {
     }
   }, []);
 
-  const handleImportMetrics = (newMetrics: VSMEMetric[]) => {
+  const handleImportMetrics = useCallback((newMetrics: VSMEMetric[]) => {
     const now = new Date().toISOString();
     localStorage.setItem('metricsLastUpdated', now);
     setLastUpdated(now);
@@ -83,7 +87,7 @@ export const useVSMEMetrics = () => {
       description: `${newMetrics.length} metrics have been successfully imported.`,
       duration: 3000,
     });
-  };
+  }, [toast]);
 
   return {
     searchQuery,

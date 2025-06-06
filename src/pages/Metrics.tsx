@@ -21,8 +21,10 @@ const Metrics = () => {
       console.log('Fetching metrics...');
       const data = await loadStaticMetrics();
       console.log('Metrics fetched:', data.length, 'metrics');
-      console.log('Sample metrics:', data.slice(0, 3));
-      setMetrics(data);
+      if (data.length > 0) {
+        console.log('Sample metrics:', data.slice(0, 3));
+        setMetrics(data);
+      }
     };
     
     fetchMetrics();
@@ -38,7 +40,7 @@ const Metrics = () => {
   const topics = Array.from(new Set(
     metrics
       .map(metric => metric.topic)
-      .filter(topic => topic && topic.trim() !== '')
+      .filter((topic): topic is string => Boolean(topic && topic.trim() !== ''))
   ));
 
   console.log('Topics:', topics);

@@ -1,13 +1,13 @@
 
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
-import { useToast } from '@/components/ui/use-toast';
+import { useToast } from '@/hooks/use-toast';
 
 export const useVSMEDatabase = () => {
   const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
 
-  const loadStaticMetrics = async () => {
+  const loadStaticMetrics = useCallback(async () => {
     setIsLoading(true);
     try {
       console.log('Loading static metrics from Supabase...');
@@ -51,8 +51,6 @@ export const useVSMEDatabase = () => {
 
       // Combine the data to create complete metric objects
       const combinedMetrics = reportContent?.map(content => {
-        console.log('Processing metric:', content.novata_reference);
-        
         // Find matching section info - match by the first part of novata_reference (before the dot)
         const disclosureCode = content.novata_reference?.split('.')[0];
         const section = sectionInfo?.find(s => s.disclosure === disclosureCode);
@@ -80,12 +78,10 @@ export const useVSMEDatabase = () => {
           order: vsmeRef?.order || 0
         };
 
-        console.log('Combined metric:', combinedMetric);
         return combinedMetric;
       }) || [];
 
       console.log('Final combined metrics:', combinedMetrics.length);
-      console.log('Sample metric:', combinedMetrics[0]);
 
       return combinedMetrics;
     } catch (error) {
@@ -99,9 +95,9 @@ export const useVSMEDatabase = () => {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [toast]);
 
-  const getUserResponse = async (metricId: string) => {
+  const getUserResponse = useCallback(async (metricId: string) => {
     try {
       const { data, error } = await supabase
         .from('vsme_user_responses')
@@ -120,9 +116,9 @@ export const useVSMEDatabase = () => {
       });
       return null;
     }
-  };
+  }, [toast]);
 
-  const saveUserResponse = async (metricId: string, responseValue: string, responseData?: any) => {
+  const saveUserResponse = useCallback(async (metricId: string, responseValue: string, responseData?: any) => {
     try {
       const { error } = await supabase
         .from('vsme_user_responses')
@@ -149,7 +145,7 @@ export const useVSMEDatabase = () => {
       });
       return false;
     }
-  };
+  }, [toast]);
 
   return {
     loadStaticMetrics,
