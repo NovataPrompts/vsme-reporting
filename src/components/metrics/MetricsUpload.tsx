@@ -6,16 +6,18 @@ import { Upload, AlertCircle, CheckCircle2, FileSpreadsheet } from "lucide-react
 import { useToast } from "@/components/ui/use-toast";
 import { Progress } from "@/components/ui/progress";
 import { useNavigate } from "react-router-dom";
-import { VSMEMetric } from "@/types/vsmeMetrics";
+import { useVSMEDatabase } from "@/hooks/useVSMEDatabase";
+import * as XLSX from 'xlsx';
 
 export const MetricsUpload = () => {
   const { toast } = useToast();
   const navigate = useNavigate();
+  const { saveUserResponse } = useVSMEDatabase();
   const [isDragging, setIsDragging] = useState(false);
   const [uploadStatus, setUploadStatus] = useState<'idle' | 'uploading' | 'success' | 'error'>('idle');
   const [fileName, setFileName] = useState<string | null>(null);
   const [uploadProgress, setUploadProgress] = useState(0);
-  const [processedMetrics, setProcessedMetrics] = useState<VSMEMetric[]>([]);
+  const [processedCount, setProcessedCount] = useState(0);
 
   const handleDragOver = (e: React.DragEvent<HTMLDivElement>) => {
     e.preventDefault();
@@ -43,87 +45,132 @@ export const MetricsUpload = () => {
     }
   };
 
-  const processFile = (file: File) => {
+  const processExcelFile = async (file: File) => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      
+      reader.onload = async (e) => {
+        try {
+          const data = new Uint8Array(e.target?.result as ArrayBuffer);
+          const workbook = XLSX.read(data, { type: 'array' });
+          
+          console.log('Available sheets:', workbook.SheetNames);
+          
+          // Process main sheet (usually the first one)
+          const mainSheetName = workbook.SheetNames[0];
+          const mainSheet = workbook.Sheets[mainSheetName];
+          const mainData = XLSX.utils.sheet_to_json(mainSheet, { header: 1 });
+          
+          console.log('Main sheet data:', mainData);
+          
+          // Process each row in the main sheet
+          let savedCount = 0;
+          const totalRows = mainData.length;
+          
+          for (let i = 1; i < totalRows; i++) { // Skip header row
+            const row = mainData[i] as any[];
+            if (!row || row.length === 0) continue;
+            
+            // Assuming columns: [Reference, Question, Response, ...]
+            const reference = row[0];
+            const response = row[2];
+            
+            if (!reference || !response) continue;
+            
+            // Check if this is a tabular data reference
+            if (typeof response === 'string' && response.toLowerCase().includes('tabular data')) {
+              // Look for corresponding tabular data sheet
+              const tabularSheetName = workbook.SheetNames.find(name => 
+                name.includes(reference) || name === reference
+              );
+              
+              if (tabularSheetName) {
+                console.log(`Found tabular sheet for ${reference}: ${tabularSheetName}`);
+                const tabularSheet = workbook.Sheets[tabularSheetName];
+                const tabularData = XLSX.utils.sheet_to_json(tabularSheet);
+                
+                // Save with tabular data
+                const success = await saveUserResponse(
+                  reference, 
+                  'Tabular data provided', 
+                  tabularData
+                );
+                
+                if (success) savedCount++;
+              } else {
+                console.warn(`No tabular sheet found for reference: ${reference}`);
+                // Save the text response as is
+                const success = await saveUserResponse(reference, response);
+                if (success) savedCount++;
+              }
+            } else {
+              // Regular text response
+              const success = await saveUserResponse(reference, response);
+              if (success) savedCount++;
+            }
+            
+            // Update progress
+            const progress = Math.round((i / totalRows) * 100);
+            setUploadProgress(progress);
+          }
+          
+          setProcessedCount(savedCount);
+          resolve(savedCount);
+          
+        } catch (error) {
+          console.error('Error processing Excel file:', error);
+          reject(error);
+        }
+      };
+      
+      reader.onerror = () => reject(new Error('Failed to read file'));
+      reader.readAsArrayBuffer(file);
+    });
+  };
+
+  const processFile = async (file: File) => {
     setFileName(file.name);
     setUploadStatus('uploading');
     setUploadProgress(0);
+    setProcessedCount(0);
     
-    // Check if file is a valid type
-    if (!(file.name.endsWith('.csv') || file.name.endsWith('.xlsx') || file.name.endsWith('.json'))) {
+    // Check if file is Excel format
+    if (!(file.name.endsWith('.xlsx') || file.name.endsWith('.xls'))) {
       setUploadStatus('error');
       toast({
         title: "Invalid file format",
-        description: "Please upload a CSV, Excel, or JSON file.",
+        description: "Please upload an Excel file (.xlsx or .xls).",
         variant: "destructive",
         duration: 3000,
       });
       return;
     }
     
-    // Simulate upload process with progress updates
-    const totalDuration = 1500; // Total duration in milliseconds
-    const intervalTime = 100; // Update progress every 100ms
-    const totalSteps = totalDuration / intervalTime;
-    let currentStep = 0;
-    
-    const progressInterval = setInterval(() => {
-      currentStep++;
-      const newProgress = Math.min(Math.round((currentStep / totalSteps) * 100), 95);
-      setUploadProgress(newProgress);
+    try {
+      const savedCount = await processExcelFile(file);
       
-      if (currentStep >= totalSteps) {
-        clearInterval(progressInterval);
-        
-        // Complete the upload and process the file
-        const reader = new FileReader();
-        
-        reader.onload = (e) => {
-          try {
-            setTimeout(() => {
-              setUploadProgress(100);
-              setUploadStatus('success');
-              toast({
-                title: "Upload successful",
-                description: `${file.name} has been processed successfully. Metrics data has been updated.`,
-                duration: 3000,
-              });
-              
-              // In a real implementation, we would parse the file and update the metrics here
-              // For this simulation, we'll just assume success
-              console.log("File content:", e.target?.result);
-              
-              // Update local storage to indicate metrics were updated
-              localStorage.setItem('metricsLastUpdated', new Date().toISOString());
-            }, 200);
-          } catch (error) {
-            console.error("Error processing file:", error);
-            setUploadStatus('error');
-            toast({
-              title: "Processing failed",
-              description: "There was an error processing your file. Please check the format and try again.",
-              variant: "destructive",
-              duration: 3000,
-            });
-          }
-        };
-        
-        reader.onerror = () => {
-          setUploadStatus('error');
-          toast({
-            title: "Upload failed",
-            description: "There was an error reading your file. Please try again.",
-            variant: "destructive",
-            duration: 3000,
-          });
-        };
-        
-        if (file.name.endsWith('.json')) {
-          reader.readAsText(file);
-        } else {
-          reader.readAsArrayBuffer(file);
-        }
-      }
-    }, intervalTime);
+      setUploadProgress(100);
+      setUploadStatus('success');
+      
+      toast({
+        title: "Upload successful",
+        description: `${file.name} has been processed successfully. ${savedCount} responses were saved.`,
+        duration: 3000,
+      });
+      
+      // Update local storage to indicate metrics were updated
+      localStorage.setItem('metricsLastUpdated', new Date().toISOString());
+      
+    } catch (error) {
+      console.error("Error processing file:", error);
+      setUploadStatus('error');
+      toast({
+        title: "Processing failed",
+        description: "There was an error processing your Excel file. Please check the format and try again.",
+        variant: "destructive",
+        duration: 3000,
+      });
+    }
   };
 
   const continueToMetrics = () => {
@@ -133,9 +180,9 @@ export const MetricsUpload = () => {
   return (
     <Card className="shadow-sm">
       <CardHeader>
-        <CardTitle>Upload Updated Metrics Data</CardTitle>
+        <CardTitle>Upload Excel Responses</CardTitle>
         <CardDescription>
-          Upload your updated sustainability metrics spreadsheet to automatically update your VSME metrics data.
+          Upload your Excel file with metric responses. The main sheet should contain responses, with separate tabs for tabular data referenced by metric numbers.
         </CardDescription>
       </CardHeader>
       <CardContent>
@@ -156,9 +203,9 @@ export const MetricsUpload = () => {
           {uploadStatus === 'idle' && (
             <div className="flex flex-col items-center">
               <FileSpreadsheet className="h-12 w-12 text-gray-400 mb-4" />
-              <h3 className="text-lg font-medium mb-2">Drag and drop your updated metrics spreadsheet</h3>
+              <h3 className="text-lg font-medium mb-2">Drag and drop your Excel file with responses</h3>
               <p className="text-sm text-gray-500 dark:text-gray-400 mb-4">
-                Supported formats: CSV, Excel, or JSON
+                Main sheet with responses + separate tabs for tabular data (Excel .xlsx or .xls)
               </p>
               <div className="relative">
                 <input 
@@ -166,7 +213,7 @@ export const MetricsUpload = () => {
                   id="file-upload" 
                   className="absolute inset-0 opacity-0 w-full h-full cursor-pointer" 
                   onChange={handleFileChange}
-                  accept=".csv,.xlsx,.json"
+                  accept=".xlsx,.xls"
                 />
                 <Button className="bg-[#057cc1] hover:bg-[#057cc1]/90 text-white">
                   Browse Files
@@ -180,7 +227,7 @@ export const MetricsUpload = () => {
               <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-accent mb-4"></div>
               <h3 className="text-lg font-medium mb-2">Processing {fileName}</h3>
               <p className="text-sm text-gray-500 dark:text-gray-400 mb-4">
-                Please wait while we update your metrics data...
+                Reading Excel file and saving responses to database...
               </p>
               <div className="w-full max-w-md mb-2">
                 <Progress value={uploadProgress} className="h-2" />
@@ -194,9 +241,9 @@ export const MetricsUpload = () => {
           {uploadStatus === 'success' && (
             <div className="flex flex-col items-center">
               <CheckCircle2 className="h-12 w-12 text-green-500 mb-4" />
-              <h3 className="text-lg font-medium mb-2">Metrics Data Updated!</h3>
+              <h3 className="text-lg font-medium mb-2">Excel File Processed Successfully!</h3>
               <p className="text-sm text-gray-500 dark:text-gray-400 mb-4">
-                {fileName} has been processed and your VSME metrics have been updated.
+                {fileName} has been processed and {processedCount} responses were saved to the database.
               </p>
               <div className="flex gap-3">
                 <Button 
@@ -205,6 +252,7 @@ export const MetricsUpload = () => {
                     setUploadStatus('idle');
                     setFileName(null);
                     setUploadProgress(0);
+                    setProcessedCount(0);
                   }}
                 >
                   Upload Another File
@@ -213,7 +261,7 @@ export const MetricsUpload = () => {
                   className="bg-[#057cc1] hover:bg-[#057cc1]/90 text-white"
                   onClick={continueToMetrics}
                 >
-                  View Updated Metrics
+                  View Responses
                 </Button>
               </div>
             </div>
@@ -224,7 +272,7 @@ export const MetricsUpload = () => {
               <AlertCircle className="h-12 w-12 text-red-500 mb-4" />
               <h3 className="text-lg font-medium mb-2">Upload Failed</h3>
               <p className="text-sm text-gray-500 dark:text-gray-400 mb-4">
-                Please make sure you're uploading a valid CSV, Excel, or JSON file with the correct format.
+                Please make sure you're uploading a valid Excel file (.xlsx or .xls) with the correct format.
               </p>
               <Button 
                 variant="outline"
@@ -232,6 +280,7 @@ export const MetricsUpload = () => {
                   setUploadStatus('idle');
                   setFileName(null);
                   setUploadProgress(0);
+                  setProcessedCount(0);
                 }}
               >
                 Try Again

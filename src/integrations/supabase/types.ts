@@ -9,6 +9,30 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      vsme_novata_ref_converter: {
+        Row: {
+          created_at: string
+          id: string
+          novata_reference: string | null
+          updated_at: string
+          vsme_reference: string | null
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          novata_reference?: string | null
+          updated_at?: string
+          vsme_reference?: string | null
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          novata_reference?: string | null
+          updated_at?: string
+          vsme_reference?: string | null
+        }
+        Relationships: []
+      }
       vsme_report_content: {
         Row: {
           created_at: string
