@@ -32,8 +32,10 @@ export const useVSMEDatabase = () => {
         refConverter: refConverter?.length || 0
       });
 
-      // Log section_info data to understand the structure
-      console.log('Section info data:', sectionInfo);
+      // Log the actual section_info data structure
+      console.log('Section info data structure:', sectionInfo);
+      console.log('Sample report content:', reportContent?.slice(0, 3));
+      console.log('Sample ref converter:', refConverter?.slice(0, 3));
 
       if (reportError) {
         console.error('Report content error:', reportError);
@@ -60,17 +62,17 @@ export const useVSMEDatabase = () => {
         // Extract disclosure code from novata_reference (e.g., "B1.1" -> "B1")
         const disclosureCode = content.novata_reference?.split('.')[0];
         
-        // Find matching section info using the disclosure code
+        // Find matching section info using the disclosure code - match exactly
         const section = sectionInfo?.find(s => s.disclosure === disclosureCode);
         
         // Find matching disclosure detail
         const disclosure = disclosureDetail?.find(d => d.novata_reference === content.novata_reference);
 
-        console.log('Mapping metric:', {
-          novataRef: content.novata_reference,
+        // Log detailed mapping for debugging
+        console.log('Detailed mapping for:', content.novata_reference, {
           disclosureCode,
-          sectionFound: !!section,
-          sectionData: section,
+          foundSection: section,
+          allSections: sectionInfo?.map(s => ({ disclosure: s.disclosure, topic: s.topic })),
           vsmeRef: vsmeRef?.vsme_reference
         });
 
@@ -78,9 +80,9 @@ export const useVSMEDatabase = () => {
           id: content.id,
           module: 'Basic', // All entries are Basic module
           disclosure: disclosureCode || '', // B1, B2, etc.
-          topic: section?.topic || 'Uncategorized', // General Information, Social metrics, etc.
-          section: section?.section || '', // Basis for preparation, Energy and greenhouse gas emissions, etc.
-          subSection: section?.sub_section || '', // General Characteristics, Health and Safety, etc.
+          topic: section?.topic || 'Unknown Topic', // Use section_info.topic
+          section: section?.section || 'Unknown Section', // Use section_info.section  
+          subSection: section?.sub_section || '', // Use section_info.sub_section (can be empty)
           reference: vsmeRef?.vsme_reference || '', // VSME reference
           novataReference: content.novata_reference || '', // Keep for internal use but not display in top row
           metric: content.metric || '',
@@ -92,8 +94,9 @@ export const useVSMEDatabase = () => {
         };
       }) || [];
 
-      console.log('Final combined metrics sample:', combinedMetrics.slice(0, 3));
+      console.log('Final combined metrics sample:', combinedMetrics.slice(0, 5));
       console.log('Total metrics combined:', combinedMetrics.length);
+      console.log('Topics found:', [...new Set(combinedMetrics.map(m => m.topic))]);
 
       // Sort by order
       const sortedMetrics = combinedMetrics.sort((a, b) => (a.order || 0) - (b.order || 0));
