@@ -18,7 +18,10 @@ const Metrics = () => {
 
   useEffect(() => {
     const fetchMetrics = async () => {
+      console.log('Fetching metrics...');
       const data = await loadStaticMetrics();
+      console.log('Metrics fetched:', data.length, 'metrics');
+      console.log('Sample metrics:', data.slice(0, 3));
       setMetrics(data);
     };
     
@@ -29,7 +32,7 @@ const Metrics = () => {
     if (metricsLastUpdated) {
       setLastUpdated(metricsLastUpdated);
     }
-  }, []);
+  }, [loadStaticMetrics]);
 
   // Get unique topics for filtering, ensuring we filter out undefined/null/empty values
   const topics = Array.from(new Set(
@@ -37,6 +40,9 @@ const Metrics = () => {
       .map(metric => metric.topic)
       .filter(topic => topic && topic.trim() !== '')
   ));
+
+  console.log('Topics:', topics);
+  console.log('Total metrics:', metrics.length);
   
   // Filter metrics based on search query
   const filteredMetrics = searchQuery
@@ -55,6 +61,8 @@ const Metrics = () => {
   topics.forEach(topic => {
     metricsByTopic[topic] = metrics.filter(metric => metric.topic === topic);
   });
+
+  console.log('Metrics by topic:', metricsByTopic);
 
   const goToImport = () => {
     navigate("/import");
@@ -75,6 +83,11 @@ const Metrics = () => {
         </main>
       </div>
     );
+  }
+
+  // Debug output for when no metrics are found
+  if (metrics.length === 0) {
+    console.log('No metrics found. Check database connection and data.');
   }
 
   return (
@@ -116,10 +129,16 @@ const Metrics = () => {
               filteredMetrics={filteredMetrics}
             />
 
-            <VSMEMetricsTabs
-              topics={topics}
-              metricsByTopic={metricsByTopic}
-            />
+            {metrics.length === 0 ? (
+              <div className="text-center py-8">
+                <p className="text-gray-500">No metrics data found. Please check your database connection.</p>
+              </div>
+            ) : (
+              <VSMEMetricsTabs
+                topics={topics}
+                metricsByTopic={metricsByTopic}
+              />
+            )}
           </div>
         </div>
       </main>

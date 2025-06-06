@@ -10,6 +10,8 @@ export const useVSMEDatabase = () => {
   const loadStaticMetrics = async () => {
     setIsLoading(true);
     try {
+      console.log('Loading static metrics from Supabase...');
+      
       // Load data from all relevant tables
       const [
         { data: reportContent, error: reportError },
@@ -23,15 +25,37 @@ export const useVSMEDatabase = () => {
         supabase.from('vsme_novata_ref_converter').select('*').order('order')
       ]);
 
-      if (reportError) throw reportError;
-      if (sectionError) throw sectionError;
-      if (disclosureError) throw disclosureError;
-      if (refError) throw refError;
+      console.log('Raw data loaded:', {
+        reportContent: reportContent?.length || 0,
+        sectionInfo: sectionInfo?.length || 0,
+        disclosureDetail: disclosureDetail?.length || 0,
+        refConverter: refConverter?.length || 0
+      });
+
+      if (reportError) {
+        console.error('Report content error:', reportError);
+        throw reportError;
+      }
+      if (sectionError) {
+        console.error('Section info error:', sectionError);
+        throw sectionError;
+      }
+      if (disclosureError) {
+        console.error('Disclosure detail error:', disclosureError);
+        throw disclosureError;
+      }
+      if (refError) {
+        console.error('Ref converter error:', refError);
+        throw refError;
+      }
 
       // Combine the data to create complete metric objects
       const combinedMetrics = reportContent?.map(content => {
-        // Find matching section info
-        const section = sectionInfo?.find(s => s.disclosure === content.novata_reference?.split('.')[0]);
+        console.log('Processing metric:', content.novata_reference);
+        
+        // Find matching section info - match by the first part of novata_reference (before the dot)
+        const disclosureCode = content.novata_reference?.split('.')[0];
+        const section = sectionInfo?.find(s => s.disclosure === disclosureCode);
         
         // Find matching disclosure detail
         const disclosure = disclosureDetail?.find(d => d.novata_reference === content.novata_reference);
@@ -39,11 +63,11 @@ export const useVSMEDatabase = () => {
         // Find matching VSME reference
         const vsmeRef = refConverter?.find(r => r.novata_reference === content.novata_reference);
 
-        return {
+        const combinedMetric = {
           id: content.id,
           module: 'Basic', // Default module
-          disclosure: section?.disclosure || '',
-          topic: section?.topic || '',
+          disclosure: section?.disclosure || disclosureCode || '',
+          topic: section?.topic || 'Uncategorized',
           section: section?.section || '',
           subSection: section?.sub_section || '',
           reference: vsmeRef?.vsme_reference || '',
@@ -55,7 +79,13 @@ export const useVSMEDatabase = () => {
           unit: content.unit || '',
           order: vsmeRef?.order || 0
         };
+
+        console.log('Combined metric:', combinedMetric);
+        return combinedMetric;
       }) || [];
+
+      console.log('Final combined metrics:', combinedMetrics.length);
+      console.log('Sample metric:', combinedMetrics[0]);
 
       return combinedMetrics;
     } catch (error) {
