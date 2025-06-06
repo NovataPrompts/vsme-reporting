@@ -1,3 +1,4 @@
+
 import { useState, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
@@ -31,55 +32,31 @@ export const useVSMEDatabase = () => {
         refConverter: refConverter?.length || 0
       });
 
-      if (reportError) {
-        console.error('Report content error:', reportError);
-        throw reportError;
-      }
-      if (sectionError) {
-        console.error('Section info error:', sectionError);
-        throw sectionError;
-      }
-      if (disclosureError) {
-        console.error('Disclosure detail error:', disclosureError);
-        throw disclosureError;
-      }
-      if (refError) {
-        console.error('Ref converter error:', refError);
-        throw refError;
-      }
+      if (reportError) throw reportError;
+      if (sectionError) throw sectionError;
+      if (disclosureError) throw disclosureError;
+      if (refError) throw refError;
 
-      // Combine the data to create complete metric objects
+      // Build the metrics by combining all data sources
       const combinedMetrics = reportContent?.map(content => {
-        // Find matching section info using the novata_reference directly
-        const sectionData = sectionInfo?.find(s => s.disclosure && content.novata_reference?.startsWith(s.disclosure));
-        
-        // Find matching VSME reference from converter
+        // Get the VSME reference from the converter table using novata_reference
         const vsmeRef = refConverter?.find(r => r.novata_reference === content.novata_reference);
         
-        // Find matching disclosure detail using the full novata_reference
+        // Get section information from section_info using novata_reference
+        const sectionData = sectionInfo?.find(s => s.disclosure === content.novata_reference);
+        
+        // Get additional disclosure details if available
         const disclosureData = disclosureDetail?.find(d => d.novata_reference === content.novata_reference);
-
-        console.log('Mapping for:', content.novata_reference, {
-          foundSectionData: !!sectionData,
-          foundVsmeRef: !!vsmeRef,
-          foundDisclosureData: !!disclosureData,
-          sectionInfo: sectionData ? {
-            disclosure: sectionData.disclosure,
-            topic: sectionData.topic,
-            section: sectionData.section,
-            sub_section: sectionData.sub_section
-          } : null
-        });
 
         return {
           id: content.id,
-          module: 'Basic', // All entries are Basic module
-          disclosure: sectionData?.disclosure || 'Unknown', // Use section_info.disclosure
-          topic: sectionData?.topic || 'Unknown Topic', // Use section_info.topic
-          section: sectionData?.section || 'Unknown Section', // Use section_info.section  
-          subSection: sectionData?.sub_section || '', // Use section_info.sub_section
-          reference: vsmeRef?.vsme_reference || '', // VSME reference from converter
-          novataReference: content.novata_reference || '', // Original novata reference
+          module: 'Basic',
+          disclosure: sectionData?.disclosure || content.novata_reference || '',
+          topic: sectionData?.topic || 'Unknown Topic',
+          section: sectionData?.section || 'Unknown Section',
+          subSection: sectionData?.sub_section || '',
+          reference: vsmeRef?.vsme_reference || '',
+          novataReference: content.novata_reference || '',
           metric: content.metric || '',
           definition: content.definition_summary || '',
           question: content.question || '',
@@ -89,11 +66,8 @@ export const useVSMEDatabase = () => {
         };
       }) || [];
 
-      console.log('Final combined metrics sample:', combinedMetrics.slice(0, 5));
-      console.log('Total metrics combined:', combinedMetrics.length);
-      console.log('Topics found:', [...new Set(combinedMetrics.map(m => m.topic))]);
-      console.log('Sections found:', [...new Set(combinedMetrics.map(m => m.section))]);
-      console.log('Disclosures found:', [...new Set(combinedMetrics.map(m => m.disclosure))]);
+      console.log('Combined metrics:', combinedMetrics.length);
+      console.log('Sample metrics:', combinedMetrics.slice(0, 3));
 
       // Sort by order
       const sortedMetrics = combinedMetrics.sort((a, b) => (a.order || 0) - (b.order || 0));
