@@ -4,13 +4,13 @@ import { VSMEMetricsTabs } from "@/components/metrics/VSMEMetricsTabs";
 import { VSMEMetricsDropdown } from "@/components/metrics/VSMEMetricsDropdown";
 import { useVSMEDatabase } from "@/hooks/useVSMEDatabase";
 import { Button } from "@/components/ui/button";
-import { Upload } from "lucide-react";
+import { Upload, Database } from "lucide-react";
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { VSMEMetric } from "@/types/vsmeMetrics";
 
 const Metrics = () => {
-  const { loadStaticMetrics, isLoading } = useVSMEDatabase();
+  const { loadStaticMetrics, insertProvidedMetrics, isLoading } = useVSMEDatabase();
   const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState("");
   const [metrics, setMetrics] = useState<VSMEMetric[]>([]);
@@ -70,6 +70,19 @@ const Metrics = () => {
     navigate("/import");
   };
 
+  const handleInsertProvidedMetrics = async () => {
+    const success = await insertProvidedMetrics();
+    if (success) {
+      // Refresh metrics after successful insertion
+      const updatedMetrics = await loadStaticMetrics();
+      setMetrics(updatedMetrics);
+      
+      const now = new Date().toISOString();
+      localStorage.setItem('metricsLastUpdated', now);
+      setLastUpdated(now);
+    }
+  };
+
   if (isLoading) {
     return (
       <div className="min-h-screen flex flex-col">
@@ -107,6 +120,15 @@ const Metrics = () => {
               </div>
             </div>
             <div className="flex gap-3">
+              <Button 
+                variant="outline" 
+                className="flex items-center gap-2"
+                onClick={handleInsertProvidedMetrics}
+                disabled={isLoading}
+              >
+                <Database className="h-4 w-4" />
+                Insert Provided Data
+              </Button>
               <Button 
                 variant="outline" 
                 className="flex items-center gap-2"

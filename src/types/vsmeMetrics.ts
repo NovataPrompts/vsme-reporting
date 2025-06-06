@@ -1,5 +1,4 @@
 
-
 export interface VSMEMetric {
   id?: string; // Making id optional since static data won't have it initially
   module: string;
@@ -18,6 +17,7 @@ export interface VSMEMetric {
   question?: string;
   inputType?: string;
   unit?: string;
+  response_options?: string; // Added response_options field
   response?: string;
   formattedResponse?: string;
   lastUpdated?: string;
@@ -26,4 +26,3 @@ export interface VSMEMetric {
 export type Module = 'Basic' | 'Advanced' | 'Comprehensive';
 
 export type InputType = 'Multiple Choice' | 'Boolean' | 'Multi-Select' | 'Tabular' | 'Text' | 'Decimal' | 'Integer';
-

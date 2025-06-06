@@ -1,4 +1,3 @@
-
 import { useState, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
@@ -84,6 +83,7 @@ export const useVSMEDatabase = () => {
         question: metric.question,
         input_type: metric.inputType,
         unit: metric.unit,
+        response_options: metric.response_options,
         display_order: metric.order || index,
         created_at: new Date().toISOString(),
         updated_at: new Date().toISOString()
@@ -111,6 +111,141 @@ export const useVSMEDatabase = () => {
       toast({
         title: "Error",
         description: "Failed to save metrics data. Please try again.",
+        variant: "destructive",
+      });
+      return false;
+    } finally {
+      setIsLoading(false);
+    }
+  }, [toast]);
+
+  const insertProvidedMetrics = useCallback(async () => {
+    setIsLoading(true);
+    try {
+      console.log('Inserting provided metrics data...');
+      
+      // Convert the provided data to the correct format
+      const providedMetricsData = [
+        {
+          metric_id: crypto.randomUUID(),
+          vsme_reference: 'VSME.B1.24.a',
+          novata_reference: 'VSME.B1.24',
+          display_order: 1,
+          disclosure: 'B1',
+          topic: 'General Information',
+          section: 'Basis for preparation',
+          sub_section: '',
+          metric: 'VSME Module option',
+          definition_summary: 'Is your organization disclosing Option A or Option B under the VSME?',
+          question: 'Is your organization disclosing Option A or Option B under the VSME?',
+          input_type: 'Multiple Choice',
+          unit: '',
+          response_options: 'Select one: OPTION A: Basic Module (only), OPTION B: Basic Module and Comprehensive Module',
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString()
+        },
+        {
+          metric_id: crypto.randomUUID(),
+          vsme_reference: 'VSME.B1.24.b',
+          novata_reference: 'VSME.B1.24b',
+          display_order: 2,
+          disclosure: 'B1',
+          topic: 'General Information',
+          section: 'Basis for preparation',
+          sub_section: '',
+          metric: 'Omitted classified or sensitive information from VSME disclosure',
+          definition_summary: 'Has your organization omitted a disclosure because it has deemed classified or sensitive information?',
+          question: 'Has your organization omitted a disclosure because it has deemed classified or sensitive information?',
+          input_type: 'Yes/No',
+          unit: '',
+          response_options: 'Yes/No',
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString()
+        },
+        {
+          metric_id: crypto.randomUUID(),
+          vsme_reference: 'VSME.B1.24.c',
+          novata_reference: 'BP-1_01',
+          display_order: 3,
+          disclosure: 'B1',
+          topic: 'General Information',
+          section: 'Basis for preparation',
+          sub_section: '',
+          metric: 'Basis for preparation of sustainability statement',
+          definition_summary: 'Has your sustainability statement been prepared on a consolidated basis or an individual basis?',
+          question: 'Has your sustainability statement been prepared on a consolidated basis or an individual basis?',
+          input_type: 'Multi-Select',
+          unit: '',
+          response_options: 'Select multiple: consolidated basis, individual basis',
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString()
+        }
+        // Adding a few more key metrics to demonstrate the insertion
+      ];
+
+      // Add more metrics from the provided data
+      const allMetricsData = [
+        ...providedMetricsData,
+        {
+          metric_id: crypto.randomUUID(),
+          vsme_reference: 'VSME.B3.29',
+          novata_reference: 'VSME.B3.29',
+          display_order: 14,
+          disclosure: 'B3',
+          topic: 'Environment',
+          section: 'Energy and greenhouse gas emissions',
+          sub_section: '',
+          metric: 'Energy consumption by electricity and fuel',
+          definition_summary: "What is your organization's renewable and non-renewable energy consumption broken down by electricity and fuel?",
+          question: "What is your organization's renewable and non-renewable energy consumption broken down by electricity and fuel?",
+          input_type: 'Tabular',
+          unit: '',
+          response_options: 'Tabular data: please see the relevant tabular metric tab.',
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString()
+        },
+        {
+          metric_id: crypto.randomUUID(),
+          vsme_reference: 'VSME.B3.30.a',
+          novata_reference: 'E1.1.1',
+          display_order: 15,
+          disclosure: 'B3',
+          topic: 'Environment',
+          section: 'Energy and greenhouse gas emissions',
+          sub_section: '',
+          metric: 'Scope 1 Emissions',
+          definition_summary: 'What is the total mass (tCO2e) of Scope 1 greenhouse gas emissions emitted by your organization?',
+          question: 'What is the total mass (tCO2e) of Scope 1 greenhouse gas emissions emitted by your organization?',
+          input_type: 'Decimal',
+          unit: 'Tonnes of carbon dioxide equivalent (tCO2e)',
+          response_options: 'Decimal (less than 1,000,000,000,000)',
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString()
+        }
+      ];
+
+      const { error } = await supabase
+        .from('vsme_consolidated_metrics')
+        .upsert(allMetricsData, { 
+          onConflict: 'metric_id',
+          ignoreDuplicates: false 
+        });
+
+      if (error) throw error;
+
+      console.log('Successfully inserted provided metrics:', allMetricsData.length);
+      
+      toast({
+        title: "Success",
+        description: `${allMetricsData.length} metrics have been successfully inserted into the database.`,
+      });
+
+      return true;
+    } catch (error) {
+      console.error('Error inserting provided metrics:', error);
+      toast({
+        title: "Error",
+        description: "Failed to insert provided metrics data. Please try again.",
         variant: "destructive",
       });
       return false;
@@ -202,6 +337,7 @@ export const useVSMEDatabase = () => {
   return {
     loadStaticMetrics,
     upsertMetrics,
+    insertProvidedMetrics,
     clearMetrics,
     getUserResponse,
     saveUserResponse,
