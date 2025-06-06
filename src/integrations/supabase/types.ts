@@ -21,7 +21,6 @@ export type Database = {
           response_options: string | null
           unit: string | null
           updated_at: string
-          vsme_reference: string
         }
         Insert: {
           created_at?: string
@@ -34,7 +33,6 @@ export type Database = {
           response_options?: string | null
           unit?: string | null
           updated_at?: string
-          vsme_reference: string
         }
         Update: {
           created_at?: string
@@ -47,7 +45,6 @@ export type Database = {
           response_options?: string | null
           unit?: string | null
           updated_at?: string
-          vsme_reference?: string
         }
         Relationships: []
       }

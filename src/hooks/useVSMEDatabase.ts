@@ -13,7 +13,7 @@ export const useVSMEDatabase = () => {
       const { data, error } = await supabase
         .from('vsme_report_content')
         .select('*')
-        .order('vsme_reference');
+        .order('novata_reference');
 
       if (error) throw error;
 

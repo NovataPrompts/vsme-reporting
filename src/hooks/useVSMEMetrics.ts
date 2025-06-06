@@ -21,7 +21,6 @@ export const useVSMEMetrics = () => {
         metric.topic.toLowerCase().includes(searchQuery.toLowerCase()) ||
         metric.section.toLowerCase().includes(searchQuery.toLowerCase()) ||
         metric.metric.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        metric.reference.toLowerCase().includes(searchQuery.toLowerCase()) ||
         metric.novataReference?.toLowerCase().includes(searchQuery.toLowerCase()) ||
         (metric.definition ? metric.definition.toLowerCase().includes(searchQuery.toLowerCase()) : false)
       )
@@ -35,7 +34,7 @@ export const useVSMEMetrics = () => {
 
   const handleSaveMetric = (metricReference: string) => {
     // Find the metric to include in the message
-    const metric = vsmeMetricsData.find(m => m.reference === metricReference);
+    const metric = vsmeMetricsData.find(m => m.novataReference === metricReference);
     toast({
       title: "Metric Saved",
       description: `${metric?.metric || metricReference} data has been saved successfully.`,
@@ -45,7 +44,7 @@ export const useVSMEMetrics = () => {
 
   const handleLearnMore = (metricReference: string) => {
     // Find the metric to include in the message
-    const metric = vsmeMetricsData.find(m => m.reference === metricReference);
+    const metric = vsmeMetricsData.find(m => m.novataReference === metricReference);
     toast({
       title: "Learn More",
       description: `Additional information about ${metric?.metric || metricReference} will be available soon.`,

@@ -38,7 +38,7 @@ export const VSMEMetricsTable = ({ metrics }: VSMEMetricsTableProps) => {
               <TableHead className="w-32">Topic</TableHead>
               <TableHead className="w-48">Section</TableHead>
               <TableHead className="w-40">Sub-Section</TableHead>
-              <TableHead className="w-32">Reference</TableHead>
+              <TableHead className="w-32">Novata Ref</TableHead>
               <TableHead>Metric</TableHead>
               <TableHead className="w-20 text-right">Actions</TableHead>
             </TableRow>
@@ -46,18 +46,18 @@ export const VSMEMetricsTable = ({ metrics }: VSMEMetricsTableProps) => {
           <TableBody>
             {metrics.length > 0 ? (
               metrics.map((metric, index) => (
-                <React.Fragment key={metric.id || `${metric.reference}-${index}`}>
+                <React.Fragment key={metric.id || `${metric.novataReference}-${index}`}>
                   <TableRow className="hover:bg-muted/50">
                     <TableCell>{metric.module}</TableCell>
                     <TableCell>{metric.disclosure}</TableCell>
                     <TableCell>{metric.topic.replace("Enviornment", "Environment")}</TableCell>
                     <TableCell>{metric.section}</TableCell>
                     <TableCell>{metric.subSection}</TableCell>
-                    <TableCell>{metric.reference}</TableCell>
+                    <TableCell>{metric.novataReference}</TableCell>
                     <TableCell>{metric.metric}</TableCell>
                     <TableCell className="text-right">
                       <div className="flex justify-end">
-                        <Collapsible open={openMetric === metric.reference} onOpenChange={() => toggleMetric(metric.reference)}>
+                        <Collapsible open={openMetric === (metric.novataReference || metric.id)} onOpenChange={() => toggleMetric(metric.novataReference || metric.id || '')}>
                           <CollapsibleTrigger asChild>
                             <Button size="sm" className="h-8 w-8 p-0 bg-[#057cc1] hover:bg-[#057cc1]/90 text-white">
                               <ChevronDown className="h-4 w-4" />
@@ -70,7 +70,7 @@ export const VSMEMetricsTable = ({ metrics }: VSMEMetricsTableProps) => {
                   </TableRow>
                   <TableRow>
                     <TableCell colSpan={8} className="p-0 border-0">
-                      <Collapsible open={openMetric === metric.reference}>
+                      <Collapsible open={openMetric === (metric.novataReference || metric.id)}>
                         <CollapsibleContent>
                           <div className="p-4 mx-4 mb-4 rounded-md bg-[ffffff] bg-slate-50 shadow-sm border border-slate-200">
                             <h3 className="text-lg font-semibold mb-3 text-[#057cc1]">{metric.metric}</h3>
@@ -82,9 +82,9 @@ export const VSMEMetricsTable = ({ metrics }: VSMEMetricsTableProps) => {
                                 </p>
                               </div>
                               <div>
-                                <p className="text-sm font-medium mb-1 text-[#00344d]">VSME Metric Reference:</p>
+                                <p className="text-sm font-medium mb-1 text-[#00344d]">Metric ID:</p>
                                 <p className="text-sm text-[#00344d] mb-3">
-                                  {metric.reference}
+                                  {metric.id || "N/A"}
                                 </p>
                               </div>
                               <div className="col-span-2">
