@@ -31,9 +31,10 @@ export const useVSMEDatabase = () => {
         refConverter: refConverter?.length || 0
       });
 
-      // Log the section_info data to verify structure
+      // Log the actual data to verify structure
       console.log('Section info data:', sectionInfo);
       console.log('Sample report content:', reportContent?.slice(0, 3));
+      console.log('Sample disclosure detail:', disclosureDetail?.slice(0, 3));
 
       if (reportError) {
         console.error('Report content error:', reportError);
@@ -60,28 +61,34 @@ export const useVSMEDatabase = () => {
         // Extract disclosure code from novata_reference (e.g., "B1.1" -> "B1")
         const disclosureCode = content.novata_reference?.split('.')[0];
         
-        // Find matching section info using the disclosure code from section_info table
+        // Find matching section info using the disclosure code
         const sectionData = sectionInfo?.find(s => s.disclosure === disclosureCode);
         
-        // Find matching disclosure detail
-        const disclosure = disclosureDetail?.find(d => d.novata_reference === content.novata_reference);
+        // Find matching disclosure detail using the full novata_reference
+        const disclosureData = disclosureDetail?.find(d => d.novata_reference === content.novata_reference);
 
         // Log detailed mapping for debugging
         console.log('Mapping for:', content.novata_reference, {
           disclosureCode,
-          sectionData,
-          foundInSectionInfo: !!sectionData
+          foundSectionData: !!sectionData,
+          foundDisclosureData: !!disclosureData,
+          sectionInfo: sectionData ? {
+            disclosure: sectionData.disclosure,
+            topic: sectionData.topic,
+            section: sectionData.section,
+            sub_section: sectionData.sub_section
+          } : null
         });
 
         return {
           id: content.id,
           module: 'Basic', // All entries are Basic module
-          disclosure: sectionData?.disclosure || disclosureCode || '', // Use section_info.disclosure or fallback
+          disclosure: sectionData?.disclosure || disclosureCode || '', // Use section_info.disclosure
           topic: sectionData?.topic || 'Unknown Topic', // Use section_info.topic
           section: sectionData?.section || 'Unknown Section', // Use section_info.section  
-          subSection: sectionData?.sub_section || '', // Use section_info.sub_section (can be empty)
-          reference: vsmeRef?.vsme_reference || '', // VSME reference
-          novataReference: content.novata_reference || '', // Keep for internal use but not display in top row
+          subSection: sectionData?.sub_section || '', // Use section_info.sub_section
+          reference: vsmeRef?.vsme_reference || '', // VSME reference from converter
+          novataReference: content.novata_reference || '', // Original novata reference
           metric: content.metric || '',
           definition: content.definition_summary || '',
           question: content.question || '',
@@ -94,6 +101,7 @@ export const useVSMEDatabase = () => {
       console.log('Final combined metrics sample:', combinedMetrics.slice(0, 5));
       console.log('Total metrics combined:', combinedMetrics.length);
       console.log('Topics found:', [...new Set(combinedMetrics.map(m => m.topic))]);
+      console.log('Sections found:', [...new Set(combinedMetrics.map(m => m.section))]);
       console.log('Disclosures found:', [...new Set(combinedMetrics.map(m => m.disclosure))]);
 
       // Sort by order
