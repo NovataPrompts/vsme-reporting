@@ -13,8 +13,6 @@ const Metrics = () => {
     topics,
     filteredMetrics,
     metricsByTopic,
-    handleSaveMetric,
-    handleLearnMore,
     goToImport,
     lastUpdated
   } = useVSMEMetrics();
@@ -56,15 +54,11 @@ const Metrics = () => {
               searchQuery={searchQuery}
               onSearchChange={setSearchQuery}
               filteredMetrics={filteredMetrics}
-              onLearnMore={handleLearnMore}
-              onSaveMetric={handleSaveMetric}
             />
 
             <VSMEMetricsTabs
               topics={topics}
               metricsByTopic={metricsByTopic}
-              onLearnMore={handleLearnMore}
-              onSaveMetric={handleSaveMetric}
             />
           </div>
         </div>

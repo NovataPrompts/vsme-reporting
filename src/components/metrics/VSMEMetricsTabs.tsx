@@ -7,15 +7,11 @@ import { VSMEMetric } from "@/types/vsmeMetrics";
 interface VSMEMetricsTabsProps {
   topics: string[];
   metricsByTopic: Record<string, VSMEMetric[]>;
-  onLearnMore: (metricReference: string) => void;
-  onSaveMetric: (metricReference: string) => void;
 }
 
 export const VSMEMetricsTabs = ({
   topics,
   metricsByTopic,
-  onLearnMore,
-  onSaveMetric,
 }: VSMEMetricsTabsProps) => {
   // Convert topic names to safe tab IDs
   const getTabId = (topic: string) => topic.toLowerCase().replace(/\s+/g, '-');
@@ -34,11 +30,7 @@ export const VSMEMetricsTabs = ({
         <TabsContent key={topic} value={getTabId(topic)} className="mt-0">
           <Card className="shadow-sm">
             <CardContent className="p-4">
-              <VSMEMetricsTable 
-                metrics={metricsByTopic[topic]}
-                onLearnMore={onLearnMore}
-                onSaveMetric={onSaveMetric}
-              />
+              <VSMEMetricsTable metrics={metricsByTopic[topic]} />
             </CardContent>
           </Card>
         </TabsContent>

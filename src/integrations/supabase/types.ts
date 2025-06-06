@@ -51,6 +51,44 @@ export type Database = {
         }
         Relationships: []
       }
+      vsme_user_responses: {
+        Row: {
+          created_at: string
+          id: string
+          metric_id: string
+          response_data: Json | null
+          response_value: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          metric_id: string
+          response_data?: Json | null
+          response_value?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          metric_id?: string
+          response_data?: Json | null
+          response_value?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "vsme_user_responses_metric_id_fkey"
+            columns: ["metric_id"]
+            isOneToOne: false
+            referencedRelation: "vsme_report_content"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never

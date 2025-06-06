@@ -9,16 +9,12 @@ interface VSMEMetricsSearchProps {
   searchQuery: string;
   onSearchChange: (query: string) => void;
   filteredMetrics: VSMEMetric[];
-  onLearnMore: (metricReference: string) => void;
-  onSaveMetric: (metricReference: string) => void;
 }
 
 export const VSMEMetricsSearch = ({
   searchQuery,
   onSearchChange,
   filteredMetrics,
-  onLearnMore,
-  onSaveMetric,
 }: VSMEMetricsSearchProps) => {
   return (
     <div className="mb-6">
@@ -37,11 +33,7 @@ export const VSMEMetricsSearch = ({
           <h2 className="text-lg font-medium mb-3">Search Results</h2>
           <Card className="shadow-sm">
             <CardContent className="p-4">
-              <VSMEMetricsTable 
-                metrics={filteredMetrics}
-                onLearnMore={onLearnMore}
-                onSaveMetric={onSaveMetric}
-              />
+              <VSMEMetricsTable metrics={filteredMetrics} />
             </CardContent>
           </Card>
         </div>
