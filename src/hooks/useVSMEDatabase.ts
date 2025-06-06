@@ -1,3 +1,4 @@
+
 import { useState, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
@@ -9,92 +10,49 @@ export const useVSMEDatabase = () => {
   const loadStaticMetrics = useCallback(async () => {
     setIsLoading(true);
     try {
-      console.log('Loading static metrics from Supabase...');
+      console.log('Loading consolidated metrics from Supabase...');
       
-      // Load data from all relevant tables
-      const [
-        { data: reportContent, error: reportError },
-        { data: sectionInfo, error: sectionError },
-        { data: disclosureDetail, error: disclosureError },
-        { data: refConverter, error: refError }
-      ] = await Promise.all([
-        supabase.from('vsme_report_content').select('*').order('novata_reference'),
-        supabase.from('section_info').select('*'),
-        supabase.from('disclosure_detail').select('*'),
-        supabase.from('vsme_novata_ref_converter').select('*').order('order')
-      ]);
+      // Load data from the new consolidated table
+      const { data: consolidatedMetrics, error } = await supabase
+        .from('vsme_consolidated_metrics')
+        .select('*')
+        .order('display_order', { nullsFirst: false });
 
-      console.log('Raw data loaded:', {
-        reportContent: reportContent?.length || 0,
-        sectionInfo: sectionInfo?.length || 0,
-        disclosureDetail: disclosureDetail?.length || 0,
-        refConverter: refConverter?.length || 0
-      });
+      console.log('Consolidated metrics loaded:', consolidatedMetrics?.length || 0);
 
-      // Log sample data to understand structure
-      console.log('Sample reportContent:', reportContent?.slice(0, 2));
-      console.log('Sample sectionInfo:', sectionInfo?.slice(0, 2));
-      console.log('Sample refConverter:', refConverter?.slice(0, 2));
+      if (error) throw error;
 
-      if (reportError) throw reportError;
-      if (sectionError) throw sectionError;
-      if (disclosureError) throw disclosureError;
-      if (refError) throw refError;
+      if (!consolidatedMetrics) {
+        console.log('No consolidated metrics found');
+        return [];
+      }
 
-      // Build the metrics by combining all data sources
-      const combinedMetrics = reportContent?.map(content => {
-        // Find section information using novata_reference
-        // Try exact match first, then partial match if needed
-        let sectionData = sectionInfo?.find(s => s.disclosure === content.novata_reference);
-        
-        // If no exact match, try to find by checking if the novata_reference starts with the disclosure
-        if (!sectionData) {
-          sectionData = sectionInfo?.find(s => 
-            s.disclosure && content.novata_reference && 
-            content.novata_reference.startsWith(s.disclosure)
-          );
-        }
-        
-        // Get the VSME reference from the converter table
-        const vsmeRef = refConverter?.find(r => r.novata_reference === content.novata_reference);
-        
-        // Get additional disclosure details if available
-        const disclosureData = disclosureDetail?.find(d => d.novata_reference === content.novata_reference);
+      // Map the consolidated data to our VSMEMetric interface
+      const metrics = consolidatedMetrics.map(metric => ({
+        id: metric.metric_id,
+        module: 'Basic',
+        disclosure: metric.disclosure || '',
+        topic: metric.topic || 'No Topic Found',
+        section: metric.section || 'No Section Found',
+        subSection: metric.sub_section || '',
+        reference: metric.vsme_reference || '',
+        novataReference: metric.novata_reference || '',
+        metric: metric.metric || '',
+        definition: metric.definition_summary || '',
+        question: metric.question || '',
+        inputType: metric.input_type || '',
+        unit: metric.unit || '',
+        order: metric.display_order || 0
+      }));
 
-        // Log mapping results for debugging
-        if (!sectionData) {
-          console.log(`No section data found for: ${content.novata_reference}`);
-        }
+      console.log('Processed metrics:', metrics.length);
+      console.log('Sample metrics:', metrics.slice(0, 3));
+      console.log('Unique topics found:', [...new Set(metrics.map(m => m.topic))]);
+      console.log('Unique sections found:', [...new Set(metrics.map(m => m.section))]);
 
-        return {
-          id: content.id,
-          module: 'Basic',
-          disclosure: content.novata_reference || '',
-          topic: sectionData?.topic || 'No Topic Found',
-          section: sectionData?.section || 'No Section Found',
-          subSection: sectionData?.sub_section || '',
-          reference: vsmeRef?.vsme_reference || '',
-          novataReference: content.novata_reference || '',
-          metric: content.metric || '',
-          definition: content.definition_summary || '',
-          question: content.question || '',
-          inputType: content.input_type || '',
-          unit: content.unit || '',
-          order: vsmeRef?.order || 0
-        };
-      }) || [];
-
-      console.log('Combined metrics:', combinedMetrics.length);
-      console.log('Sample combined metrics:', combinedMetrics.slice(0, 3));
-      console.log('Unique topics found:', [...new Set(combinedMetrics.map(m => m.topic))]);
-      console.log('Unique sections found:', [...new Set(combinedMetrics.map(m => m.section))]);
-
-      // Sort by order
-      const sortedMetrics = combinedMetrics.sort((a, b) => (a.order || 0) - (b.order || 0));
-
-      return sortedMetrics;
+      return metrics;
     } catch (error) {
-      console.error('Error loading static metrics:', error);
+      console.error('Error loading consolidated metrics:', error);
       toast({
         title: "Error",
         description: "Failed to load metrics data. Please try again.",

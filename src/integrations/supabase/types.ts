@@ -72,6 +72,63 @@ export type Database = {
         }
         Relationships: []
       }
+      vsme_consolidated_metrics: {
+        Row: {
+          created_at: string | null
+          definition_summary: string | null
+          disclosure: string | null
+          display_order: number | null
+          input_type: string | null
+          metric: string | null
+          metric_id: string
+          novata_reference: string | null
+          question: string | null
+          response_options: string | null
+          section: string | null
+          sub_section: string | null
+          topic: string | null
+          unit: string | null
+          updated_at: string | null
+          vsme_reference: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          definition_summary?: string | null
+          disclosure?: string | null
+          display_order?: number | null
+          input_type?: string | null
+          metric?: string | null
+          metric_id: string
+          novata_reference?: string | null
+          question?: string | null
+          response_options?: string | null
+          section?: string | null
+          sub_section?: string | null
+          topic?: string | null
+          unit?: string | null
+          updated_at?: string | null
+          vsme_reference?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          definition_summary?: string | null
+          disclosure?: string | null
+          display_order?: number | null
+          input_type?: string | null
+          metric?: string | null
+          metric_id?: string
+          novata_reference?: string | null
+          question?: string | null
+          response_options?: string | null
+          section?: string | null
+          sub_section?: string | null
+          topic?: string | null
+          unit?: string | null
+          updated_at?: string | null
+          vsme_reference?: string | null
+        }
+        Relationships: []
+      }
       vsme_novata_ref_converter: {
         Row: {
           created_at: string
