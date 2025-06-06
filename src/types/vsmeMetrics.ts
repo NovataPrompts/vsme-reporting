@@ -1,5 +1,6 @@
 
 export interface VSMEMetric {
+  id: string; // Adding the id field from the database
   module: string;
   disclosure: string;
   topic: string;

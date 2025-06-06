@@ -46,7 +46,7 @@ export const VSMEMetricsTable = ({ metrics }: VSMEMetricsTableProps) => {
           <TableBody>
             {metrics.length > 0 ? (
               metrics.map((metric, index) => (
-                <React.Fragment key={`${metric.reference}-${index}`}>
+                <React.Fragment key={metric.id || `${metric.reference}-${index}`}>
                   <TableRow className="hover:bg-muted/50">
                     <TableCell>{metric.module}</TableCell>
                     <TableCell>{metric.disclosure}</TableCell>
