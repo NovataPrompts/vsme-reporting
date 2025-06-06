@@ -9,7 +9,57 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
-      [_ in never]: never
+      vsme_report_content: {
+        Row: {
+          created_at: string
+          definition_summary: string | null
+          formatted_response: string | null
+          id: string
+          input_type: string | null
+          metric: string | null
+          novata_reference: string | null
+          question: string | null
+          response_options: string | null
+          unit: string | null
+          updated_at: string
+          user_id: string
+          user_response: string | null
+          vsme_reference: string
+        }
+        Insert: {
+          created_at?: string
+          definition_summary?: string | null
+          formatted_response?: string | null
+          id?: string
+          input_type?: string | null
+          metric?: string | null
+          novata_reference?: string | null
+          question?: string | null
+          response_options?: string | null
+          unit?: string | null
+          updated_at?: string
+          user_id: string
+          user_response?: string | null
+          vsme_reference: string
+        }
+        Update: {
+          created_at?: string
+          definition_summary?: string | null
+          formatted_response?: string | null
+          id?: string
+          input_type?: string | null
+          metric?: string | null
+          novata_reference?: string | null
+          question?: string | null
+          response_options?: string | null
+          unit?: string | null
+          updated_at?: string
+          user_id?: string
+          user_response?: string | null
+          vsme_reference?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never

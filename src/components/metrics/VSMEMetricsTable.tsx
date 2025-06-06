@@ -1,11 +1,12 @@
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { ChevronDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Table, TableHeader, TableBody, TableHead, TableRow, TableCell } from "@/components/ui/table";
 import { VSMEMetric } from "@/types/vsmeMetrics";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { Textarea } from "@/components/ui/textarea";
+import { useVSMEDatabase } from "@/hooks/useVSMEDatabase";
 
 interface VSMEMetricsTableProps {
   metrics: VSMEMetric[];
@@ -20,6 +21,16 @@ export const VSMEMetricsTable = ({
 }: VSMEMetricsTableProps) => {
   const [openMetric, setOpenMetric] = useState<string | null>(null);
   const [responses, setResponses] = useState<Record<string, { response: string, formattedResponse: string }>>({});
+  const { saveMetricResponse, loadSavedResponses, isLoading } = useVSMEDatabase();
+  
+  useEffect(() => {
+    // Load saved responses when component mounts
+    const loadResponses = async () => {
+      const savedResponses = await loadSavedResponses();
+      setResponses(savedResponses);
+    };
+    loadResponses();
+  }, []);
   
   const toggleMetric = (metricRef: string) => {
     setOpenMetric(openMetric === metricRef ? null : metricRef);
@@ -45,6 +56,16 @@ export const VSMEMetricsTable = ({
     }));
   };
   
+  const handleSaveMetric = async (metricRef: string) => {
+    const response = responses[metricRef]?.response || "";
+    const formattedResponse = responses[metricRef]?.formattedResponse || "";
+    
+    const success = await saveMetricResponse(metricRef, response, formattedResponse);
+    if (success) {
+      onSaveMetric(metricRef);
+    }
+  };
+  
   const getResponse = (metric: VSMEMetric) => {
     return responses[metric.reference]?.response || metric.response || "";
   };
@@ -53,7 +74,8 @@ export const VSMEMetricsTable = ({
     return responses[metric.reference]?.formattedResponse || metric.formattedResponse || "";
   };
   
-  return <div className="overflow-x-auto">
+  return (
+    <div className="overflow-x-auto">
       <Table>
         <TableHeader>
           <TableRow>
@@ -68,7 +90,9 @@ export const VSMEMetricsTable = ({
           </TableRow>
         </TableHeader>
         <TableBody>
-          {metrics.length > 0 ? metrics.map((metric, index) => <React.Fragment key={`${metric.reference}-${index}`}>
+          {metrics.length > 0 ? (
+            metrics.map((metric, index) => (
+              <React.Fragment key={`${metric.reference}-${index}`}>
                 <TableRow className="hover:bg-muted/50">
                   <TableCell>{metric.module}</TableCell>
                   <TableCell>{metric.disclosure}</TableCell>
@@ -154,9 +178,10 @@ export const VSMEMetricsTable = ({
                             <div className="col-span-2 mt-2">
                               <Button 
                                 className="bg-[#057cc1] hover:bg-[#057cc1]/90 text-white"
-                                onClick={() => onSaveMetric(metric.reference)}
+                                onClick={() => handleSaveMetric(metric.reference)}
+                                disabled={isLoading}
                               >
-                                Save Metric Response
+                                {isLoading ? "Saving..." : "Save Metric Response"}
                               </Button>
                             </div>
                           </div>
@@ -165,12 +190,17 @@ export const VSMEMetricsTable = ({
                     </Collapsible>
                   </TableCell>
                 </TableRow>
-              </React.Fragment>) : <TableRow>
+              </React.Fragment>
+            ))
+          ) : (
+            <TableRow>
               <TableCell colSpan={8} className="h-24 text-center">
                 No metrics found
               </TableCell>
-            </TableRow>}
+            </TableRow>
+          )}
         </TableBody>
       </Table>
-    </div>;
+    </div>
+  );
 };
