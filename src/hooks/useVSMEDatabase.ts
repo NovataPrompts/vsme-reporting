@@ -32,6 +32,9 @@ export const useVSMEDatabase = () => {
         refConverter: refConverter?.length || 0
       });
 
+      // Log section_info data to understand the structure
+      console.log('Section info data:', sectionInfo);
+
       if (reportError) {
         console.error('Report content error:', reportError);
         throw reportError;
@@ -66,8 +69,8 @@ export const useVSMEDatabase = () => {
         console.log('Mapping metric:', {
           novataRef: content.novata_reference,
           disclosureCode,
-          section: section?.section,
-          topic: section?.topic,
+          sectionFound: !!section,
+          sectionData: section,
           vsmeRef: vsmeRef?.vsme_reference
         });
 
@@ -75,9 +78,9 @@ export const useVSMEDatabase = () => {
           id: content.id,
           module: 'Basic', // All entries are Basic module
           disclosure: disclosureCode || '', // B1, B2, etc.
-          topic: section?.topic || 'Uncategorized', // General, Social, etc.
-          section: section?.section || '',
-          subSection: section?.sub_section || '',
+          topic: section?.topic || 'Uncategorized', // General Information, Social metrics, etc.
+          section: section?.section || '', // Basis for preparation, Energy and greenhouse gas emissions, etc.
+          subSection: section?.sub_section || '', // General Characteristics, Health and Safety, etc.
           reference: vsmeRef?.vsme_reference || '', // VSME reference
           novataReference: content.novata_reference || '', // Keep for internal use but not display in top row
           metric: content.metric || '',
