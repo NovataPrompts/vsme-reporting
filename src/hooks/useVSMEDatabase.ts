@@ -31,11 +31,6 @@ export const useVSMEDatabase = () => {
         refConverter: refConverter?.length || 0
       });
 
-      // Log the actual data to verify structure
-      console.log('Section info data:', sectionInfo);
-      console.log('Sample report content:', reportContent?.slice(0, 3));
-      console.log('Sample disclosure detail:', disclosureDetail?.slice(0, 3));
-
       if (reportError) {
         console.error('Report content error:', reportError);
         throw reportError;
@@ -55,22 +50,18 @@ export const useVSMEDatabase = () => {
 
       // Combine the data to create complete metric objects
       const combinedMetrics = reportContent?.map(content => {
-        // Find matching VSME reference first
+        // Find matching section info using the novata_reference directly
+        const sectionData = sectionInfo?.find(s => s.disclosure && content.novata_reference?.startsWith(s.disclosure));
+        
+        // Find matching VSME reference from converter
         const vsmeRef = refConverter?.find(r => r.novata_reference === content.novata_reference);
-        
-        // Extract disclosure code from novata_reference (e.g., "B1.1" -> "B1")
-        const disclosureCode = content.novata_reference?.split('.')[0];
-        
-        // Find matching section info using the disclosure code
-        const sectionData = sectionInfo?.find(s => s.disclosure === disclosureCode);
         
         // Find matching disclosure detail using the full novata_reference
         const disclosureData = disclosureDetail?.find(d => d.novata_reference === content.novata_reference);
 
-        // Log detailed mapping for debugging
         console.log('Mapping for:', content.novata_reference, {
-          disclosureCode,
           foundSectionData: !!sectionData,
+          foundVsmeRef: !!vsmeRef,
           foundDisclosureData: !!disclosureData,
           sectionInfo: sectionData ? {
             disclosure: sectionData.disclosure,
@@ -83,7 +74,7 @@ export const useVSMEDatabase = () => {
         return {
           id: content.id,
           module: 'Basic', // All entries are Basic module
-          disclosure: sectionData?.disclosure || disclosureCode || '', // Use section_info.disclosure
+          disclosure: sectionData?.disclosure || 'Unknown', // Use section_info.disclosure
           topic: sectionData?.topic || 'Unknown Topic', // Use section_info.topic
           section: sectionData?.section || 'Unknown Section', // Use section_info.section  
           subSection: sectionData?.sub_section || '', // Use section_info.sub_section
