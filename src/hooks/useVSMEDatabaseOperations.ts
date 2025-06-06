@@ -21,6 +21,7 @@ export const useVSMEDatabaseOperations = () => {
         sub_section: metric.subSection,
         vsme_reference: metric.reference,
         novata_reference: metric.novataReference,
+        order_index: metric.order || index,
         metric: metric.metric,
         definition_summary: metric.definition,
         question: metric.question,

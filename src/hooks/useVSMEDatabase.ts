@@ -18,10 +18,11 @@ export const useVSMEDatabase = () => {
     try {
       console.log('Loading consolidated metrics from Supabase...');
       
-      // Load data from the consolidated table only
+      // Load data from the consolidated table only, ordered by order_index
       const { data: consolidatedMetrics, error } = await supabase
         .from('vsme_consolidated_metrics')
         .select('*')
+        .order('order_index', { nullsFirst: false })
         .order('display_order', { nullsFirst: false });
 
       console.log('Consolidated metrics loaded:', consolidatedMetrics?.length || 0);
@@ -36,6 +37,7 @@ export const useVSMEDatabase = () => {
         const { data: retryData, error: retryError } = await supabase
           .from('vsme_consolidated_metrics')
           .select('*')
+          .order('order_index', { nullsFirst: false })
           .order('display_order', { nullsFirst: false });
 
         if (retryError) throw retryError;
@@ -60,7 +62,7 @@ export const useVSMEDatabase = () => {
           question: metric.question || '',
           inputType: metric.input_type || '',
           unit: metric.unit || '',
-          order: metric.display_order || 0
+          order: metric.order_index || metric.display_order || 0
         }));
 
         return retryMetrics;
@@ -81,7 +83,7 @@ export const useVSMEDatabase = () => {
         question: metric.question || '',
         inputType: metric.input_type || '',
         unit: metric.unit || '',
-        order: metric.display_order || 0
+        order: metric.order_index || metric.display_order || 0
       }));
 
       console.log('Processed metrics:', metrics.length);

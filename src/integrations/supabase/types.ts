@@ -82,6 +82,7 @@ export type Database = {
           metric: string | null
           metric_id: string
           novata_reference: string | null
+          order_index: number | null
           question: string | null
           response_options: string | null
           section: string | null
@@ -100,6 +101,7 @@ export type Database = {
           metric?: string | null
           metric_id: string
           novata_reference?: string | null
+          order_index?: number | null
           question?: string | null
           response_options?: string | null
           section?: string | null
@@ -118,6 +120,7 @@ export type Database = {
           metric?: string | null
           metric_id?: string
           novata_reference?: string | null
+          order_index?: number | null
           question?: string | null
           response_options?: string | null
           section?: string | null
