@@ -1,12 +1,10 @@
 
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { ChevronDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Table, TableHeader, TableBody, TableHead, TableRow, TableCell } from "@/components/ui/table";
 import { VSMEMetric } from "@/types/vsmeMetrics";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
-import { Textarea } from "@/components/ui/textarea";
-import { useVSMEDatabase } from "@/hooks/useVSMEDatabase";
 
 interface VSMEMetricsTableProps {
   metrics: VSMEMetric[];
@@ -20,58 +18,9 @@ export const VSMEMetricsTable = ({
   onSaveMetric
 }: VSMEMetricsTableProps) => {
   const [openMetric, setOpenMetric] = useState<string | null>(null);
-  const [responses, setResponses] = useState<Record<string, { response: string, formattedResponse: string }>>({});
-  const { saveMetricResponse, loadSavedResponses, isLoading } = useVSMEDatabase();
-  
-  useEffect(() => {
-    // Load saved responses when component mounts
-    const loadResponses = async () => {
-      const savedResponses = await loadSavedResponses();
-      setResponses(savedResponses);
-    };
-    loadResponses();
-  }, []);
   
   const toggleMetric = (metricRef: string) => {
     setOpenMetric(openMetric === metricRef ? null : metricRef);
-  };
-  
-  const handleResponseChange = (metricRef: string, value: string) => {
-    setResponses(prev => ({
-      ...prev,
-      [metricRef]: {
-        ...prev[metricRef],
-        response: value
-      }
-    }));
-  };
-  
-  const handleFormattedResponseChange = (metricRef: string, value: string) => {
-    setResponses(prev => ({
-      ...prev,
-      [metricRef]: {
-        ...prev[metricRef],
-        formattedResponse: value
-      }
-    }));
-  };
-  
-  const handleSaveMetric = async (metricRef: string) => {
-    const response = responses[metricRef]?.response || "";
-    const formattedResponse = responses[metricRef]?.formattedResponse || "";
-    
-    const success = await saveMetricResponse(metricRef, response, formattedResponse);
-    if (success) {
-      onSaveMetric(metricRef);
-    }
-  };
-  
-  const getResponse = (metric: VSMEMetric) => {
-    return responses[metric.reference]?.response || metric.response || "";
-  };
-  
-  const getFormattedResponse = (metric: VSMEMetric) => {
-    return responses[metric.reference]?.formattedResponse || metric.formattedResponse || "";
   };
   
   return (
@@ -157,31 +106,18 @@ export const VSMEMetricsTable = ({
                                 {metric.unit || "N/A"}
                               </p>
                             </div>
-                            <div>
-                              <p className="text-sm font-medium mb-1 text-[#00344d]">Response:</p>
-                              <Textarea
-                                className="text-sm text-[#00344d] mb-3 bg-white p-2 rounded border border-slate-200 min-h-[80px]"
-                                value={getResponse(metric)}
-                                onChange={(e) => handleResponseChange(metric.reference, e.target.value)}
-                                placeholder="Enter response here..."
-                              />
-                            </div>
-                            <div>
-                              <p className="text-sm font-medium mb-1 text-[#00344d]">Formatted Response:</p>
-                              <Textarea
-                                className="text-sm text-[#00344d] mb-3 bg-white p-2 rounded border border-slate-200 min-h-[80px]"
-                                value={getFormattedResponse(metric)}
-                                onChange={(e) => handleFormattedResponseChange(metric.reference, e.target.value)}
-                                placeholder="Enter formatted response here..."
-                              />
-                            </div>
                             <div className="col-span-2 mt-2">
                               <Button 
-                                className="bg-[#057cc1] hover:bg-[#057cc1]/90 text-white"
-                                onClick={() => handleSaveMetric(metric.reference)}
-                                disabled={isLoading}
+                                className="bg-[#057cc1] hover:bg-[#057cc1]/90 text-white mr-2"
+                                onClick={() => onLearnMore(metric.reference)}
                               >
-                                {isLoading ? "Saving..." : "Save Metric Response"}
+                                Learn More
+                              </Button>
+                              <Button 
+                                variant="outline"
+                                onClick={() => onSaveMetric(metric.reference)}
+                              >
+                                Save to Collection
                               </Button>
                             </div>
                           </div>

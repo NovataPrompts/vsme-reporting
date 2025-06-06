@@ -13,7 +13,6 @@ export type Database = {
         Row: {
           created_at: string
           definition_summary: string | null
-          formatted_response: string | null
           id: string
           input_type: string | null
           metric: string | null
@@ -22,14 +21,11 @@ export type Database = {
           response_options: string | null
           unit: string | null
           updated_at: string
-          user_id: string
-          user_response: string | null
           vsme_reference: string
         }
         Insert: {
           created_at?: string
           definition_summary?: string | null
-          formatted_response?: string | null
           id?: string
           input_type?: string | null
           metric?: string | null
@@ -38,14 +34,11 @@ export type Database = {
           response_options?: string | null
           unit?: string | null
           updated_at?: string
-          user_id: string
-          user_response?: string | null
           vsme_reference: string
         }
         Update: {
           created_at?: string
           definition_summary?: string | null
-          formatted_response?: string | null
           id?: string
           input_type?: string | null
           metric?: string | null
@@ -54,8 +47,6 @@ export type Database = {
           response_options?: string | null
           unit?: string | null
           updated_at?: string
-          user_id?: string
-          user_response?: string | null
           vsme_reference?: string
         }
         Relationships: []
