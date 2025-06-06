@@ -2,20 +2,76 @@
 import { VSMEMetricsSearch } from "@/components/metrics/VSMEMetricsSearch";
 import { VSMEMetricsTabs } from "@/components/metrics/VSMEMetricsTabs";
 import { VSMEMetricsDropdown } from "@/components/metrics/VSMEMetricsDropdown";
-import { useVSMEMetrics } from "@/hooks/useVSMEMetrics";
+import { useVSMEDatabase } from "@/hooks/useVSMEDatabase";
 import { Button } from "@/components/ui/button";
 import { Upload } from "lucide-react";
+import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import { VSMEMetric } from "@/types/vsmeMetrics";
 
 const Metrics = () => {
-  const {
-    searchQuery,
-    setSearchQuery,
-    topics,
-    filteredMetrics,
-    metricsByTopic,
-    goToImport,
-    lastUpdated
-  } = useVSMEMetrics();
+  const { loadStaticMetrics, isLoading } = useVSMEDatabase();
+  const navigate = useNavigate();
+  const [searchQuery, setSearchQuery] = useState("");
+  const [metrics, setMetrics] = useState<VSMEMetric[]>([]);
+  const [lastUpdated, setLastUpdated] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchMetrics = async () => {
+      const data = await loadStaticMetrics();
+      setMetrics(data);
+    };
+    
+    fetchMetrics();
+    
+    // Check if data was previously synced
+    const metricsLastUpdated = localStorage.getItem('metricsLastUpdated');
+    if (metricsLastUpdated) {
+      setLastUpdated(metricsLastUpdated);
+    }
+  }, []);
+
+  // Get unique topics for filtering
+  const topics = Array.from(new Set(metrics.map(metric => metric.topic).filter(Boolean)));
+  
+  // Filter metrics based on search query
+  const filteredMetrics = searchQuery
+    ? metrics.filter(metric => 
+        metric.disclosure?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        metric.topic?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        metric.section?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        metric.metric?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        metric.novataReference?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        metric.definition?.toLowerCase().includes(searchQuery.toLowerCase())
+      )
+    : [];
+
+  // Group metrics by topic
+  const metricsByTopic: Record<string, VSMEMetric[]> = {};
+  topics.forEach(topic => {
+    metricsByTopic[topic] = metrics.filter(metric => metric.topic === topic);
+  });
+
+  const goToImport = () => {
+    navigate("/import");
+  };
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen flex flex-col">
+        <main className="flex-1 pt-12 pb-12">
+          <div className="container mx-auto px-4 md:px-6">
+            <div className="flex items-center justify-center h-64">
+              <div className="text-center">
+                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#057cc1] mx-auto mb-4"></div>
+                <p className="text-gray-600">Loading metrics...</p>
+              </div>
+            </div>
+          </div>
+        </main>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen flex flex-col">

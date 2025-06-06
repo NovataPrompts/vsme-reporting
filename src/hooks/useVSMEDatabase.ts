@@ -10,14 +10,54 @@ export const useVSMEDatabase = () => {
   const loadStaticMetrics = async () => {
     setIsLoading(true);
     try {
-      const { data, error } = await supabase
-        .from('vsme_report_content')
-        .select('*')
-        .order('novata_reference');
+      // Load data from all relevant tables
+      const [
+        { data: reportContent, error: reportError },
+        { data: sectionInfo, error: sectionError },
+        { data: disclosureDetail, error: disclosureError },
+        { data: refConverter, error: refError }
+      ] = await Promise.all([
+        supabase.from('vsme_report_content').select('*').order('novata_reference'),
+        supabase.from('section_info').select('*'),
+        supabase.from('disclosure_detail').select('*'),
+        supabase.from('vsme_novata_ref_converter').select('*').order('order')
+      ]);
 
-      if (error) throw error;
+      if (reportError) throw reportError;
+      if (sectionError) throw sectionError;
+      if (disclosureError) throw disclosureError;
+      if (refError) throw refError;
 
-      return data || [];
+      // Combine the data to create complete metric objects
+      const combinedMetrics = reportContent?.map(content => {
+        // Find matching section info
+        const section = sectionInfo?.find(s => s.disclosure === content.novata_reference?.split('.')[0]);
+        
+        // Find matching disclosure detail
+        const disclosure = disclosureDetail?.find(d => d.novata_reference === content.novata_reference);
+        
+        // Find matching VSME reference
+        const vsmeRef = refConverter?.find(r => r.novata_reference === content.novata_reference);
+
+        return {
+          id: content.id,
+          module: 'Basic', // Default module
+          disclosure: section?.disclosure || '',
+          topic: section?.topic || '',
+          section: section?.section || '',
+          subSection: section?.sub_section || '',
+          reference: vsmeRef?.vsme_reference || '',
+          novataReference: content.novata_reference || '',
+          metric: content.metric || '',
+          definition: content.definition_summary || '',
+          question: content.question || '',
+          inputType: content.input_type || '',
+          unit: content.unit || '',
+          order: vsmeRef?.order || 0
+        };
+      }) || [];
+
+      return combinedMetrics;
     } catch (error) {
       console.error('Error loading static metrics:', error);
       toast({

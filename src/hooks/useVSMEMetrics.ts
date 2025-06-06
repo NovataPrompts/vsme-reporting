@@ -1,40 +1,50 @@
 
 import { useState, useEffect } from "react";
 import { useToast } from "@/hooks/use-toast";
-import { vsmeMetricsData } from "@/data/vsmeMetricsData";
 import { VSMEMetric } from "@/types/vsmeMetrics";
 import { useNavigate } from "react-router-dom";
+import { useVSMEDatabase } from "./useVSMEDatabase";
 
 export const useVSMEMetrics = () => {
   const { toast } = useToast();
+  const { loadStaticMetrics } = useVSMEDatabase();
   const [searchQuery, setSearchQuery] = useState("");
   const navigate = useNavigate();
   const [lastUpdated, setLastUpdated] = useState<string | null>(null);
+  const [metrics, setMetrics] = useState<VSMEMetric[]>([]);
+
+  useEffect(() => {
+    const fetchMetrics = async () => {
+      const data = await loadStaticMetrics();
+      setMetrics(data);
+    };
+    
+    fetchMetrics();
+  }, []);
   
   // Get unique topics for filtering
-  const topics = Array.from(new Set(vsmeMetricsData.map(metric => metric.topic)));
+  const topics = Array.from(new Set(metrics.map(metric => metric.topic).filter(Boolean)));
   
   // Filter metrics based on search query
   const filteredMetrics = searchQuery
-    ? vsmeMetricsData.filter(metric => 
-        metric.disclosure.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        metric.topic.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        metric.section.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        metric.metric.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    ? metrics.filter(metric => 
+        metric.disclosure?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        metric.topic?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        metric.section?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        metric.metric?.toLowerCase().includes(searchQuery.toLowerCase()) ||
         metric.novataReference?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        (metric.definition ? metric.definition.toLowerCase().includes(searchQuery.toLowerCase()) : false)
+        metric.definition?.toLowerCase().includes(searchQuery.toLowerCase())
       )
     : [];
 
   // Group metrics by topic
   const metricsByTopic: Record<string, VSMEMetric[]> = {};
   topics.forEach(topic => {
-    metricsByTopic[topic] = vsmeMetricsData.filter(metric => metric.topic === topic);
+    metricsByTopic[topic] = metrics.filter(metric => metric.topic === topic);
   });
 
   const handleSaveMetric = (metricReference: string) => {
-    // Find the metric to include in the message
-    const metric = vsmeMetricsData.find(m => m.novataReference === metricReference);
+    const metric = metrics.find(m => m.novataReference === metricReference);
     toast({
       title: "Metric Saved",
       description: `${metric?.metric || metricReference} data has been saved successfully.`,
@@ -43,8 +53,7 @@ export const useVSMEMetrics = () => {
   };
 
   const handleLearnMore = (metricReference: string) => {
-    // Find the metric to include in the message
-    const metric = vsmeMetricsData.find(m => m.novataReference === metricReference);
+    const metric = metrics.find(m => m.novataReference === metricReference);
     toast({
       title: "Learn More",
       description: `Additional information about ${metric?.metric || metricReference} will be available soon.`,
@@ -65,8 +74,6 @@ export const useVSMEMetrics = () => {
   }, []);
 
   const handleImportMetrics = (newMetrics: VSMEMetric[]) => {
-    // This function would normally update the metrics in a real application
-    // For now we'll just show a success message
     const now = new Date().toISOString();
     localStorage.setItem('metricsLastUpdated', now);
     setLastUpdated(now);
@@ -82,7 +89,7 @@ export const useVSMEMetrics = () => {
     searchQuery,
     setSearchQuery,
     topics,
-    vsmeMetricsData,
+    vsmeMetricsData: metrics,
     filteredMetrics,
     metricsByTopic,
     handleSaveMetric,
