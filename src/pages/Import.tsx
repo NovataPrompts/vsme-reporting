@@ -1,15 +1,24 @@
 
 import { Button } from "@/components/ui/button";
-import { ChevronRight, RefreshCw } from "lucide-react";
+import { ChevronRight, RefreshCw, Check } from "lucide-react";
 import { useToast } from "@/components/ui/use-toast";
 import { useNavigate } from "react-router-dom";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 const Import = () => {
   const { toast } = useToast();
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
+  const [isSynced, setIsSynced] = useState(false);
+  
+  useEffect(() => {
+    // Check if data was previously synced
+    const lastUpdated = localStorage.getItem('metricsLastUpdated');
+    if (lastUpdated) {
+      setIsSynced(true);
+    }
+  }, []);
   
   const handleLearnMore = (topic: string) => {
     toast({
@@ -33,6 +42,7 @@ const Import = () => {
       
       // Update local storage to indicate metrics were updated
       localStorage.setItem('metricsLastUpdated', new Date().toISOString());
+      setIsSynced(true);
       
       toast({
         title: "Data Synced Successfully",
@@ -74,28 +84,43 @@ const Import = () => {
               </CardHeader>
               <CardContent>
                 <div className="flex flex-col items-center justify-center py-12">
-                  <RefreshCw className="h-16 w-16 text-[#057cc1] mb-6" />
-                  <h3 className="text-xl font-semibold mb-4">Ready to Sync Data</h3>
-                  <p className="text-gray-600 dark:text-gray-300 text-center mb-8 max-w-md">
-                    Click the button below to fetch the latest sustainability metrics data from your connected data source.
-                  </p>
-                  <Button 
-                    onClick={handleSyncData}
-                    disabled={isLoading}
-                    className="bg-[#057cc1] hover:bg-[#057cc1]/90 text-white flex items-center gap-2 px-8 py-3"
-                  >
-                    {isLoading ? (
-                      <>
-                        <RefreshCw className="h-4 w-4 animate-spin" />
-                        Syncing Data...
-                      </>
+                  <div className={`h-16 w-16 rounded-full flex items-center justify-center mb-6 ${
+                    isSynced ? 'bg-[#41e571]' : 'bg-transparent'
+                  }`}>
+                    {isSynced ? (
+                      <Check className="h-8 w-8 text-white" />
                     ) : (
-                      <>
-                        <RefreshCw className="h-4 w-4" />
-                        Sync Data
-                      </>
+                      <RefreshCw className="h-16 w-16 text-[#057cc1]" />
                     )}
-                  </Button>
+                  </div>
+                  <h3 className="text-xl font-semibold mb-4">
+                    {isSynced ? "Data Synced Successfully" : "Ready to Sync Data"}
+                  </h3>
+                  <p className="text-gray-600 dark:text-gray-300 text-center mb-8 max-w-md">
+                    {isSynced 
+                      ? "Your sustainability metrics data has been successfully synced from the API."
+                      : "Click the button below to fetch the latest sustainability metrics data from your connected data source."
+                    }
+                  </p>
+                  {!isSynced && (
+                    <Button 
+                      onClick={handleSyncData}
+                      disabled={isLoading}
+                      className="bg-[#057cc1] hover:bg-[#057cc1]/90 text-white flex items-center gap-2 px-8 py-3"
+                    >
+                      {isLoading ? (
+                        <>
+                          <RefreshCw className="h-4 w-4 animate-spin" />
+                          Syncing Data...
+                        </>
+                      ) : (
+                        <>
+                          <RefreshCw className="h-4 w-4" />
+                          Sync Data
+                        </>
+                      )}
+                    </Button>
+                  )}
                 </div>
               </CardContent>
             </Card>
