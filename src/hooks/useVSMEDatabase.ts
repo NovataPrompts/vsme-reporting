@@ -1,4 +1,3 @@
-
 import { useState, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
@@ -32,6 +31,11 @@ export const useVSMEDatabase = () => {
         refConverter: refConverter?.length || 0
       });
 
+      // Log sample data to understand structure
+      console.log('Sample reportContent:', reportContent?.slice(0, 2));
+      console.log('Sample sectionInfo:', sectionInfo?.slice(0, 2));
+      console.log('Sample refConverter:', refConverter?.slice(0, 2));
+
       if (reportError) throw reportError;
       if (sectionError) throw sectionError;
       if (disclosureError) throw disclosureError;
@@ -39,21 +43,35 @@ export const useVSMEDatabase = () => {
 
       // Build the metrics by combining all data sources
       const combinedMetrics = reportContent?.map(content => {
-        // Get the VSME reference from the converter table using novata_reference
-        const vsmeRef = refConverter?.find(r => r.novata_reference === content.novata_reference);
+        // Find section information using novata_reference
+        // Try exact match first, then partial match if needed
+        let sectionData = sectionInfo?.find(s => s.disclosure === content.novata_reference);
         
-        // Get section information from section_info using novata_reference
-        const sectionData = sectionInfo?.find(s => s.disclosure === content.novata_reference);
+        // If no exact match, try to find by checking if the novata_reference starts with the disclosure
+        if (!sectionData) {
+          sectionData = sectionInfo?.find(s => 
+            s.disclosure && content.novata_reference && 
+            content.novata_reference.startsWith(s.disclosure)
+          );
+        }
+        
+        // Get the VSME reference from the converter table
+        const vsmeRef = refConverter?.find(r => r.novata_reference === content.novata_reference);
         
         // Get additional disclosure details if available
         const disclosureData = disclosureDetail?.find(d => d.novata_reference === content.novata_reference);
 
+        // Log mapping results for debugging
+        if (!sectionData) {
+          console.log(`No section data found for: ${content.novata_reference}`);
+        }
+
         return {
           id: content.id,
           module: 'Basic',
-          disclosure: sectionData?.disclosure || content.novata_reference || '',
-          topic: sectionData?.topic || 'Unknown Topic',
-          section: sectionData?.section || 'Unknown Section',
+          disclosure: content.novata_reference || '',
+          topic: sectionData?.topic || 'No Topic Found',
+          section: sectionData?.section || 'No Section Found',
           subSection: sectionData?.sub_section || '',
           reference: vsmeRef?.vsme_reference || '',
           novataReference: content.novata_reference || '',
@@ -67,7 +85,9 @@ export const useVSMEDatabase = () => {
       }) || [];
 
       console.log('Combined metrics:', combinedMetrics.length);
-      console.log('Sample metrics:', combinedMetrics.slice(0, 3));
+      console.log('Sample combined metrics:', combinedMetrics.slice(0, 3));
+      console.log('Unique topics found:', [...new Set(combinedMetrics.map(m => m.topic))]);
+      console.log('Unique sections found:', [...new Set(combinedMetrics.map(m => m.section))]);
 
       // Sort by order
       const sortedMetrics = combinedMetrics.sort((a, b) => (a.order || 0) - (b.order || 0));
