@@ -31,8 +31,12 @@ const Metrics = () => {
     }
   }, []);
 
-  // Get unique topics for filtering
-  const topics = Array.from(new Set(metrics.map(metric => metric.topic).filter(Boolean)));
+  // Get unique topics for filtering, ensuring we filter out undefined/null/empty values
+  const topics = Array.from(new Set(
+    metrics
+      .map(metric => metric.topic)
+      .filter(topic => topic && topic.trim() !== '')
+  ));
   
   // Filter metrics based on search query
   const filteredMetrics = searchQuery
@@ -46,7 +50,7 @@ const Metrics = () => {
       )
     : [];
 
-  // Group metrics by topic
+  // Group metrics by topic, only including metrics with valid topics
   const metricsByTopic: Record<string, VSMEMetric[]> = {};
   topics.forEach(topic => {
     metricsByTopic[topic] = metrics.filter(metric => metric.topic === topic);
