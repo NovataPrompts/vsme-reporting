@@ -7,7 +7,7 @@ import { useVSMEDatabase } from "./useVSMEDatabase";
 
 export const useVSMEMetrics = () => {
   const { toast } = useToast();
-  const { loadStaticMetrics } = useVSMEDatabase();
+  const { loadStaticMetrics, upsertMetrics } = useVSMEDatabase();
   const [searchQuery, setSearchQuery] = useState("");
   const navigate = useNavigate();
   const [lastUpdated, setLastUpdated] = useState<string | null>(null);
@@ -77,17 +77,25 @@ export const useVSMEMetrics = () => {
     }
   }, []);
 
-  const handleImportMetrics = useCallback((newMetrics: VSMEMetric[]) => {
-    const now = new Date().toISOString();
-    localStorage.setItem('metricsLastUpdated', now);
-    setLastUpdated(now);
+  const handleImportMetrics = useCallback(async (newMetrics: VSMEMetric[]) => {
+    const success = await upsertMetrics(newMetrics);
     
-    toast({
-      title: "Metrics Imported",
-      description: `${newMetrics.length} metrics have been successfully imported.`,
-      duration: 3000,
-    });
-  }, [toast]);
+    if (success) {
+      const now = new Date().toISOString();
+      localStorage.setItem('metricsLastUpdated', now);
+      setLastUpdated(now);
+      
+      // Refresh metrics after successful import
+      const updatedMetrics = await loadStaticMetrics();
+      setMetrics(updatedMetrics);
+      
+      toast({
+        title: "Metrics Imported",
+        description: `${newMetrics.length} metrics have been successfully imported and saved to the database.`,
+        duration: 3000,
+      });
+    }
+  }, [upsertMetrics, loadStaticMetrics, toast]);
 
   return {
     searchQuery,
