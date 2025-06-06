@@ -1,6 +1,7 @@
 
+
 export interface VSMEMetric {
-  id: string; // Adding the id field from the database
+  id?: string; // Making id optional since static data won't have it initially
   module: string;
   disclosure: string;
   topic: string;
@@ -25,3 +26,4 @@ export interface VSMEMetric {
 export type Module = 'Basic' | 'Advanced' | 'Comprehensive';
 
 export type InputType = 'Multiple Choice' | 'Boolean' | 'Multi-Select' | 'Tabular' | 'Text' | 'Decimal' | 'Integer';
+
