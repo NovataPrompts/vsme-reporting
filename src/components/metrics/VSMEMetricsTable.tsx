@@ -60,7 +60,7 @@ export const VSMEMetricsTable = ({ metrics }: VSMEMetricsTableProps) => {
               <TableHead className="w-32">Topic</TableHead>
               <TableHead className="w-48">Section</TableHead>
               <TableHead className="w-40">Sub-Section</TableHead>
-              <TableHead className="w-32">VSME Ref</TableHead>
+              <TableHead className="w-32">VSME Reference</TableHead>
               <TableHead>Metric</TableHead>
               <TableHead className="w-16 text-center">Type</TableHead>
               <TableHead className="w-20 text-right">Actions</TableHead>
