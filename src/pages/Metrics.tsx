@@ -36,7 +36,7 @@ const Metrics = () => {
     }
   }, [loadStaticMetrics]);
 
-  // Get unique topics for filtering, ensuring we filter out undefined/null/empty values
+  // Get unique topics for filtering - only include valid topics
   const topics = Array.from(new Set(
     metrics
       .map(metric => metric.topic)
@@ -58,7 +58,7 @@ const Metrics = () => {
       )
     : [];
 
-  // Group metrics by topic, only including metrics with valid topics
+  // Group metrics by topic - only include metrics with valid topics
   const metricsByTopic: Record<string, VSMEMetric[]> = {};
   topics.forEach(topic => {
     metricsByTopic[topic] = metrics.filter(metric => metric.topic === topic);
@@ -85,11 +85,6 @@ const Metrics = () => {
         </main>
       </div>
     );
-  }
-
-  // Debug output for when no metrics are found
-  if (metrics.length === 0) {
-    console.log('No metrics found. Check database connection and data.');
   }
 
   return (
@@ -131,16 +126,10 @@ const Metrics = () => {
               filteredMetrics={filteredMetrics}
             />
 
-            {metrics.length === 0 ? (
-              <div className="text-center py-8">
-                <p className="text-gray-500">No metrics data found. Please check your database connection.</p>
-              </div>
-            ) : (
-              <VSMEMetricsTabs
-                topics={topics}
-                metricsByTopic={metricsByTopic}
-              />
-            )}
+            <VSMEMetricsTabs
+              topics={topics}
+              metricsByTopic={metricsByTopic}
+            />
           </div>
         </div>
       </main>

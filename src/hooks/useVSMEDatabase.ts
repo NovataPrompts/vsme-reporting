@@ -12,7 +12,7 @@ export const useVSMEDatabase = () => {
     try {
       console.log('Loading consolidated metrics from Supabase...');
       
-      // Load data from the new consolidated table
+      // Load data from the consolidated table only
       const { data: consolidatedMetrics, error } = await supabase
         .from('vsme_consolidated_metrics')
         .select('*')
@@ -22,7 +22,7 @@ export const useVSMEDatabase = () => {
 
       if (error) throw error;
 
-      if (!consolidatedMetrics) {
+      if (!consolidatedMetrics || consolidatedMetrics.length === 0) {
         console.log('No consolidated metrics found');
         return [];
       }
@@ -32,8 +32,8 @@ export const useVSMEDatabase = () => {
         id: metric.metric_id,
         module: 'Basic',
         disclosure: metric.disclosure || '',
-        topic: metric.topic || 'No Topic Found',
-        section: metric.section || 'No Section Found',
+        topic: metric.topic || '',
+        section: metric.section || '',
         subSection: metric.sub_section || '',
         reference: metric.vsme_reference || '',
         novataReference: metric.novata_reference || '',
