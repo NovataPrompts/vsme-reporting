@@ -1,10 +1,10 @@
-
 import { Button } from "@/components/ui/button";
 import { ChevronRight, RefreshCw, Check } from "lucide-react";
 import { useToast } from "@/components/ui/use-toast";
 import { useNavigate } from "react-router-dom";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { useState, useEffect } from "react";
+import { MetricsUpload } from "@/components/metrics/MetricsUpload";
 
 const Import = () => {
   const { toast } = useToast();
@@ -69,12 +69,13 @@ const Import = () => {
             <div>
               <h1 className="text-2xl font-bold mb-2">Import Data</h1>
               <p className="text-base text-gray-600 dark:text-gray-300">
-                Sync your sustainability metrics data from the API
+                Sync your sustainability metrics data from the API or upload Excel responses
               </p>
             </div>
           </div>
           
-          <div className="w-full mb-8">
+          <div className="grid gap-8 mb-8">
+            {/* API Sync Section */}
             <Card className="shadow-sm">
               <CardHeader>
                 <CardTitle>Sync Sustainability Data</CardTitle>
@@ -124,6 +125,9 @@ const Import = () => {
                 </div>
               </CardContent>
             </Card>
+
+            {/* Excel Upload Section */}
+            <MetricsUpload />
           </div>
           
           {/* Go to Step 2 button at bottom right */}
