@@ -51,25 +51,35 @@ export const useVSMEDatabase = () => {
 
       // Combine the data to create complete metric objects
       const combinedMetrics = reportContent?.map(content => {
-        // Find matching section info - match by the first part of novata_reference (before the dot)
+        // Find matching VSME reference first
+        const vsmeRef = refConverter?.find(r => r.novata_reference === content.novata_reference);
+        
+        // Extract disclosure code from novata_reference (e.g., "B1.1" -> "B1")
         const disclosureCode = content.novata_reference?.split('.')[0];
+        
+        // Find matching section info using the disclosure code
         const section = sectionInfo?.find(s => s.disclosure === disclosureCode);
         
         // Find matching disclosure detail
         const disclosure = disclosureDetail?.find(d => d.novata_reference === content.novata_reference);
-        
-        // Find matching VSME reference
-        const vsmeRef = refConverter?.find(r => r.novata_reference === content.novata_reference);
 
-        const combinedMetric = {
+        console.log('Mapping metric:', {
+          novataRef: content.novata_reference,
+          disclosureCode,
+          section: section?.section,
+          topic: section?.topic,
+          vsmeRef: vsmeRef?.vsme_reference
+        });
+
+        return {
           id: content.id,
-          module: 'Basic', // Default module
-          disclosure: section?.disclosure || disclosureCode || '',
-          topic: section?.topic || 'Uncategorized',
+          module: 'Basic', // All entries are Basic module
+          disclosure: disclosureCode || '', // B1, B2, etc.
+          topic: section?.topic || 'Uncategorized', // General, Social, etc.
           section: section?.section || '',
           subSection: section?.sub_section || '',
-          reference: vsmeRef?.vsme_reference || '',
-          novataReference: content.novata_reference || '',
+          reference: vsmeRef?.vsme_reference || '', // VSME reference
+          novataReference: content.novata_reference || '', // Keep for internal use but not display in top row
           metric: content.metric || '',
           definition: content.definition_summary || '',
           question: content.question || '',
@@ -77,13 +87,15 @@ export const useVSMEDatabase = () => {
           unit: content.unit || '',
           order: vsmeRef?.order || 0
         };
-
-        return combinedMetric;
       }) || [];
 
-      console.log('Final combined metrics:', combinedMetrics.length);
+      console.log('Final combined metrics sample:', combinedMetrics.slice(0, 3));
+      console.log('Total metrics combined:', combinedMetrics.length);
 
-      return combinedMetrics;
+      // Sort by order
+      const sortedMetrics = combinedMetrics.sort((a, b) => (a.order || 0) - (b.order || 0));
+
+      return sortedMetrics;
     } catch (error) {
       console.error('Error loading static metrics:', error);
       toast({

@@ -61,7 +61,7 @@ export const VSMEMetricsTable = ({ metrics }: VSMEMetricsTableProps) => {
               <TableHead className="w-32">Topic</TableHead>
               <TableHead className="w-48">Section</TableHead>
               <TableHead className="w-40">Sub-Section</TableHead>
-              <TableHead className="w-32">Novata Ref</TableHead>
+              <TableHead className="w-32">VSME Ref</TableHead>
               <TableHead>Metric</TableHead>
               <TableHead className="w-16 text-center">Type</TableHead>
               <TableHead className="w-20 text-right">Actions</TableHead>
@@ -74,10 +74,10 @@ export const VSMEMetricsTable = ({ metrics }: VSMEMetricsTableProps) => {
                   <TableRow className="hover:bg-muted/50">
                     <TableCell>{metric.module}</TableCell>
                     <TableCell>{metric.disclosure}</TableCell>
-                    <TableCell>{metric.topic.replace("Enviornment", "Environment")}</TableCell>
+                    <TableCell>{metric.topic}</TableCell>
                     <TableCell>{metric.section}</TableCell>
                     <TableCell>{metric.subSection}</TableCell>
-                    <TableCell>{metric.novataReference}</TableCell>
+                    <TableCell>{metric.reference}</TableCell>
                     <TableCell>{metric.metric}</TableCell>
                     <TableCell className="text-center">
                       <div className="flex justify-center text-gray-600">
