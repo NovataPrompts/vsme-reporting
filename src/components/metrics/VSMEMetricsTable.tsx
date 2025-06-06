@@ -56,7 +56,6 @@ export const VSMEMetricsTable = ({ metrics }: VSMEMetricsTableProps) => {
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead className="w-24">Module</TableHead>
               <TableHead className="w-24">Disclosure</TableHead>
               <TableHead className="w-32">Topic</TableHead>
               <TableHead className="w-48">Section</TableHead>
@@ -76,7 +75,6 @@ export const VSMEMetricsTable = ({ metrics }: VSMEMetricsTableProps) => {
                 return (
                   <React.Fragment key={uniqueKey}>
                     <TableRow className="hover:bg-muted/50">
-                      <TableCell>{metric.module}</TableCell>
                       <TableCell>{metric.disclosure}</TableCell>
                       <TableCell>{metric.topic}</TableCell>
                       <TableCell>{metric.section}</TableCell>
@@ -102,7 +100,7 @@ export const VSMEMetricsTable = ({ metrics }: VSMEMetricsTableProps) => {
                       </TableCell>
                     </TableRow>
                     <TableRow>
-                      <TableCell colSpan={9} className="p-0 border-0">
+                      <TableCell colSpan={8} className="p-0 border-0">
                         <Collapsible open={openMetric === metricRefKey}>
                           <CollapsibleContent>
                             <div className="p-4 mx-4 mb-4 rounded-md bg-[ffffff] bg-slate-50 shadow-sm border border-slate-200">
@@ -175,7 +173,7 @@ export const VSMEMetricsTable = ({ metrics }: VSMEMetricsTableProps) => {
               })
             ) : (
               <TableRow>
-                <TableCell colSpan={9} className="h-24 text-center">
+                <TableCell colSpan={8} className="h-24 text-center">
                   No metrics found
                 </TableCell>
               </TableRow>
