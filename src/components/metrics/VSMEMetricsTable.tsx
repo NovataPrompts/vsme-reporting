@@ -1,6 +1,5 @@
-
 import React, { useState } from "react";
-import { ChevronDown, Eye, SquareCheckBig, ToggleLeft, ListChecks, Sheet, LetterText, DecimalsArrowRight, FileDigit } from "lucide-react";
+import { ChevronDown, Eye, SquareCheckBig, ToggleLeft, ListChecks, Sheet, LetterText, Hash, FileDigit } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Table, TableHeader, TableBody, TableHead, TableRow, TableCell } from "@/components/ui/table";
 import { VSMEMetric } from "@/types/vsmeMetrics";
@@ -26,7 +25,7 @@ const getInputTypeIcon = (inputType: string | undefined) => {
     case 'text':
       return <LetterText className="h-4 w-4" />;
     case 'decimal':
-      return <DecimalsArrowRight className="h-4 w-4" />;
+      return <Hash className="h-4 w-4" />;
     case 'integer':
       return <FileDigit className="h-4 w-4" />;
     default:
