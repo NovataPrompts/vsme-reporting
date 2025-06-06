@@ -9,11 +9,75 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      disclosure_detail: {
+        Row: {
+          created_at: string
+          disclosure: string | null
+          id: string
+          novata_reference: string | null
+          number: string | null
+          paragraph: string | null
+          sub_paragraph: string | null
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          disclosure?: string | null
+          id?: string
+          novata_reference?: string | null
+          number?: string | null
+          paragraph?: string | null
+          sub_paragraph?: string | null
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          disclosure?: string | null
+          id?: string
+          novata_reference?: string | null
+          number?: string | null
+          paragraph?: string | null
+          sub_paragraph?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      section_info: {
+        Row: {
+          created_at: string
+          disclosure: string | null
+          id: string
+          section: string | null
+          sub_section: string | null
+          topic: string | null
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          disclosure?: string | null
+          id?: string
+          section?: string | null
+          sub_section?: string | null
+          topic?: string | null
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          disclosure?: string | null
+          id?: string
+          section?: string | null
+          sub_section?: string | null
+          topic?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
       vsme_novata_ref_converter: {
         Row: {
           created_at: string
           id: string
           novata_reference: string | null
+          order: number | null
           updated_at: string
           vsme_reference: string | null
         }
@@ -21,6 +85,7 @@ export type Database = {
           created_at?: string
           id?: string
           novata_reference?: string | null
+          order?: number | null
           updated_at?: string
           vsme_reference?: string | null
         }
@@ -28,6 +93,7 @@ export type Database = {
           created_at?: string
           id?: string
           novata_reference?: string | null
+          order?: number | null
           updated_at?: string
           vsme_reference?: string | null
         }

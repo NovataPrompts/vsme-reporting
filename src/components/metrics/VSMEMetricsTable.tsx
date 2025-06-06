@@ -1,6 +1,6 @@
 
 import React, { useState } from "react";
-import { ChevronDown, Eye } from "lucide-react";
+import { ChevronDown, Eye, SquareCheckBig, ToggleLeft, ListChecks, Sheet, LetterText, DecimalsArrowRight, FileDigit } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Table, TableHeader, TableBody, TableHead, TableRow, TableCell } from "@/components/ui/table";
 import { VSMEMetric } from "@/types/vsmeMetrics";
@@ -10,6 +10,29 @@ import { UserResponseDialog } from "./UserResponseDialog";
 interface VSMEMetricsTableProps {
   metrics: VSMEMetric[];
 }
+
+const getInputTypeIcon = (inputType: string | undefined) => {
+  const type = inputType?.toLowerCase();
+  
+  switch (type) {
+    case 'multiple choice':
+      return <SquareCheckBig className="h-4 w-4" />;
+    case 'boolean':
+      return <ToggleLeft className="h-4 w-4" />;
+    case 'multi-select':
+      return <ListChecks className="h-4 w-4" />;
+    case 'tabular':
+      return <Sheet className="h-4 w-4" />;
+    case 'text':
+      return <LetterText className="h-4 w-4" />;
+    case 'decimal':
+      return <DecimalsArrowRight className="h-4 w-4" />;
+    case 'integer':
+      return <FileDigit className="h-4 w-4" />;
+    default:
+      return <LetterText className="h-4 w-4" />; // Default to text icon
+  }
+};
 
 export const VSMEMetricsTable = ({ metrics }: VSMEMetricsTableProps) => {
   const [openMetric, setOpenMetric] = useState<string | null>(null);
@@ -40,6 +63,7 @@ export const VSMEMetricsTable = ({ metrics }: VSMEMetricsTableProps) => {
               <TableHead className="w-40">Sub-Section</TableHead>
               <TableHead className="w-32">Novata Ref</TableHead>
               <TableHead>Metric</TableHead>
+              <TableHead className="w-16 text-center">Type</TableHead>
               <TableHead className="w-20 text-right">Actions</TableHead>
             </TableRow>
           </TableHeader>
@@ -55,6 +79,11 @@ export const VSMEMetricsTable = ({ metrics }: VSMEMetricsTableProps) => {
                     <TableCell>{metric.subSection}</TableCell>
                     <TableCell>{metric.novataReference}</TableCell>
                     <TableCell>{metric.metric}</TableCell>
+                    <TableCell className="text-center">
+                      <div className="flex justify-center text-gray-600">
+                        {getInputTypeIcon(metric.inputType)}
+                      </div>
+                    </TableCell>
                     <TableCell className="text-right">
                       <div className="flex justify-end">
                         <Collapsible open={openMetric === (metric.novataReference || metric.id)} onOpenChange={() => toggleMetric(metric.novataReference || metric.id || '')}>
@@ -69,7 +98,7 @@ export const VSMEMetricsTable = ({ metrics }: VSMEMetricsTableProps) => {
                     </TableCell>
                   </TableRow>
                   <TableRow>
-                    <TableCell colSpan={8} className="p-0 border-0">
+                    <TableCell colSpan={9} className="p-0 border-0">
                       <Collapsible open={openMetric === (metric.novataReference || metric.id)}>
                         <CollapsibleContent>
                           <div className="p-4 mx-4 mb-4 rounded-md bg-[ffffff] bg-slate-50 shadow-sm border border-slate-200">
@@ -130,7 +159,7 @@ export const VSMEMetricsTable = ({ metrics }: VSMEMetricsTableProps) => {
               ))
             ) : (
               <TableRow>
-                <TableCell colSpan={8} className="h-24 text-center">
+                <TableCell colSpan={9} className="h-24 text-center">
                   No metrics found
                 </TableCell>
               </TableRow>
