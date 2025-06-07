@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -29,6 +30,10 @@ export const DisclosureBox = ({
   const [showGraphicsModal, setShowGraphicsModal] = useState(false);
   const { toast } = useToast();
   const { vsmeMetricsData } = useVSMEMetrics();
+
+  // Define which disclosures need graphics
+  const disclosuresWithGraphics = ['B2', 'B3'];
+  const showGraphicsButton = disclosuresWithGraphics.includes(disclosure.id);
 
   const handleGenerateResponse = async () => {
     setIsGenerating(true);
@@ -205,19 +210,21 @@ export const DisclosureBox = ({
                 )}
                 {isGenerating ? "Generating..." : "Generate Response"}
               </Button>
-              <Button 
-                onClick={handleRecommendGraphics} 
-                disabled={isRecommendingGraphics} 
-                variant="outline"
-                className="flex items-center gap-2"
-              >
-                {isRecommendingGraphics ? (
-                  <Loader2 className="h-4 w-4 animate-spin" />
-                ) : (
-                  <BarChart3 className="h-4 w-4" />
-                )}
-                {isRecommendingGraphics ? "Analyzing..." : "Recommend Graphics"}
-              </Button>
+              {showGraphicsButton && (
+                <Button 
+                  onClick={handleRecommendGraphics} 
+                  disabled={isRecommendingGraphics} 
+                  variant="outline"
+                  className="flex items-center gap-2"
+                >
+                  {isRecommendingGraphics ? (
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                  ) : (
+                    <BarChart3 className="h-4 w-4" />
+                  )}
+                  {isRecommendingGraphics ? "Analyzing..." : "Recommend Graphics"}
+                </Button>
+              )}
               {(response || graphicsRecommendations) && (
                 <>
                   <Button 
