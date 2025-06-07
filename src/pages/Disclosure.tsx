@@ -7,28 +7,58 @@ const Disclosure = () => {
   const disclosures = [
     {
       id: "B1",
-      title: "B1 - Basis for Preparation",
+      title: "General Information - Basis for preparation",
       description: "Basis for preparation of sustainability information"
     },
     {
       id: "B2", 
-      title: "B2 - Governance",
-      description: "Governance processes, controls and procedures"
+      title: "General Information - Practices, policies and future initiatives for transitioning towards a more sustainable economy",
+      description: "Practices, policies and future initiatives for transitioning towards a more sustainable economy"
     },
     {
       id: "B3",
-      title: "B3 - Strategy", 
-      description: "Strategy and business model"
+      title: "Environment metrics - Energy and greenhouse gas emissions", 
+      description: "Energy and greenhouse gas emissions metrics and disclosures"
     },
     {
       id: "B4",
-      title: "B4 - Impact, Risk and Opportunity Management",
-      description: "Impact, risk and opportunity management processes"
+      title: "Environment metrics - Pollution of air, water and soil",
+      description: "Pollution of air, water and soil metrics and disclosures"
     },
     {
       id: "B5",
-      title: "B5 - Metrics and Targets",
-      description: "Metrics and targets used to measure and manage impacts, risks and opportunities"
+      title: "Environment metrics - Biodiversity",
+      description: "Biodiversity metrics and disclosures"
+    },
+    {
+      id: "B6",
+      title: "Environment metrics - Water",
+      description: "Water usage and management metrics and disclosures"
+    },
+    {
+      id: "B7",
+      title: "Environment metrics - Resource use, circular economy, and waste management",
+      description: "Resource use, circular economy, and waste management metrics and disclosures"
+    },
+    {
+      id: "B8",
+      title: "Social metrics - Workforce - General Characteristics",
+      description: "Workforce general characteristics metrics and disclosures"
+    },
+    {
+      id: "B9",
+      title: "Social metrics - Workforce - Health and Safety",
+      description: "Workforce health and safety metrics and disclosures"
+    },
+    {
+      id: "B10",
+      title: "Social metrics - Workforce - Remuneration, collective bargaining and training",
+      description: "Workforce remuneration, collective bargaining and training metrics and disclosures"
+    },
+    {
+      id: "B11",
+      title: "Governance metrics - Convictions and fines for corruption and bribery",
+      description: "Governance metrics related to convictions and fines for corruption and bribery"
     }
   ];
 

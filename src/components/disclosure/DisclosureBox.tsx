@@ -72,7 +72,12 @@ export const DisclosureBox = ({ disclosure }: DisclosureBoxProps) => {
     <Card>
       <CardHeader>
         <CardTitle className="flex items-center justify-between">
-          {disclosure.title}
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-full bg-primary text-primary-foreground flex items-center justify-center font-semibold text-sm">
+              {disclosure.id}
+            </div>
+            <span>{disclosure.title}</span>
+          </div>
           <Button 
             onClick={handleGenerateResponse}
             disabled={isGenerating}
