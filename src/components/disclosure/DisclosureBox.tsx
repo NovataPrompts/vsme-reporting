@@ -68,10 +68,8 @@ export const DisclosureBox = ({ disclosure }: DisclosureBoxProps) => {
     }
   };
 
-  // Split title at hyphen for multi-line display
-  const titleParts = disclosure.title.split(' - ');
-  const mainTitle = titleParts[0];
-  const subTitle = titleParts[1];
+  // Extract only the main title (before the hyphen)
+  const mainTitle = disclosure.title.split(' - ')[0];
 
   return (
     <Card>
@@ -85,11 +83,6 @@ export const DisclosureBox = ({ disclosure }: DisclosureBoxProps) => {
               <span className="font-semibold text-lg text-primary leading-tight">
                 {mainTitle}
               </span>
-              {subTitle && (
-                <span className="font-medium text-base text-muted-foreground leading-tight mt-1">
-                  {subTitle}
-                </span>
-              )}
             </div>
           </div>
           <Button 
