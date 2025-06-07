@@ -51,7 +51,7 @@ Once the necessary data is available, this disclosure response can be generated 
       )
     }
 
-    // Function to synthesize tabular data into readable text
+    // Enhanced function to synthesize tabular data into professional prose
     const synthesizeTabularData = (responseData: any): string => {
       if (!responseData || typeof responseData !== 'object') {
         return 'No detailed data available';
@@ -62,7 +62,7 @@ Once the necessary data is available, this disclosure response can be generated 
           return 'No entries found in the data';
         }
 
-        // For arrays of objects (typical Excel data), synthesize into readable format
+        // Enhanced synthesis for different data types
         const synthesizedItems = responseData.map((item, index) => {
           if (typeof item === 'object' && item !== null) {
             const entries = Object.entries(item).filter(([key, value]) => 
@@ -71,14 +71,12 @@ Once the necessary data is available, this disclosure response can be generated 
             
             if (entries.length === 0) return null;
             
-            // Create readable description from the object
-            const description = entries.map(([key, value]) => {
-              // Clean up column names for better readability
+            return entries.reduce((acc, [key, value], i) => {
               const cleanKey = key.replace(/[_-]/g, ' ').toLowerCase();
-              return `${cleanKey}: ${value}`;
-            }).join(', ');
-            
-            return description;
+              if (i === 0) return `${value}`;
+              if (i === entries.length - 1 && entries.length > 1) return `${acc} ${cleanKey} ${value}`;
+              return `${acc}, ${cleanKey} ${value}`;
+            }, '');
           }
           return String(item);
         }).filter(item => item !== null);
@@ -87,24 +85,94 @@ Once the necessary data is available, this disclosure response can be generated 
           return 'Data entries are present but contain no meaningful information';
         }
 
-        // Determine the type of data and create appropriate summary
+        // Determine the type of data and create appropriate professional sentences
         const firstItem = responseData[0];
         if (firstItem && typeof firstItem === 'object') {
           const keys = Object.keys(firstItem).map(k => k.toLowerCase());
           
-          // Check for common patterns to create better summaries
-          if (keys.some(k => k.includes('subsidiary') || k.includes('entity') || k.includes('company'))) {
-            return `The organization has ${synthesizedItems.length} ${synthesizedItems.length === 1 ? 'subsidiary' : 'subsidiaries'}: ${synthesizedItems.slice(0, 3).join('; ')}${synthesizedItems.length > 3 ? ' and others' : ''}`;
-          } else if (keys.some(k => k.includes('location') || k.includes('address') || k.includes('site'))) {
-            return `The organization operates from ${synthesizedItems.length} ${synthesizedItems.length === 1 ? 'location' : 'locations'}: ${synthesizedItems.slice(0, 3).join('; ')}${synthesizedItems.length > 3 ? ' and others' : ''}`;
-          } else if (keys.some(k => k.includes('employee') || k.includes('staff') || k.includes('worker'))) {
-            return `Workforce data shows ${synthesizedItems.length} entries: ${synthesizedItems.slice(0, 3).join('; ')}${synthesizedItems.length > 3 ? ' and others' : ''}`;
-          } else {
-            return `Data contains ${synthesizedItems.length} entries: ${synthesizedItems.slice(0, 3).join('; ')}${synthesizedItems.length > 3 ? ' and others' : ''}`;
+          // Gender/workforce composition
+          if (keys.some(k => k.includes('gender') || k.includes('sex'))) {
+            const genderData = responseData.filter(item => item.gender || item.Gender);
+            if (genderData.length > 0) {
+              const totalEmployees = genderData.reduce((sum, item) => {
+                const count = parseInt(item['Number of Employees'] || item.count || item.employees || '0');
+                return sum + count;
+              }, 0);
+              
+              const genderBreakdown = genderData.map(item => {
+                const gender = item.gender || item.Gender;
+                const count = parseInt(item['Number of Employees'] || item.count || item.employees || '0');
+                const percentage = totalEmployees > 0 ? Math.round((count / totalEmployees) * 100) : 0;
+                return `${count} ${gender.toLowerCase()} employees (${percentage}%)`;
+              }).join(', ');
+              
+              return `The organization's workforce comprises ${totalEmployees} employees distributed as follows: ${genderBreakdown}.`;
+            }
           }
+          
+          // Energy consumption data
+          if (keys.some(k => k.includes('energy') || k.includes('fuel') || k.includes('electricity'))) {
+            const energyItems = responseData.map(item => {
+              const type = item['Energy Type'] || item.type || item.category || 'energy source';
+              const consumption = item['Consumption'] || item.consumption || item.amount || item.value;
+              const unit = item['Unit'] || item.unit || 'units';
+              return `${consumption} ${unit} from ${type.toLowerCase()}`;
+            });
+            return `Energy consumption breakdown includes ${energyItems.join(', ')}.`;
+          }
+          
+          // Location/subsidiary data
+          if (keys.some(k => k.includes('subsidiary') || k.includes('entity') || k.includes('company') || k.includes('location'))) {
+            const locationItems = responseData.map(item => {
+              const name = item.subsidiary || item.entity || item.company || item.name;
+              const location = item.location || item.address || item.city || item.country;
+              if (name && location) {
+                return `${name} located at ${location}`;
+              } else if (name) {
+                return name;
+              } else if (location) {
+                return `operations at ${location}`;
+              }
+              return 'unnamed entity';
+            }).filter(item => item !== 'unnamed entity');
+            
+            if (locationItems.length > 0) {
+              const entityWord = responseData.length === 1 ? 'subsidiary' : 'subsidiaries';
+              return `The organization operates through ${responseData.length} ${entityWord}: ${locationItems.join(', ')}.`;
+            }
+          }
+          
+          // Emissions data
+          if (keys.some(k => k.includes('emission') || k.includes('co2') || k.includes('carbon'))) {
+            const emissionItems = responseData.map(item => {
+              const scope = item.scope || item.category || item.type;
+              const amount = item.emissions || item.amount || item.value;
+              const unit = item.unit || 'tCO2e';
+              return `${scope}: ${amount} ${unit}`;
+            });
+            return `Greenhouse gas emissions data shows ${emissionItems.join(', ')}.`;
+          }
+          
+          // Health and safety data
+          if (keys.some(k => k.includes('accident') || k.includes('injury') || k.includes('incident') || k.includes('safety'))) {
+            const safetyItems = responseData.map(item => {
+              const type = item.type || item.category || item.incident_type || 'safety incident';
+              const count = item.count || item.number || item.incidents || item.accidents || '0';
+              return `${count} ${type.toLowerCase()}${parseInt(count) !== 1 ? 's' : ''}`;
+            });
+            return `Health and safety performance includes ${safetyItems.join(', ')} recorded during the reporting period.`;
+          }
+          
+          // Generic structured data
+          const structuredSummary = synthesizedItems.slice(0, 3).join('; ');
+          const moreIndicator = synthesizedItems.length > 3 ? ` and ${synthesizedItems.length - 3} additional entries` : '';
+          return `The data includes ${structuredSummary}${moreIndicator}.`;
         }
 
-        return `Contains ${synthesizedItems.length} data entries: ${synthesizedItems.slice(0, 3).join('; ')}${synthesizedItems.length > 3 ? ' and others' : ''}`;
+        // Fallback for simple arrays
+        const summary = synthesizedItems.slice(0, 3).join(', ');
+        const moreIndicator = synthesizedItems.length > 3 ? ` and ${synthesizedItems.length - 3} other entries` : '';
+        return `The dataset contains ${synthesizedItems.length} entries including ${summary}${moreIndicator}.`;
       }
 
       // For non-array objects, convert to readable format
@@ -121,15 +189,15 @@ Once the necessary data is available, this disclosure response can be generated 
         return `${cleanKey}: ${value}`;
       }).join(', ');
 
-      return description;
+      return `Data shows ${description}.`;
     };
 
-    // Prepare metrics data for the prompt with synthesized tabular data
+    // Prepare metrics data for the prompt with enhanced tabular data synthesis
     const metricsData = validMetrics.map((metric: any) => {
       let processedResponse = metric.response;
       let synthesizedData = '';
 
-      // If there's tabular data, synthesize it
+      // If there's tabular data, synthesize it into professional prose
       if (metric.responseData) {
         synthesizedData = synthesizeTabularData(metric.responseData);
       }
@@ -144,7 +212,7 @@ Once the necessary data is available, this disclosure response can be generated 
       };
     });
 
-    const prompt = `You are a sustainability reporting expert tasked with creating a disclosure response for ${disclosureTitle}.
+    const prompt = `You are a sustainability reporting expert tasked with creating a professional disclosure response for ${disclosureTitle}.
 
 Disclosure Context:
 - ID: ${disclosureId}
@@ -155,28 +223,31 @@ CRITICAL INSTRUCTIONS:
 1. ONLY use the specific data provided below from disclosure ${disclosureId}
 2. DO NOT create, assume, or fabricate any data points, metrics, or information
 3. DO NOT reference industry standards, best practices, or generic sustainability concepts unless directly supported by the provided data
-4. When tabular data has been synthesized, use the specific details provided rather than generic statements
-5. Be factual and conservative - only state what can be directly derived from the provided metrics
-6. If a specific data point is missing, explicitly state "data not available" rather than making assumptions
+4. When tabular data has been synthesized, use the specific details provided and convert them into professional prose
+5. NEVER display raw tables, data grids, or formatted lists - always write in complete, professional sentences
+6. Be factual and conservative - only state what can be directly derived from the provided metrics
+7. If a specific data point is missing, explicitly state "data not available" rather than making assumptions
+8. Write in a professional, formal disclosure style appropriate for sustainability reporting
 
 Available Metrics Data for ${disclosureId}:
 ${metricsData.map((m: any) => `
 Metric: ${m.metric}
 Response/Value: ${m.response || 'Not provided'}
-Synthesized Tabular Data: ${m.synthesizedData || 'Not provided'}
+Synthesized Data: ${m.synthesizedData || 'Not provided'}
 Definition: ${m.definition || 'Not provided'}
 `).join('\n')}
 
 Instructions for Response:
 1. Structure the response to address the ${disclosureTitle} requirements using ONLY the provided data
-2. For each metric listed above, incorporate the actual response/value and synthesized data if meaningful
-3. Use the synthesized tabular data to provide specific, concrete details rather than generic statements
+2. For each metric listed above, incorporate the actual response/value and synthesized data into flowing, professional sentences
+3. Convert all tabular information into well-written prose that naturally integrates into the disclosure narrative
 4. If any required information is missing, clearly state "This information is not currently available in our data collection"
 5. Do not add hypothetical examples, industry benchmarks, or generic sustainability statements
 6. Keep the response factual, concise, and directly tied to the provided metrics and synthesized data
-7. If the data is insufficient for a complete disclosure, acknowledge this limitation
+7. Write in complete paragraphs with proper sentence structure - avoid bullet points, lists, or table formats
+8. If the data is insufficient for a complete disclosure, acknowledge this limitation in professional language
 
-Generate a disclosure response based STRICTLY on the provided data and synthesized information:`
+Generate a professional disclosure response written entirely in prose format based STRICTLY on the provided data:`
 
     const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=${geminiApiKey}`, {
       method: 'POST',
@@ -190,10 +261,10 @@ Generate a disclosure response based STRICTLY on the provided data and synthesiz
           }]
         }],
         generationConfig: {
-          temperature: 0.3, // Lower temperature for more factual, less creative responses
+          temperature: 0.2, // Even lower temperature for more formal, factual responses
           topK: 20,
           topP: 0.8,
-          maxOutputTokens: 1500, // Reduced to encourage more concise responses
+          maxOutputTokens: 2000, // Increased for more comprehensive prose
         }
       }),
     })
