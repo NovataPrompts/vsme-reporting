@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { ChevronDown, Eye, SquareCheckBig, ToggleLeft, ListChecks, Sheet, LetterText, Hash, FileDigit, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -126,27 +125,25 @@ export const VSMEMetricsTable = ({ metrics }: VSMEMetricsTableProps) => {
                         <Collapsible open={openMetric === metricRefKey}>
                           <CollapsibleContent>
                             <div className="p-4 mx-4 mb-4 rounded-md bg-[ffffff] bg-slate-50 shadow-sm border border-slate-200">
-                              <h3 className="text-lg font-semibold mb-3 text-[#057cc1]">{metric.metric}</h3>
+                              <div className="flex items-center gap-3 mb-4">
+                                <Badge variant="outline" className="bg-[#057cc1] text-white border-[#057cc1] px-3 py-1 text-sm font-medium">
+                                  {showNovataReference 
+                                    ? (metric.novataReference || "N/A")
+                                    : (metric.reference || "N/A")
+                                  }
+                                </Badge>
+                                <h3 className="text-lg font-semibold text-[#057cc1]">{metric.metric}</h3>
+                              </div>
+                              
                               <div className="space-y-4">
-                                <div className="flex items-center justify-between">
-                                  <div className="flex-1">
-                                    <p className="text-sm font-medium mb-2 text-[#00344d]">Metric Reference:</p>
-                                    <Badge variant="outline" className="bg-[#057cc1] text-white border-[#057cc1] mb-2">
-                                      {showNovataReference 
-                                        ? (metric.novataReference || "N/A")
-                                        : (metric.reference || "N/A")
-                                      }
-                                    </Badge>
-                                    <div className="flex items-center gap-2 text-sm text-[#00344d]">
-                                      <span>VSME</span>
-                                      <Switch 
-                                        checked={showNovataReference}
-                                        onCheckedChange={setShowNovataReference}
-                                        className="data-[state=checked]:bg-[#057cc1]"
-                                      />
-                                      <span>Novata</span>
-                                    </div>
-                                  </div>
+                                <div className="flex items-center gap-2 text-sm text-[#00344d]">
+                                  <span>VSME</span>
+                                  <Switch 
+                                    checked={showNovataReference}
+                                    onCheckedChange={setShowNovataReference}
+                                    className="data-[state=checked]:bg-[#057cc1]"
+                                  />
+                                  <span>Novata</span>
                                 </div>
                                 
                                 <div>
