@@ -18,26 +18,24 @@ export const useVSMEDatabase = () => {
     try {
       console.log('Loading consolidated metrics from Supabase...');
       
-      // Load data from the consolidated table only, ordered by order_index
-      const { data: consolidatedMetrics, error } = await supabase
-        .from('vsme_consolidated_metrics')
+      // Load data from the consol table, ordered by display_order
+      const { data: consolMetrics, error } = await supabase
+        .from('consol')
         .select('*')
-        .order('order_index', { nullsFirst: false })
         .order('display_order', { nullsFirst: false });
 
-      console.log('Consolidated metrics loaded:', consolidatedMetrics?.length || 0);
+      console.log('Consol metrics loaded:', consolMetrics?.length || 0);
 
       if (error) throw error;
 
-      if (!consolidatedMetrics || consolidatedMetrics.length === 0) {
-        console.log('No consolidated metrics found, inserting provided data...');
+      if (!consolMetrics || consolMetrics.length === 0) {
+        console.log('No consol metrics found, inserting provided data...');
         await insertProvidedMetrics();
         
         // Try loading again after insertion
         const { data: retryData, error: retryError } = await supabase
-          .from('vsme_consolidated_metrics')
+          .from('consol')
           .select('*')
-          .order('order_index', { nullsFirst: false })
           .order('display_order', { nullsFirst: false });
 
         if (retryError) throw retryError;
@@ -49,7 +47,7 @@ export const useVSMEDatabase = () => {
         
         // Map the retry data
         const retryMetrics = retryData.map(metric => ({
-          id: metric.metric_id,
+          id: metric.id,
           module: 'Basic',
           disclosure: metric.disclosure || '',
           topic: metric.topic || '',
@@ -62,15 +60,16 @@ export const useVSMEDatabase = () => {
           question: metric.question || '',
           inputType: metric.input_type || '',
           unit: metric.unit || '',
-          order: metric.order_index || metric.display_order || 0
+          response_options: metric.response_options || '',
+          order: metric.display_order || 0
         }));
 
         return retryMetrics;
       }
 
-      // Map the consolidated data to our VSMEMetric interface
-      const metrics = consolidatedMetrics.map(metric => ({
-        id: metric.metric_id,
+      // Map the consol data to our VSMEMetric interface
+      const metrics = consolMetrics.map(metric => ({
+        id: metric.id,
         module: 'Basic',
         disclosure: metric.disclosure || '',
         topic: metric.topic || '',
@@ -83,7 +82,8 @@ export const useVSMEDatabase = () => {
         question: metric.question || '',
         inputType: metric.input_type || '',
         unit: metric.unit || '',
-        order: metric.order_index || metric.display_order || 0
+        response_options: metric.response_options || '',
+        order: metric.display_order || 0
       }));
 
       console.log('Processed metrics:', metrics.length);
@@ -93,7 +93,7 @@ export const useVSMEDatabase = () => {
 
       return metrics;
     } catch (error) {
-      console.error('Error loading consolidated metrics:', error);
+      console.error('Error loading consol metrics:', error);
       toast({
         title: "Error",
         description: "Failed to load metrics data. Please try again.",

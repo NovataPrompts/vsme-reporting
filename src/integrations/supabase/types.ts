@@ -9,6 +9,63 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      consol: {
+        Row: {
+          created_at: string
+          definition_summary: string | null
+          disclosure: string | null
+          display_order: number | null
+          id: string
+          input_type: string | null
+          metric: string | null
+          novata_reference: string | null
+          question: string | null
+          response_options: string | null
+          section: string | null
+          sub_section: string | null
+          topic: string | null
+          unit: string | null
+          updated_at: string
+          vsme_reference: string | null
+        }
+        Insert: {
+          created_at?: string
+          definition_summary?: string | null
+          disclosure?: string | null
+          display_order?: number | null
+          id?: string
+          input_type?: string | null
+          metric?: string | null
+          novata_reference?: string | null
+          question?: string | null
+          response_options?: string | null
+          section?: string | null
+          sub_section?: string | null
+          topic?: string | null
+          unit?: string | null
+          updated_at?: string
+          vsme_reference?: string | null
+        }
+        Update: {
+          created_at?: string
+          definition_summary?: string | null
+          disclosure?: string | null
+          display_order?: number | null
+          id?: string
+          input_type?: string | null
+          metric?: string | null
+          novata_reference?: string | null
+          question?: string | null
+          response_options?: string | null
+          section?: string | null
+          sub_section?: string | null
+          topic?: string | null
+          unit?: string | null
+          updated_at?: string
+          vsme_reference?: string | null
+        }
+        Relationships: []
+      }
       disclosure_detail: {
         Row: {
           created_at: string

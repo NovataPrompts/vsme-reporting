@@ -10,33 +10,32 @@ export const useVSMEDatabaseOperations = () => {
 
   const upsertMetrics = useCallback(async (metrics: VSMEMetric[]) => {
     try {
-      console.log('Upserting metrics to consolidated table...', metrics.length);
+      console.log('Upserting metrics to consol table...', metrics.length);
       
       // Transform metrics to match the database schema
       const dbMetrics = metrics.map((metric, index) => ({
-        metric_id: metric.id || crypto.randomUUID(),
+        id: metric.id || crypto.randomUUID(),
+        vsme_reference: metric.reference,
+        novata_reference: metric.novataReference,
+        display_order: metric.order || index,
         disclosure: metric.disclosure,
         topic: metric.topic,
         section: metric.section,
         sub_section: metric.subSection,
-        vsme_reference: metric.reference,
-        novata_reference: metric.novataReference,
-        order_index: metric.order || index,
         metric: metric.metric,
         definition_summary: metric.definition,
         question: metric.question,
         input_type: metric.inputType,
         unit: metric.unit,
         response_options: metric.response_options,
-        display_order: metric.order || index,
         created_at: new Date().toISOString(),
         updated_at: new Date().toISOString()
       }));
 
       const { error } = await supabase
-        .from('vsme_consolidated_metrics')
+        .from('consol')
         .upsert(dbMetrics, { 
-          onConflict: 'metric_id',
+          onConflict: 'id',
           ignoreDuplicates: false 
         });
 
@@ -65,16 +64,36 @@ export const useVSMEDatabaseOperations = () => {
     try {
       console.log('Inserting all provided metrics data...');
       
+      // Transform provided metrics to match consol table schema
+      const transformedMetrics = providedVSMEMetrics.map((metric, index) => ({
+        id: metric.metric_id,
+        vsme_reference: metric.vsme_reference,
+        novata_reference: metric.novata_reference,
+        display_order: metric.display_order || index,
+        disclosure: metric.disclosure,
+        topic: metric.topic,
+        section: metric.section,
+        sub_section: metric.sub_section,
+        metric: metric.metric,
+        definition_summary: metric.definition_summary,
+        question: metric.question,
+        input_type: metric.input_type,
+        unit: metric.unit,
+        response_options: metric.response_options,
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString()
+      }));
+
       const { error } = await supabase
-        .from('vsme_consolidated_metrics')
-        .upsert(providedVSMEMetrics, { 
-          onConflict: 'metric_id',
+        .from('consol')
+        .upsert(transformedMetrics, { 
+          onConflict: 'id',
           ignoreDuplicates: false 
         });
 
       if (error) throw error;
 
-      console.log('Successfully inserted all provided metrics:', providedVSMEMetrics.length);
+      console.log('Successfully inserted all provided metrics:', transformedMetrics.length);
       return true;
     } catch (error) {
       console.error('Error inserting provided metrics:', error);
@@ -84,12 +103,12 @@ export const useVSMEDatabaseOperations = () => {
 
   const clearMetrics = useCallback(async () => {
     try {
-      console.log('Clearing all metrics from consolidated table...');
+      console.log('Clearing all metrics from consol table...');
       
       const { error } = await supabase
-        .from('vsme_consolidated_metrics')
+        .from('consol')
         .delete()
-        .neq('metric_id', ''); // Delete all rows
+        .neq('id', ''); // Delete all rows
 
       if (error) throw error;
 
