@@ -166,7 +166,7 @@ export const VSMEMetricsFilters = ({
   };
 
   return (
-    <div className="mb-4 p-4 bg-gray-50 rounded-lg border">
+    <div className="mb-4 p-4 bg-gray-100 rounded-lg border">
       <div className="flex items-center gap-2 mb-3">
         <Filter className="h-4 w-4 text-gray-600" />
         <span className="text-sm font-medium text-gray-700">Filters</span>
@@ -256,44 +256,44 @@ export const VSMEMetricsFilters = ({
       {hasActiveFilters && (
         <div className="flex flex-wrap gap-2 mt-3">
           {selectedTopic && selectedTopic !== "all" && (
-            <Badge variant="secondary" className="text-xs">
+            <Badge className="text-xs bg-[#077bc0] text-white hover:bg-[#077bc0]/80">
               Topic: {selectedTopic.replace("Enviornment", "Environment")}
               <button
                 onClick={() => onTopicChange("")}
-                className="ml-1 hover:text-red-600"
+                className="ml-1 hover:text-red-200"
               >
                 <X className="h-3 w-3" />
               </button>
             </Badge>
           )}
           {selectedSection && selectedSection !== "all" && (
-            <Badge variant="secondary" className="text-xs">
+            <Badge className="text-xs bg-[#077bc0] text-white hover:bg-[#077bc0]/80">
               Section: {selectedSection}
               <button
                 onClick={() => onSectionChange("")}
-                className="ml-1 hover:text-red-600"
+                className="ml-1 hover:text-red-200"
               >
                 <X className="h-3 w-3" />
               </button>
             </Badge>
           )}
           {selectedSubSection && selectedSubSection !== "all" && (
-            <Badge variant="secondary" className="text-xs">
+            <Badge className="text-xs bg-[#077bc0] text-white hover:bg-[#077bc0]/80">
               Sub-Section: {selectedSubSection}
               <button
                 onClick={() => onSubSectionChange("")}
-                className="ml-1 hover:text-red-600"
+                className="ml-1 hover:text-red-200"
               >
                 <X className="h-3 w-3" />
               </button>
             </Badge>
           )}
           {selectedInputType && selectedInputType !== "all" && (
-            <Badge variant="secondary" className="text-xs">
+            <Badge className="text-xs bg-[#077bc0] text-white hover:bg-[#077bc0]/80">
               Type: {selectedInputType}
               <button
                 onClick={() => onInputTypeChange("")}
-                className="ml-1 hover:text-red-600"
+                className="ml-1 hover:text-red-200"
               >
                 <X className="h-3 w-3" />
               </button>
