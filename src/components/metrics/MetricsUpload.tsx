@@ -74,6 +74,7 @@ export const MetricsUpload = () => {
           
           // Process each row in the main sheet
           let savedCount = 0;
+          let errorCount = 0;
           const totalRows = mainData.length;
           
           // Find header row and column indices - be more flexible with column names
@@ -180,6 +181,9 @@ export const MetricsUpload = () => {
                 if (success) {
                   savedCount++;
                   console.log(`Saved tabular data for ${referenceStr}`);
+                } else {
+                  errorCount++;
+                  console.error(`Failed to save tabular data for ${referenceStr}`);
                 }
               } else {
                 console.warn(`No tabular sheet found for reference: ${referenceStr}`);
@@ -188,6 +192,9 @@ export const MetricsUpload = () => {
                 if (success) {
                   savedCount++;
                   console.log(`Saved text response for ${referenceStr}`);
+                } else {
+                  errorCount++;
+                  console.error(`Failed to save text response for ${referenceStr}`);
                 }
               }
             } else {
@@ -196,6 +203,9 @@ export const MetricsUpload = () => {
               if (success) {
                 savedCount++;
                 console.log(`Saved response for ${reference}: ${response}`);
+              } else {
+                errorCount++;
+                console.error(`Failed to save response for ${reference}: ${response}`);
               }
             }
             
@@ -204,8 +214,14 @@ export const MetricsUpload = () => {
             setUploadProgress(progress);
           }
           
-          console.log(`Processing complete. Saved ${savedCount} responses out of ${totalRows - startRow} rows processed.`);
+          console.log(`Processing complete. Saved ${savedCount} responses out of ${totalRows - startRow} rows processed. ${errorCount} errors encountered.`);
           setProcessedCount(savedCount);
+          
+          // Only show error toast if there were significant errors and no successes
+          if (savedCount === 0 && errorCount > 0) {
+            console.error('No responses were saved due to database errors');
+          }
+          
           resolve(savedCount);
           
         } catch (error) {
@@ -243,14 +259,25 @@ export const MetricsUpload = () => {
       setUploadProgress(100);
       setUploadStatus('success');
       
-      toast({
-        title: "Upload successful",
-        description: `${file.name} has been processed successfully. ${savedCount} responses were saved.`,
-        duration: 3000,
-      });
-      
-      // Update local storage to indicate metrics were updated
-      localStorage.setItem('metricsLastUpdated', new Date().toISOString());
+      // Only show success toast if responses were actually saved
+      if (savedCount > 0) {
+        toast({
+          title: "Upload successful",
+          description: `${file.name} has been processed successfully. ${savedCount} responses were saved.`,
+          duration: 3000,
+        });
+        
+        // Update local storage to indicate metrics were updated
+        localStorage.setItem('metricsLastUpdated', new Date().toISOString());
+      } else {
+        // Show warning toast if no responses were saved
+        toast({
+          title: "No responses saved",
+          description: `${file.name} was processed but no responses were saved. Please check the file format and column names.`,
+          variant: "destructive",
+          duration: 5000,
+        });
+      }
       
     } catch (error) {
       console.error("Error processing file:", error);
