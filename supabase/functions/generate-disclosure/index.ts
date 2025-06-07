@@ -30,6 +30,27 @@ serve(async (req) => {
       disclosureId
     });
 
+    // If no valid metrics, return a message indicating data collection is needed
+    if (validMetrics.length === 0) {
+      const noDataResponse = `Disclosure ${disclosureId}: ${disclosureTitle}
+
+This disclosure requires specific data collection and metrics to provide a comprehensive response. Currently, no relevant data has been provided for this disclosure section.
+
+To complete this disclosure, please ensure the following steps are taken:
+1. Collect the required metrics and data points specific to ${disclosureTitle.toLowerCase()}
+2. Upload or input the relevant sustainability data
+3. Verify that data aligns with the disclosure requirements
+
+Once the necessary data is available, this disclosure response can be generated with specific, factual information based on your organization's actual performance and practices.`;
+
+      return new Response(
+        JSON.stringify({ generatedResponse: noDataResponse }),
+        {
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        },
+      )
+    }
+
     // Prepare metrics data for the prompt
     const metricsData = validMetrics.map((metric: any) => ({
       metric: metric.metric,
@@ -40,37 +61,37 @@ serve(async (req) => {
       disclosure: metric.disclosure
     }));
 
-    const prompt = `You are a sustainability reporting expert tasked with creating a comprehensive disclosure response for ${disclosureTitle}.
+    const prompt = `You are a sustainability reporting expert tasked with creating a disclosure response for ${disclosureTitle}.
 
 Disclosure Context:
 - ID: ${disclosureId}
 - Title: ${disclosureTitle}
 - Description: ${disclosureDescription}
 
-IMPORTANT: Only use metrics data that specifically belongs to disclosure ${disclosureId}. Do not reference or incorporate data from other disclosures.
+CRITICAL INSTRUCTIONS:
+1. ONLY use the specific data provided below from disclosure ${disclosureId}
+2. DO NOT create, assume, or fabricate any data points, metrics, or information
+3. DO NOT reference industry standards, best practices, or generic sustainability concepts unless directly supported by the provided data
+4. If a specific data point is missing, explicitly state "data not available" rather than making assumptions
+5. Be factual and conservative - only state what can be directly derived from the provided metrics
 
 Available Metrics Data for ${disclosureId}:
-${metricsData.length > 0 ? metricsData.map((m: any) => `
-- Metric: ${m.metric}
-- Disclosure: ${m.disclosure}
-- Topic: ${m.topic || 'Not specified'}
-- Definition: ${m.definition || 'Not provided'}
-- Response: ${m.response || 'Not provided'}
-- Additional Data: ${m.responseData || 'Not provided'}
-`).join('\n') : 'No metrics data available for this disclosure.'}
+${metricsData.map((m: any) => `
+Metric: ${m.metric}
+Response/Value: ${m.response || 'Not provided'}
+Additional Data: ${m.responseData || 'Not provided'}
+Definition: ${m.definition || 'Not provided'}
+`).join('\n')}
 
-Instructions:
-1. Write a comprehensive disclosure response that addresses ONLY the ${disclosureTitle} requirements
-2. Use ONLY the provided metrics data that belongs to disclosure ${disclosureId}
-3. If no relevant metrics are available, focus on the disclosure requirements and indicate areas where data collection is needed
-4. Write in a confident, authoritative, and expertise-driven tone
-5. Structure the response in well-formed paragraphs with full sentences
-6. Ensure the response demonstrates the organization's commitment to sustainability and transparency
-7. Include specific data points and metrics where relevant, but only from ${disclosureId}
-8. Make the response professional and suitable for stakeholder review
-9. Do not reference metrics or data from other disclosure sections
+Instructions for Response:
+1. Structure the response to address the ${disclosureTitle} requirements using ONLY the provided data
+2. For each metric listed above, incorporate the actual response/value if meaningful
+3. If any required information is missing, clearly state "This information is not currently available in our data collection"
+4. Do not add hypothetical examples, industry benchmarks, or generic sustainability statements
+5. Keep the response factual, concise, and directly tied to the provided metrics
+6. If the data is insufficient for a complete disclosure, acknowledge this limitation
 
-Please generate a detailed disclosure response for ${disclosureId} only:`
+Generate a disclosure response based STRICTLY on the provided data:`
 
     const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=${geminiApiKey}`, {
       method: 'POST',
@@ -84,10 +105,10 @@ Please generate a detailed disclosure response for ${disclosureId} only:`
           }]
         }],
         generationConfig: {
-          temperature: 0.7,
-          topK: 40,
-          topP: 0.95,
-          maxOutputTokens: 2048,
+          temperature: 0.3, // Lower temperature for more factual, less creative responses
+          topK: 20,
+          topP: 0.8,
+          maxOutputTokens: 1500, // Reduced to encourage more concise responses
         }
       }),
     })
