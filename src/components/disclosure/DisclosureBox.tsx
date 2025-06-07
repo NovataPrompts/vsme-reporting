@@ -22,6 +22,7 @@ export const DisclosureBox = ({
   disclosure
 }: DisclosureBoxProps) => {
   const [response, setResponse] = useState("");
+  const [graphicsRecommendations, setGraphicsRecommendations] = useState("");
   const [isGenerating, setIsGenerating] = useState(false);
   const [isRecommendingGraphics, setIsRecommendingGraphics] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
@@ -98,6 +99,8 @@ export const DisclosureBox = ({
         return hasData && belongsToDisclosure;
       });
 
+      console.log(`Generating graphics recommendations for disclosure ${disclosure.id} with ${relevantMetrics.length} metrics`);
+
       const { data, error } = await supabase.functions.invoke('recommend-graphics', {
         body: {
           disclosureId: disclosure.id,
@@ -108,16 +111,16 @@ export const DisclosureBox = ({
       });
 
       if (error) {
+        console.error('Graphics recommendation error:', error);
         throw new Error(error.message || 'Failed to generate graphics recommendations');
       }
 
+      setGraphicsRecommendations(data.recommendations);
+      
       toast({
         title: "Graphics Recommendations Generated",
         description: `Visualization recommendations for ${disclosure.title} have been generated.`
       });
-
-      // You can handle the recommendations data here - for now just showing in console
-      console.log('Graphics recommendations:', data.recommendations);
       
     } catch (error) {
       console.error('Error generating graphics recommendations:', error);
@@ -133,10 +136,11 @@ export const DisclosureBox = ({
 
   const handleClear = () => {
     setResponse("");
+    setGraphicsRecommendations("");
     setIsEditing(false);
     toast({
-      title: "Response Cleared",
-      description: `Disclosure response for ${disclosure.title} has been cleared.`
+      title: "Content Cleared",
+      description: `All content for ${disclosure.title} has been cleared.`
     });
   };
 
@@ -206,7 +210,7 @@ export const DisclosureBox = ({
               )}
               {isRecommendingGraphics ? "Analyzing..." : "Recommend Graphics"}
             </Button>
-            {response && (
+            {(response || graphicsRecommendations) && (
               <>
                 <Button 
                   variant="outline"
@@ -231,13 +235,31 @@ export const DisclosureBox = ({
       </CardHeader>
       <CardContent>
         <div className="space-y-4">
-          <Textarea 
-            placeholder={`Enter or generate disclosure response for ${disclosure.title}...`}
-            value={response}
-            onChange={(e) => setResponse(e.target.value)}
-            className="min-h-[200px] resize-y"
-            readOnly={!isEditing && response !== ""}
-          />
+          {/* Disclosure Response Section */}
+          <div>
+            <Textarea 
+              placeholder={`Enter or generate disclosure response for ${disclosure.title}...`}
+              value={response}
+              onChange={(e) => setResponse(e.target.value)}
+              className="min-h-[200px] resize-y"
+              readOnly={!isEditing && response !== ""}
+            />
+          </div>
+
+          {/* Graphics Recommendations Section */}
+          {graphicsRecommendations && (
+            <div className="mt-6">
+              <h4 className="text-lg font-semibold mb-3 flex items-center gap-2">
+                <BarChart3 className="h-5 w-5" />
+                Graphics Recommendations
+              </h4>
+              <div className="bg-slate-50 p-4 rounded-lg border">
+                <pre className="whitespace-pre-wrap text-sm font-mono">
+                  {graphicsRecommendations}
+                </pre>
+              </div>
+            </div>
+          )}
         </div>
       </CardContent>
     </Card>

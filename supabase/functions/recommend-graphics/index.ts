@@ -14,6 +14,11 @@ serve(async (req) => {
   try {
     const { disclosureId, disclosureTitle, disclosureDescription, metrics } = await req.json()
 
+    console.log(`Processing graphics recommendations for disclosure ${disclosureId}:`, {
+      totalMetrics: metrics.length,
+      disclosureTitle
+    })
+
     const geminiApiKey = Deno.env.get('GEMINI_API_KEY')
     if (!geminiApiKey) {
       throw new Error('Gemini API key not configured')
@@ -48,19 +53,19 @@ serve(async (req) => {
 
     // If no quantitative metrics, return a message indicating no visualizable data
     if (quantitativeMetrics.length === 0) {
-      const noDataResponse = `No Quantitative Data Available for Visualization
+      const noDataResponse = `**No Quantitative Data Available for Visualization**
 
-Disclosure ${disclosureId}: ${disclosureTitle}
+**Disclosure ${disclosureId}: ${disclosureTitle}**
 
 Currently, there are no quantitative metrics available for this disclosure that would benefit from data visualization. 
 
-To generate meaningful graphics recommendations:
+**To generate meaningful graphics recommendations:**
 1. Ensure numerical data is collected for relevant metrics
 2. Include data with units of measurement (percentages, amounts, counts, etc.)
 3. Provide time-series data for trend analysis
 4. Include categorical data that can be compared
 
-Once quantitative data is available, we can recommend appropriate visualizations such as:
+**Once quantitative data is available, we can recommend appropriate visualizations such as:**
 - Bar charts for comparisons
 - Line charts for trends over time
 - Pie charts for proportional data
@@ -86,12 +91,12 @@ Once quantitative data is available, we can recommend appropriate visualizations
 
     const prompt = `You are a data visualization expert analyzing sustainability metrics for ${disclosureTitle}.
 
-Disclosure Context:
+**Disclosure Context:**
 - ID: ${disclosureId}
 - Title: ${disclosureTitle}
 - Description: ${disclosureDescription}
 
-INSTRUCTIONS:
+**INSTRUCTIONS:**
 1. Analyze the quantitative data provided below
 2. Recommend specific, appropriate visualizations for this data
 3. Focus on charts and graphics that would best communicate the sustainability information
@@ -99,17 +104,17 @@ INSTRUCTIONS:
 5. Suggest chart types, data groupings, and key insights to highlight
 6. Be specific about which metrics should be visualized together vs. separately
 
-Available Quantitative Data for ${disclosureId}:
+**Available Quantitative Data for ${disclosureId}:**
 ${dataForAnalysis.map((d: any) => `
-Metric: ${d.metric}
-Value: ${d.value || 'Not provided'}
-Unit: ${d.unit || 'Not specified'}
-Input Type: ${d.inputType || 'Not specified'}
-Definition: ${d.definition || 'Not provided'}
-Additional Data: ${d.responseData ? JSON.stringify(d.responseData) : 'None'}
+**Metric:** ${d.metric}
+**Value:** ${d.value || 'Not provided'}
+**Unit:** ${d.unit || 'Not specified'}
+**Input Type:** ${d.inputType || 'Not specified'}
+**Definition:** ${d.definition || 'Not provided'}
+**Additional Data:** ${d.responseData ? JSON.stringify(d.responseData) : 'None'}
 `).join('\n')}
 
-Provide specific visualization recommendations including:
+**Provide specific visualization recommendations including:**
 1. Chart type (bar, line, pie, scatter, etc.)
 2. Which metrics to include in each visualization
 3. How to group or categorize the data
@@ -117,7 +122,7 @@ Provide specific visualization recommendations including:
 5. Suggested titles and labels
 6. Any time-based analysis if applicable
 
-Format your response as clear, actionable recommendations for creating meaningful visualizations.`
+Format your response as clear, actionable recommendations for creating meaningful visualizations. Use markdown formatting for better readability.`
 
     const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=${geminiApiKey}`, {
       method: 'POST',
@@ -141,11 +146,14 @@ Format your response as clear, actionable recommendations for creating meaningfu
 
     if (!response.ok) {
       const error = await response.json()
+      console.error('Gemini API error:', error)
       throw new Error(error.error?.message || 'Failed to generate graphics recommendations')
     }
 
     const data = await response.json()
     const recommendations = data.candidates[0].content.parts[0].text
+
+    console.log('Graphics recommendations generated successfully')
 
     return new Response(
       JSON.stringify({ recommendations }),
@@ -154,11 +162,11 @@ Format your response as clear, actionable recommendations for creating meaningfu
       },
     )
   } catch (error) {
-    console.error('Error:', error)
+    console.error('Error in recommend-graphics function:', error)
     return new Response(
       JSON.stringify({ error: error.message }),
       {
-        status: 400,
+        status: 500,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       },
     )
