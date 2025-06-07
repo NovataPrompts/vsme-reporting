@@ -19,6 +19,7 @@ export interface VSMEMetric {
   unit?: string;
   response_options?: string; // Added response_options field
   response?: string;
+  responseData?: any; // Added responseData field
   formattedResponse?: string;
   lastUpdated?: string;
 }
