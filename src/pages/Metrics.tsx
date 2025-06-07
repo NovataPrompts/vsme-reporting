@@ -1,4 +1,3 @@
-
 import { VSMEMetricsSearch } from "@/components/metrics/VSMEMetricsSearch";
 import { VSMEMetricsTabs } from "@/components/metrics/VSMEMetricsTabs";
 import { VSMEMetricsDropdown } from "@/components/metrics/VSMEMetricsDropdown";
@@ -68,7 +67,10 @@ const Metrics = () => {
     filteredByFilters = filteredByFilters.filter(metric => metric.inputType === selectedInputType);
   }
   
-  // Then apply search query
+  console.log('Filtered by filters:', filteredByFilters.length);
+  console.log('Active filters:', { selectedTopic, selectedSection, selectedSubSection, selectedInputType });
+  
+  // Then apply search query to filtered results
   const filteredMetrics = searchQuery
     ? filteredByFilters.filter(metric => 
         metric.disclosure?.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -80,14 +82,10 @@ const Metrics = () => {
       )
     : [];
 
-  // Group metrics by topic - use filtered metrics for tabs when filters are active
-  const metricsForTabs = selectedTopic || selectedSection || selectedSubSection || selectedInputType 
-    ? filteredByFilters 
-    : metrics;
-    
+  // Group metrics by topic - use filtered metrics for tabs
   const metricsByTopic: Record<string, VSMEMetric[]> = {};
   topics.forEach(topic => {
-    metricsByTopic[topic] = metricsForTabs.filter(metric => metric.topic === topic);
+    metricsByTopic[topic] = filteredByFilters.filter(metric => metric.topic === topic);
   });
 
   console.log('Metrics by topic:', metricsByTopic);
