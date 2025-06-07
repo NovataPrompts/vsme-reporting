@@ -2,6 +2,8 @@
 import React, { useState } from "react";
 import { ChevronDown, Eye, SquareCheckBig, ToggleLeft, ListChecks, Sheet, LetterText, Hash, FileDigit, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Switch } from "@/components/ui/switch";
 import { Table, TableHeader, TableBody, TableHead, TableRow, TableCell } from "@/components/ui/table";
 import { VSMEMetric } from "@/types/vsmeMetrics";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
@@ -13,7 +15,7 @@ interface VSMEMetricsTableProps {
 
 const getInputTypeIcon = (inputType: string | undefined) => {
   const type = inputType?.toLowerCase();
-  
+
   switch (type) {
     case 'multiple choice':
       return <SquareCheckBig className="h-4 w-4" />;
@@ -40,7 +42,8 @@ export const VSMEMetricsTable = ({ metrics }: VSMEMetricsTableProps) => {
   const [selectedMetricId, setSelectedMetricId] = useState<string | null>(null);
   const [isResponseDialogOpen, setIsResponseDialogOpen] = useState(false);
   const [showSubSection, setShowSubSection] = useState(false);
-  
+  const [showNovataReference, setShowNovataReference] = useState(false);
+
   const toggleMetric = (metricRef: string) => {
     setOpenMetric(openMetric === metricRef ? null : metricRef);
   };
@@ -50,7 +53,7 @@ export const VSMEMetricsTable = ({ metrics }: VSMEMetricsTableProps) => {
     setSelectedMetricId(metric.id);
     setIsResponseDialogOpen(true);
   };
-  
+
   return (
     <>
       <div className="overflow-x-auto">
@@ -88,7 +91,7 @@ export const VSMEMetricsTable = ({ metrics }: VSMEMetricsTableProps) => {
               metrics.map((metric, index) => {
                 const uniqueKey = metric.id || `${metric.novataReference}-${index}`;
                 const metricRefKey = metric.novataReference || metric.id || '';
-                
+
                 return (
                   <React.Fragment key={uniqueKey}>
                     <TableRow className="hover:bg-muted/50">
@@ -125,18 +128,25 @@ export const VSMEMetricsTable = ({ metrics }: VSMEMetricsTableProps) => {
                             <div className="p-4 mx-4 mb-4 rounded-md bg-[ffffff] bg-slate-50 shadow-sm border border-slate-200">
                               <h3 className="text-lg font-semibold mb-3 text-[#057cc1]">{metric.metric}</h3>
                               <div className="space-y-4">
-                                <div>
-                                  <p className="text-sm font-medium mb-1 text-[#00344d]">Novata Metric Reference:</p>
-                                  <p className="text-sm text-[#00344d]">
-                                    {metric.novataReference || "N/A"}
-                                  </p>
-                                </div>
-                                
-                                <div>
-                                  <p className="text-sm font-medium mb-1 text-[#00344d]">VSME Metric Reference:</p>
-                                  <p className="text-sm text-[#00344d]">
-                                    {metric.reference || "N/A"}
-                                  </p>
+                                <div className="flex items-center justify-between">
+                                  <div className="flex-1">
+                                    <p className="text-sm font-medium mb-2 text-[#00344d]">Metric Reference:</p>
+                                    <Badge variant="outline" className="bg-[#057cc1] text-white border-[#057cc1] mb-2">
+                                      {showNovataReference 
+                                        ? (metric.novataReference || "N/A")
+                                        : (metric.reference || "N/A")
+                                      }
+                                    </Badge>
+                                    <div className="flex items-center gap-2 text-sm text-[#00344d]">
+                                      <span>VSME</span>
+                                      <Switch 
+                                        checked={showNovataReference}
+                                        onCheckedChange={setShowNovataReference}
+                                        className="data-[state=checked]:bg-[#057cc1]"
+                                      />
+                                      <span>Novata</span>
+                                    </div>
+                                  </div>
                                 </div>
                                 
                                 <div>
