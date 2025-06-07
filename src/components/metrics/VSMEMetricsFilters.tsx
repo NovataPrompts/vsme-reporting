@@ -230,7 +230,7 @@ export const VSMEMetricsFilters = ({
             variant="ghost"
             size="sm"
             onClick={onClearFilters}
-            className="text-xs text-gray-500 hover:text-gray-700"
+            className="text-xs text-gray-500 hover:text-blue-900 hover:bg-blue-100"
           >
             <X className="h-3 w-3 mr-1" />
             Clear all
