@@ -12,6 +12,58 @@ interface ChartRendererProps {
 
 export const ChartRenderer = ({ chartType, data, title, description }: ChartRendererProps) => {
   if (chartType === "Table") {
+    if (!data || data.length === 0) {
+      return (
+        <div className="w-full text-center p-8">
+          <p className="text-muted-foreground">No data available for table visualization</p>
+        </div>
+      );
+    }
+
+    // Get all unique keys from the data to create dynamic columns
+    const allKeys = Array.from(new Set(data.flatMap(item => Object.keys(item))));
+    
+    // Filter out empty keys and sort them logically
+    const columns = allKeys.filter(key => key.trim() !== '').sort((a, b) => {
+      // Put implementation status columns first
+      if (a.toLowerCase().includes('implement') && !b.toLowerCase().includes('implement')) return -1;
+      if (b.toLowerCase().includes('implement') && !a.toLowerCase().includes('implement')) return 1;
+      // Then practice/area columns
+      if (a.toLowerCase().includes('practice') || a.toLowerCase().includes('area')) return -1;
+      if (b.toLowerCase().includes('practice') || b.toLowerCase().includes('area')) return 1;
+      return a.localeCompare(b);
+    });
+
+    const renderCellContent = (value: any, columnKey: string) => {
+      if (value === null || value === undefined || value === '') {
+        return <span className="text-muted-foreground">-</span>;
+      }
+
+      // Check if this is an implementation status column
+      const isImplementationColumn = columnKey.toLowerCase().includes('implement') || 
+                                   columnKey.toLowerCase().includes('status');
+
+      if (isImplementationColumn) {
+        const isImplemented = value === 'Yes' || 
+                             value === 'Implemented' || 
+                             value === true || 
+                             value?.toString().toLowerCase() === 'yes' ||
+                             value?.toString().toLowerCase() === 'implemented';
+
+        return (
+          <div className="flex justify-center">
+            {isImplemented ? (
+              <Check className="h-5 w-5 text-green-600" />
+            ) : (
+              <X className="h-5 w-5 text-red-600" />
+            )}
+          </div>
+        );
+      }
+
+      return <span>{value.toString()}</span>;
+    };
+
     return (
       <div className="w-full">
         <div className="mb-4">
@@ -22,27 +74,21 @@ export const ChartRenderer = ({ chartType, data, title, description }: ChartRend
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>Practice/Policy Area</TableHead>
-                <TableHead className="text-center">Implementation Status</TableHead>
-                <TableHead>Details</TableHead>
+                {columns.map((column) => (
+                  <TableHead key={column} className={column.toLowerCase().includes('implement') || column.toLowerCase().includes('status') ? 'text-center' : ''}>
+                    {column.replace(/[_-]/g, ' ').replace(/\b\w/g, l => l.toUpperCase())}
+                  </TableHead>
+                ))}
               </TableRow>
             </TableHeader>
             <TableBody>
               {data.map((item, index) => (
                 <TableRow key={index}>
-                  <TableCell className="font-medium">
-                    {item.practice || item.area || item.category || item.name || `Item ${index + 1}`}
-                  </TableCell>
-                  <TableCell className="text-center">
-                    {(item.implemented === 'Yes' || item.status === 'Implemented' || item.implemented === true) ? (
-                      <Check className="h-5 w-5 text-green-600 mx-auto" />
-                    ) : (
-                      <X className="h-5 w-5 text-red-600 mx-auto" />
-                    )}
-                  </TableCell>
-                  <TableCell>
-                    {item.details || item.description || item.notes || 'No additional details'}
-                  </TableCell>
+                  {columns.map((column) => (
+                    <TableCell key={column} className={column.toLowerCase().includes('implement') || column.toLowerCase().includes('status') ? 'text-center' : ''}>
+                      {renderCellContent(item[column], column)}
+                    </TableCell>
+                  ))}
                 </TableRow>
               ))}
             </TableBody>
