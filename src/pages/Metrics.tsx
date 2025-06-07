@@ -15,6 +15,12 @@ const Metrics = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [metrics, setMetrics] = useState<VSMEMetric[]>([]);
   const [lastUpdated, setLastUpdated] = useState<string | null>(null);
+  
+  // Filter states
+  const [selectedTopic, setSelectedTopic] = useState("");
+  const [selectedSection, setSelectedSection] = useState("");
+  const [selectedSubSection, setSelectedSubSection] = useState("");
+  const [selectedInputType, setSelectedInputType] = useState("");
 
   useEffect(() => {
     const fetchMetrics = async () => {
@@ -46,9 +52,25 @@ const Metrics = () => {
   console.log('Topics:', topics);
   console.log('Total metrics:', metrics.length);
   
-  // Filter metrics based on search query
+  // Apply filters first
+  let filteredByFilters = metrics;
+  
+  if (selectedTopic) {
+    filteredByFilters = filteredByFilters.filter(metric => metric.topic === selectedTopic);
+  }
+  if (selectedSection) {
+    filteredByFilters = filteredByFilters.filter(metric => metric.section === selectedSection);
+  }
+  if (selectedSubSection) {
+    filteredByFilters = filteredByFilters.filter(metric => metric.subSection === selectedSubSection);
+  }
+  if (selectedInputType) {
+    filteredByFilters = filteredByFilters.filter(metric => metric.inputType === selectedInputType);
+  }
+  
+  // Then apply search query
   const filteredMetrics = searchQuery
-    ? metrics.filter(metric => 
+    ? filteredByFilters.filter(metric => 
         metric.disclosure?.toLowerCase().includes(searchQuery.toLowerCase()) ||
         metric.topic?.toLowerCase().includes(searchQuery.toLowerCase()) ||
         metric.section?.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -58,16 +80,27 @@ const Metrics = () => {
       )
     : [];
 
-  // Group metrics by topic - only include metrics with valid topics
+  // Group metrics by topic - use filtered metrics for tabs when filters are active
+  const metricsForTabs = selectedTopic || selectedSection || selectedSubSection || selectedInputType 
+    ? filteredByFilters 
+    : metrics;
+    
   const metricsByTopic: Record<string, VSMEMetric[]> = {};
   topics.forEach(topic => {
-    metricsByTopic[topic] = metrics.filter(metric => metric.topic === topic);
+    metricsByTopic[topic] = metricsForTabs.filter(metric => metric.topic === topic);
   });
 
   console.log('Metrics by topic:', metricsByTopic);
 
   const goToImport = () => {
     navigate("/import");
+  };
+
+  const handleClearFilters = () => {
+    setSelectedTopic("");
+    setSelectedSection("");
+    setSelectedSubSection("");
+    setSelectedInputType("");
   };
 
   if (isLoading) {
@@ -124,6 +157,16 @@ const Metrics = () => {
               searchQuery={searchQuery}
               onSearchChange={setSearchQuery}
               filteredMetrics={filteredMetrics}
+              allMetrics={metrics}
+              selectedTopic={selectedTopic}
+              selectedSection={selectedSection}
+              selectedSubSection={selectedSubSection}
+              selectedInputType={selectedInputType}
+              onTopicChange={setSelectedTopic}
+              onSectionChange={setSelectedSection}
+              onSubSectionChange={setSelectedSubSection}
+              onInputTypeChange={setSelectedInputType}
+              onClearFilters={handleClearFilters}
             />
 
             <VSMEMetricsTabs
