@@ -38,23 +38,62 @@ export const VSMEMetricsFilters = ({
       .filter((topic): topic is string => Boolean(topic && topic.trim() !== ''))
   )).sort();
 
-  const sections = Array.from(new Set(
-    metrics
-      .map(metric => metric.section)
-      .filter((section): section is string => Boolean(section && section.trim() !== ''))
-  )).sort();
+  // Filter sections based on selected topic
+  const availableSections = selectedTopic 
+    ? Array.from(new Set(
+        metrics
+          .filter(metric => metric.topic === selectedTopic)
+          .map(metric => metric.section)
+          .filter((section): section is string => Boolean(section && section.trim() !== ''))
+      )).sort()
+    : Array.from(new Set(
+        metrics
+          .map(metric => metric.section)
+          .filter((section): section is string => Boolean(section && section.trim() !== ''))
+      )).sort();
 
-  const subSections = Array.from(new Set(
-    metrics
-      .map(metric => metric.subSection)
-      .filter((subSection): subSection is string => Boolean(subSection && subSection.trim() !== ''))
-  )).sort();
+  // Filter sub-sections based on selected topic and section
+  const availableSubSections = selectedTopic && selectedSection
+    ? Array.from(new Set(
+        metrics
+          .filter(metric => 
+            metric.topic === selectedTopic && 
+            metric.section === selectedSection
+          )
+          .map(metric => metric.subSection)
+          .filter((subSection): subSection is string => Boolean(subSection && subSection.trim() !== ''))
+      )).sort()
+    : selectedTopic
+    ? Array.from(new Set(
+        metrics
+          .filter(metric => metric.topic === selectedTopic)
+          .map(metric => metric.subSection)
+          .filter((subSection): subSection is string => Boolean(subSection && subSection.trim() !== ''))
+      )).sort()
+    : Array.from(new Set(
+        metrics
+          .map(metric => metric.subSection)
+          .filter((subSection): subSection is string => Boolean(subSection && subSection.trim() !== ''))
+      )).sort();
 
-  const inputTypes = Array.from(new Set(
-    metrics
-      .map(metric => metric.inputType)
-      .filter((inputType): inputType is string => Boolean(inputType && inputType.trim() !== ''))
-  )).sort();
+  // Input types can be filtered based on current selections
+  const availableInputTypes = selectedTopic || selectedSection || selectedSubSection
+    ? Array.from(new Set(
+        metrics
+          .filter(metric => {
+            const topicMatch = !selectedTopic || metric.topic === selectedTopic;
+            const sectionMatch = !selectedSection || metric.section === selectedSection;
+            const subSectionMatch = !selectedSubSection || metric.subSection === selectedSubSection;
+            return topicMatch && sectionMatch && subSectionMatch;
+          })
+          .map(metric => metric.inputType)
+          .filter((inputType): inputType is string => Boolean(inputType && inputType.trim() !== ''))
+      )).sort()
+    : Array.from(new Set(
+        metrics
+          .map(metric => metric.inputType)
+          .filter((inputType): inputType is string => Boolean(inputType && inputType.trim() !== ''))
+      )).sort();
 
   const hasActiveFilters = selectedTopic && selectedTopic !== "all" || 
                           selectedSection && selectedSection !== "all" || 
@@ -62,11 +101,60 @@ export const VSMEMetricsFilters = ({
                           selectedInputType && selectedInputType !== "all";
 
   const handleTopicChange = (value: string) => {
-    onTopicChange(value === "all" ? "" : value);
+    const newTopic = value === "all" ? "" : value;
+    onTopicChange(newTopic);
+    
+    // Clear section and sub-section if they're no longer valid for the new topic
+    if (newTopic && selectedSection) {
+      const validSections = Array.from(new Set(
+        metrics
+          .filter(metric => metric.topic === newTopic)
+          .map(metric => metric.section)
+          .filter((section): section is string => Boolean(section && section.trim() !== ''))
+      ));
+      
+      if (!validSections.includes(selectedSection)) {
+        onSectionChange("");
+        onSubSectionChange("");
+      } else if (selectedSubSection) {
+        // Check if sub-section is still valid
+        const validSubSections = Array.from(new Set(
+          metrics
+            .filter(metric => 
+              metric.topic === newTopic && 
+              metric.section === selectedSection
+            )
+            .map(metric => metric.subSection)
+            .filter((subSection): subSection is string => Boolean(subSection && subSection.trim() !== ''))
+        ));
+        
+        if (!validSubSections.includes(selectedSubSection)) {
+          onSubSectionChange("");
+        }
+      }
+    }
   };
 
   const handleSectionChange = (value: string) => {
-    onSectionChange(value === "all" ? "" : value);
+    const newSection = value === "all" ? "" : value;
+    onSectionChange(newSection);
+    
+    // Clear sub-section if it's no longer valid for the new section
+    if (newSection && selectedSubSection) {
+      const validSubSections = Array.from(new Set(
+        metrics
+          .filter(metric => {
+            const topicMatch = !selectedTopic || metric.topic === selectedTopic;
+            return topicMatch && metric.section === newSection;
+          })
+          .map(metric => metric.subSection)
+          .filter((subSection): subSection is string => Boolean(subSection && subSection.trim() !== ''))
+      ));
+      
+      if (!validSubSections.includes(selectedSubSection)) {
+        onSubSectionChange("");
+      }
+    }
   };
 
   const handleSubSectionChange = (value: string) => {
@@ -121,7 +209,7 @@ export const VSMEMetricsFilters = ({
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="all">All sections</SelectItem>
-              {sections.map(section => (
+              {availableSections.map(section => (
                 <SelectItem key={section} value={section}>
                   {section}
                 </SelectItem>
@@ -138,7 +226,7 @@ export const VSMEMetricsFilters = ({
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="all">All sub-sections</SelectItem>
-              {subSections.map(subSection => (
+              {availableSubSections.map(subSection => (
                 <SelectItem key={subSection} value={subSection}>
                   {subSection}
                 </SelectItem>
@@ -155,7 +243,7 @@ export const VSMEMetricsFilters = ({
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="all">All types</SelectItem>
-              {inputTypes.map(inputType => (
+              {availableInputTypes.map(inputType => (
                 <SelectItem key={inputType} value={inputType}>
                   {inputType}
                 </SelectItem>
