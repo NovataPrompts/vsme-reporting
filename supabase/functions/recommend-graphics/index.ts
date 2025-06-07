@@ -24,6 +24,63 @@ serve(async (req) => {
       throw new Error('Gemini API key not configured')
     }
 
+    // Function to analyze and extract quantitative data from tabular data
+    const extractQuantitativeData = (responseData: any): any[] => {
+      if (!responseData || typeof responseData !== 'object') {
+        return [];
+      }
+
+      const quantitativeData: any[] = [];
+
+      if (Array.isArray(responseData)) {
+        responseData.forEach((item, index) => {
+          if (typeof item === 'object' && item !== null) {
+            Object.entries(item).forEach(([key, value]) => {
+              // Check if value is numeric or contains numeric data
+              if (typeof value === 'number') {
+                quantitativeData.push({
+                  category: key,
+                  value: value,
+                  unit: 'count',
+                  source: `Row ${index + 1}`,
+                  type: 'numeric'
+                });
+              } else if (typeof value === 'string') {
+                // Try to extract numbers from strings
+                const numericMatch = value.match(/(\d+(?:\.\d+)?)/g);
+                if (numericMatch) {
+                  numericMatch.forEach((num) => {
+                    quantitativeData.push({
+                      category: `${key} (extracted)`,
+                      value: parseFloat(num),
+                      unit: 'extracted value',
+                      source: `Row ${index + 1}`,
+                      type: 'extracted'
+                    });
+                  });
+                }
+              }
+            });
+          }
+        });
+      } else {
+        // Handle object data
+        Object.entries(responseData).forEach(([key, value]) => {
+          if (typeof value === 'number') {
+            quantitativeData.push({
+              category: key,
+              value: value,
+              unit: 'count',
+              source: 'Data object',
+              type: 'numeric'
+            });
+          }
+        });
+      }
+
+      return quantitativeData;
+    };
+
     // Filter metrics that have quantitative data
     const quantitativeMetrics = metrics.filter((metric: any) => {
       const hasData = metric.response || metric.responseData;
@@ -47,7 +104,8 @@ serve(async (req) => {
         metric: m.metric, 
         value: m.response,
         unit: m.unit,
-        inputType: m.inputType
+        inputType: m.inputType,
+        hasTabularData: !!m.responseData
       }))
     });
 
@@ -79,15 +137,20 @@ Currently, there are no quantitative metrics available for this disclosure that 
       )
     }
 
-    // Prepare quantitative data for analysis
-    const dataForAnalysis = quantitativeMetrics.map((metric: any) => ({
-      metric: metric.metric,
-      value: metric.response,
-      unit: metric.unit,
-      inputType: metric.inputType,
-      definition: metric.definition,
-      responseData: metric.responseData
-    }));
+    // Prepare quantitative data for analysis with tabular data extraction
+    const dataForAnalysis = quantitativeMetrics.map((metric: any) => {
+      const extractedTabularData = metric.responseData ? extractQuantitativeData(metric.responseData) : [];
+      
+      return {
+        metric: metric.metric,
+        value: metric.response,
+        unit: metric.unit,
+        inputType: metric.inputType,
+        definition: metric.definition,
+        responseData: metric.responseData,
+        extractedQuantitativeData: extractedTabularData
+      };
+    });
 
     const prompt = `You are a data visualization expert analyzing sustainability metrics for ${disclosureTitle}.
 
@@ -97,12 +160,13 @@ Currently, there are no quantitative metrics available for this disclosure that 
 - Description: ${disclosureDescription}
 
 **INSTRUCTIONS:**
-1. Analyze the quantitative data provided below
+1. Analyze the quantitative data provided below, including extracted data from tabular sources
 2. Recommend specific, appropriate visualizations for this data
 3. Focus on charts and graphics that would best communicate the sustainability information
 4. Consider the audience (stakeholders, investors, regulators)
 5. Suggest chart types, data groupings, and key insights to highlight
 6. Be specific about which metrics should be visualized together vs. separately
+7. When tabular data is available, suggest how to best visualize the relationships and patterns
 
 **Available Quantitative Data for ${disclosureId}:**
 ${dataForAnalysis.map((d: any) => `
@@ -111,16 +175,20 @@ ${dataForAnalysis.map((d: any) => `
 **Unit:** ${d.unit || 'Not specified'}
 **Input Type:** ${d.inputType || 'Not specified'}
 **Definition:** ${d.definition || 'Not provided'}
-**Additional Data:** ${d.responseData ? JSON.stringify(d.responseData) : 'None'}
+**Tabular Data:** ${d.responseData ? JSON.stringify(d.responseData, null, 2) : 'None'}
+**Extracted Quantitative Elements:** ${d.extractedQuantitativeData.length > 0 ? 
+  d.extractedQuantitativeData.map((item: any) => `${item.category}: ${item.value} ${item.unit}`).join(', ') : 'None'}
 `).join('\n')}
 
 **Provide specific visualization recommendations including:**
-1. Chart type (bar, line, pie, scatter, etc.)
+1. Chart type (bar, line, pie, scatter, table, etc.)
 2. Which metrics to include in each visualization
 3. How to group or categorize the data
 4. Key insights each chart should highlight
 5. Suggested titles and labels
 6. Any time-based analysis if applicable
+7. How to best represent tabular data relationships
+8. Specific recommendations for extracted quantitative elements
 
 Format your response as clear, actionable recommendations for creating meaningful visualizations. Use markdown formatting for better readability.`
 
