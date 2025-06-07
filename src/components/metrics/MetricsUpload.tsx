@@ -56,8 +56,11 @@ export const MetricsUpload = () => {
           
           console.log('Available sheets:', workbook.SheetNames);
           
-          // Process main sheet (usually the first one)
-          const mainSheetName = workbook.SheetNames[0];
+          // Process main sheet (usually the first one or one with "ESG" in name)
+          const mainSheetName = workbook.SheetNames.find(name => 
+            name.toLowerCase().includes('esg') || name.toLowerCase().includes('report')
+          ) || workbook.SheetNames[0];
+          
           const mainSheet = workbook.Sheets[mainSheetName];
           const mainData = XLSX.utils.sheet_to_json(mainSheet, { header: 1 });
           
@@ -67,15 +70,49 @@ export const MetricsUpload = () => {
           let savedCount = 0;
           const totalRows = mainData.length;
           
-          for (let i = 1; i < totalRows; i++) { // Skip header row
+          // Find header row and column indices
+          let headerRowIndex = 0;
+          let novataRefIndex = -1;
+          let responseIndex = -1;
+          
+          for (let i = 0; i < Math.min(5, totalRows); i++) {
+            const row = mainData[i] as any[];
+            if (!row) continue;
+            
+            for (let j = 0; j < row.length; j++) {
+              const cellValue = String(row[j] || '').toLowerCase();
+              if (cellValue.includes('novata') && cellValue.includes('reference')) {
+                headerRowIndex = i;
+                novataRefIndex = j;
+              } else if (cellValue === 'response') {
+                responseIndex = j;
+              }
+            }
+            
+            if (novataRefIndex !== -1 && responseIndex !== -1) break;
+          }
+          
+          console.log('Header found at row:', headerRowIndex);
+          console.log('Novata Reference column:', novataRefIndex);
+          console.log('Response column:', responseIndex);
+          
+          if (novataRefIndex === -1 || responseIndex === -1) {
+            throw new Error('Could not find required columns (Novata Reference and Response)');
+          }
+          
+          for (let i = headerRowIndex + 1; i < totalRows; i++) {
             const row = mainData[i] as any[];
             if (!row || row.length === 0) continue;
             
-            // Assuming columns: [Reference, Question, Response, ...]
-            const reference = row[0];
-            const response = row[2];
+            const reference = row[novataRefIndex];
+            const response = row[responseIndex];
             
-            if (!reference || !response) continue;
+            console.log(`Processing row ${i}: Reference=${reference}, Response=${response}`);
+            
+            if (!reference) continue;
+            
+            // Skip empty responses unless they're explicitly empty strings
+            if (response === undefined || response === null) continue;
             
             // Check if this is a tabular data reference
             if (typeof response === 'string' && response.toLowerCase().includes('tabular data')) {
@@ -96,17 +133,26 @@ export const MetricsUpload = () => {
                   tabularData
                 );
                 
-                if (success) savedCount++;
+                if (success) {
+                  savedCount++;
+                  console.log(`Saved tabular data for ${reference}`);
+                }
               } else {
                 console.warn(`No tabular sheet found for reference: ${reference}`);
                 // Save the text response as is
-                const success = await saveUserResponse(reference, response);
-                if (success) savedCount++;
+                const success = await saveUserResponse(reference, String(response));
+                if (success) {
+                  savedCount++;
+                  console.log(`Saved text response for ${reference}`);
+                }
               }
             } else {
-              // Regular text response
-              const success = await saveUserResponse(reference, response);
-              if (success) savedCount++;
+              // Regular text/number response
+              const success = await saveUserResponse(reference, String(response));
+              if (success) {
+                savedCount++;
+                console.log(`Saved response for ${reference}: ${response}`);
+              }
             }
             
             // Update progress
@@ -166,9 +212,9 @@ export const MetricsUpload = () => {
       setUploadStatus('error');
       toast({
         title: "Processing failed",
-        description: "There was an error processing your Excel file. Please check the format and try again.",
+        description: `There was an error processing your Excel file: ${error instanceof Error ? error.message : 'Unknown error'}. Please check the format and try again.`,
         variant: "destructive",
-        duration: 3000,
+        duration: 5000,
       });
     }
   };
