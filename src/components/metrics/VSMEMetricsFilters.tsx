@@ -41,19 +41,19 @@ export const VSMEMetricsFilters = ({
   const sections = Array.from(new Set(
     metrics
       .map(metric => metric.section)
-      .filter((section): topic is string => Boolean(section && section.trim() !== ''))
+      .filter((section): section is string => Boolean(section && section.trim() !== ''))
   )).sort();
 
   const subSections = Array.from(new Set(
     metrics
       .map(metric => metric.subSection)
-      .filter((subSection): topic is string => Boolean(subSection && subSection.trim() !== ''))
+      .filter((subSection): subSection is string => Boolean(subSection && subSection.trim() !== ''))
   )).sort();
 
   const inputTypes = Array.from(new Set(
     metrics
       .map(metric => metric.inputType)
-      .filter((inputType): topic is string => Boolean(inputType && inputType.trim() !== ''))
+      .filter((inputType): inputType is string => Boolean(inputType && inputType.trim() !== ''))
   )).sort();
 
   const hasActiveFilters = selectedTopic || selectedSection || selectedSubSection || selectedInputType;
