@@ -1,10 +1,9 @@
 
-
 import { useState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import { Loader2, Sparkles } from "lucide-react";
+import { Loader2, Sparkles, Trash2, Edit } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useVSMEMetrics } from "@/hooks/useVSMEMetrics";
 import { supabase } from "@/integrations/supabase/client";
@@ -24,6 +23,7 @@ export const DisclosureBox = ({
 }: DisclosureBoxProps) => {
   const [response, setResponse] = useState("");
   const [isGenerating, setIsGenerating] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
   const { toast } = useToast();
   const { vsmeMetricsData } = useVSMEMetrics();
 
@@ -66,6 +66,7 @@ export const DisclosureBox = ({
       }
 
       setResponse(data.generatedResponse);
+      setIsEditing(false); // Exit edit mode after generation
       toast({
         title: "Response Generated",
         description: `Disclosure response for ${disclosure.title} has been generated successfully using ${relevantMetrics.length} relevant metrics.`
@@ -80,6 +81,31 @@ export const DisclosureBox = ({
     } finally {
       setIsGenerating(false);
     }
+  };
+
+  const handleClear = () => {
+    setResponse("");
+    setIsEditing(false);
+    toast({
+      title: "Response Cleared",
+      description: `Disclosure response for ${disclosure.title} has been cleared.`
+    });
+  };
+
+  const handleEdit = () => {
+    setIsEditing(true);
+    toast({
+      title: "Edit Mode",
+      description: "You can now edit the disclosure response."
+    });
+  };
+
+  const handleSaveEdit = () => {
+    setIsEditing(false);
+    toast({
+      title: "Changes Saved",
+      description: "Your changes have been saved."
+    });
   };
 
   // Split title at hyphen for multi-line display
@@ -106,18 +132,40 @@ export const DisclosureBox = ({
               )}
             </div>
           </div>
-          <Button 
-            onClick={handleGenerateResponse} 
-            disabled={isGenerating} 
-            className="flex items-center gap-2 flex-shrink-0"
-          >
-            {isGenerating ? (
-              <Loader2 className="h-4 w-4 animate-spin" />
-            ) : (
-              <Sparkles className="h-4 w-4" />
+          <div className="flex items-center gap-2 flex-shrink-0">
+            <Button 
+              onClick={handleGenerateResponse} 
+              disabled={isGenerating} 
+              className="flex items-center gap-2"
+            >
+              {isGenerating ? (
+                <Loader2 className="h-4 w-4 animate-spin" />
+              ) : (
+                <Sparkles className="h-4 w-4" />
+              )}
+              {isGenerating ? "Generating..." : "Generate Response"}
+            </Button>
+            {response && (
+              <>
+                <Button 
+                  variant="outline"
+                  onClick={isEditing ? handleSaveEdit : handleEdit}
+                  className="flex items-center gap-2"
+                >
+                  <Edit className="h-4 w-4" />
+                  {isEditing ? "Save" : "Edit"}
+                </Button>
+                <Button 
+                  variant="outline"
+                  onClick={handleClear}
+                  className="flex items-center gap-2 text-destructive hover:text-destructive"
+                >
+                  <Trash2 className="h-4 w-4" />
+                  Clear
+                </Button>
+              </>
             )}
-            {isGenerating ? "Generating..." : "Generate Response"}
-          </Button>
+          </div>
         </CardTitle>
       </CardHeader>
       <CardContent>
@@ -127,10 +175,10 @@ export const DisclosureBox = ({
             value={response}
             onChange={(e) => setResponse(e.target.value)}
             className="min-h-[200px] resize-y"
+            readOnly={!isEditing && response !== ""}
           />
         </div>
       </CardContent>
     </Card>
   );
 };
-
