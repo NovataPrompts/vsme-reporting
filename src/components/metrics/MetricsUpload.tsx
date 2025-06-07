@@ -46,7 +46,7 @@ export const MetricsUpload = () => {
   };
 
   const processExcelFile = async (file: File) => {
-    return new Promise((resolve, reject) => {
+    return new Promise<number>((resolve, reject) => {
       const reader = new FileReader();
       
       reader.onload = async (e) => {
@@ -188,7 +188,7 @@ export const MetricsUpload = () => {
               } else {
                 console.warn(`No tabular sheet found for reference: ${referenceStr}`);
                 // Save the text response as is
-                const success = await saveUserResponse(referenceStr, responseStr);
+                const success = await saveUserResponse(String(reference), responseStr);
                 if (success) {
                   savedCount++;
                   console.log(`Saved text response for ${referenceStr}`);

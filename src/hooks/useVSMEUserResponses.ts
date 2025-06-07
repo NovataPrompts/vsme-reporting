@@ -27,34 +27,51 @@ export const useVSMEUserResponses = () => {
     }
   }, [toast]);
 
-  const saveUserResponse = useCallback(async (metricId: string, responseValue: string, responseData?: any) => {
+  const saveUserResponse = useCallback(async (novataReference: string, responseValue: string, responseData?: any) => {
     try {
+      // First, find the metric ID based on the Novata Reference
+      console.log(`Looking up metric for Novata Reference: ${novataReference}`);
+      
+      const { data: metric, error: lookupError } = await supabase
+        .from('consol')
+        .select('id')
+        .eq('novata_reference', novataReference)
+        .maybeSingle();
+
+      if (lookupError) {
+        console.error('Error looking up metric:', lookupError);
+        throw lookupError;
+      }
+
+      if (!metric) {
+        console.warn(`No metric found for Novata Reference: ${novataReference}`);
+        return false;
+      }
+
+      console.log(`Found metric ID ${metric.id} for reference ${novataReference}`);
+
+      // Now save the response using the correct metric ID
       const { error } = await supabase
         .from('vsme_user_responses')
         .upsert({
-          metric_id: metricId,
+          metric_id: metric.id,
           user_id: (await supabase.auth.getUser()).data.user?.id,
           response_value: responseValue,
           response_data: responseData
         });
 
-      if (error) throw error;
+      if (error) {
+        console.error('Error saving user response:', error);
+        throw error;
+      }
 
-      toast({
-        title: "Success",
-        description: "Response saved successfully.",
-      });
+      console.log(`Successfully saved response for ${novataReference}`);
       return true;
     } catch (error) {
       console.error('Error saving user response:', error);
-      toast({
-        title: "Error",
-        description: "Failed to save response.",
-        variant: "destructive",
-      });
       return false;
     }
-  }, [toast]);
+  }, []);
 
   return {
     getUserResponse,
