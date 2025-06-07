@@ -68,20 +68,34 @@ export const DisclosureBox = ({ disclosure }: DisclosureBoxProps) => {
     }
   };
 
+  // Split title at hyphen for multi-line display
+  const titleParts = disclosure.title.split(' - ');
+  const mainTitle = titleParts[0];
+  const subTitle = titleParts[1];
+
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-full bg-primary text-primary-foreground flex items-center justify-center font-semibold text-sm">
+        <CardTitle className="flex items-start justify-between gap-4">
+          <div className="flex items-start gap-3">
+            <div className="w-10 h-10 rounded-full bg-primary text-primary-foreground flex items-center justify-center font-semibold text-sm flex-shrink-0 mt-1">
               {disclosure.id}
             </div>
-            <span>{disclosure.title}</span>
+            <div className="flex flex-col">
+              <span className="font-semibold text-lg text-primary leading-tight">
+                {mainTitle}
+              </span>
+              {subTitle && (
+                <span className="font-medium text-base text-muted-foreground leading-tight mt-1">
+                  {subTitle}
+                </span>
+              )}
+            </div>
           </div>
           <Button 
             onClick={handleGenerateResponse}
             disabled={isGenerating}
-            className="flex items-center gap-2"
+            className="flex items-center gap-2 flex-shrink-0"
           >
             {isGenerating ? (
               <Loader2 className="h-4 w-4 animate-spin" />
