@@ -56,7 +56,26 @@ export const VSMEMetricsFilters = ({
       .filter((inputType): inputType is string => Boolean(inputType && inputType.trim() !== ''))
   )).sort();
 
-  const hasActiveFilters = selectedTopic || selectedSection || selectedSubSection || selectedInputType;
+  const hasActiveFilters = selectedTopic && selectedTopic !== "all" || 
+                          selectedSection && selectedSection !== "all" || 
+                          selectedSubSection && selectedSubSection !== "all" || 
+                          selectedInputType && selectedInputType !== "all";
+
+  const handleTopicChange = (value: string) => {
+    onTopicChange(value === "all" ? "" : value);
+  };
+
+  const handleSectionChange = (value: string) => {
+    onSectionChange(value === "all" ? "" : value);
+  };
+
+  const handleSubSectionChange = (value: string) => {
+    onSubSectionChange(value === "all" ? "" : value);
+  };
+
+  const handleInputTypeChange = (value: string) => {
+    onInputTypeChange(value === "all" ? "" : value);
+  };
 
   return (
     <div className="mb-4 p-4 bg-gray-50 rounded-lg border">
@@ -79,12 +98,12 @@ export const VSMEMetricsFilters = ({
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3">
         <div>
           <label className="text-xs font-medium text-gray-600 mb-1 block">Topic</label>
-          <Select value={selectedTopic} onValueChange={onTopicChange}>
+          <Select value={selectedTopic || "all"} onValueChange={handleTopicChange}>
             <SelectTrigger className="h-9">
               <SelectValue placeholder="All topics" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="">All topics</SelectItem>
+              <SelectItem value="all">All topics</SelectItem>
               {topics.map(topic => (
                 <SelectItem key={topic} value={topic}>
                   {topic.replace("Enviornment", "Environment")}
@@ -96,12 +115,12 @@ export const VSMEMetricsFilters = ({
 
         <div>
           <label className="text-xs font-medium text-gray-600 mb-1 block">Section</label>
-          <Select value={selectedSection} onValueChange={onSectionChange}>
+          <Select value={selectedSection || "all"} onValueChange={handleSectionChange}>
             <SelectTrigger className="h-9">
               <SelectValue placeholder="All sections" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="">All sections</SelectItem>
+              <SelectItem value="all">All sections</SelectItem>
               {sections.map(section => (
                 <SelectItem key={section} value={section}>
                   {section}
@@ -113,12 +132,12 @@ export const VSMEMetricsFilters = ({
 
         <div>
           <label className="text-xs font-medium text-gray-600 mb-1 block">Sub-Section</label>
-          <Select value={selectedSubSection} onValueChange={onSubSectionChange}>
+          <Select value={selectedSubSection || "all"} onValueChange={handleSubSectionChange}>
             <SelectTrigger className="h-9">
               <SelectValue placeholder="All sub-sections" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="">All sub-sections</SelectItem>
+              <SelectItem value="all">All sub-sections</SelectItem>
               {subSections.map(subSection => (
                 <SelectItem key={subSection} value={subSection}>
                   {subSection}
@@ -130,12 +149,12 @@ export const VSMEMetricsFilters = ({
 
         <div>
           <label className="text-xs font-medium text-gray-600 mb-1 block">Input Type</label>
-          <Select value={selectedInputType} onValueChange={onInputTypeChange}>
+          <Select value={selectedInputType || "all"} onValueChange={handleInputTypeChange}>
             <SelectTrigger className="h-9">
               <SelectValue placeholder="All types" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="">All types</SelectItem>
+              <SelectItem value="all">All types</SelectItem>
               {inputTypes.map(inputType => (
                 <SelectItem key={inputType} value={inputType}>
                   {inputType}
@@ -148,7 +167,7 @@ export const VSMEMetricsFilters = ({
 
       {hasActiveFilters && (
         <div className="flex flex-wrap gap-2 mt-3">
-          {selectedTopic && (
+          {selectedTopic && selectedTopic !== "all" && (
             <Badge variant="secondary" className="text-xs">
               Topic: {selectedTopic.replace("Enviornment", "Environment")}
               <button
@@ -159,7 +178,7 @@ export const VSMEMetricsFilters = ({
               </button>
             </Badge>
           )}
-          {selectedSection && (
+          {selectedSection && selectedSection !== "all" && (
             <Badge variant="secondary" className="text-xs">
               Section: {selectedSection}
               <button
@@ -170,7 +189,7 @@ export const VSMEMetricsFilters = ({
               </button>
             </Badge>
           )}
-          {selectedSubSection && (
+          {selectedSubSection && selectedSubSection !== "all" && (
             <Badge variant="secondary" className="text-xs">
               Sub-Section: {selectedSubSection}
               <button
@@ -181,7 +200,7 @@ export const VSMEMetricsFilters = ({
               </button>
             </Badge>
           )}
-          {selectedInputType && (
+          {selectedInputType && selectedInputType !== "all" && (
             <Badge variant="secondary" className="text-xs">
               Type: {selectedInputType}
               <button
