@@ -228,7 +228,7 @@ export type Database = {
             foreignKeyName: "vsme_user_responses_metric_id_fkey"
             columns: ["metric_id"]
             isOneToOne: false
-            referencedRelation: "vsme_report_content"
+            referencedRelation: "consol"
             referencedColumns: ["id"]
           },
         ]

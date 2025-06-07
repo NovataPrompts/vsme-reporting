@@ -2,6 +2,7 @@
 import { VSMEMetricsSearch } from "@/components/metrics/VSMEMetricsSearch";
 import { VSMEMetricsDropdown } from "@/components/metrics/VSMEMetricsDropdown";
 import { useVSMEDatabase } from "@/hooks/useVSMEDatabase";
+import { useVSMEUserResponses } from "@/hooks/useVSMEUserResponses";
 import { Button } from "@/components/ui/button";
 import { Upload } from "lucide-react";
 import { useState, useEffect } from "react";
@@ -10,6 +11,7 @@ import { VSMEMetric } from "@/types/vsmeMetrics";
 
 const Metrics = () => {
   const { loadStaticMetrics, isLoading } = useVSMEDatabase();
+  const { getUserResponseByNovataReference } = useVSMEUserResponses();
   const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState("");
   const [metrics, setMetrics] = useState<VSMEMetric[]>([]);
@@ -26,9 +28,26 @@ const Metrics = () => {
       console.log('Fetching metrics...');
       const data = await loadStaticMetrics();
       console.log('Metrics fetched:', data.length, 'metrics');
+      
       if (data.length > 0) {
         console.log('Sample metrics:', data.slice(0, 3));
-        setMetrics(data);
+        
+        // Load user responses for each metric
+        const metricsWithResponses = await Promise.all(
+          data.map(async (metric) => {
+            if (metric.novataReference) {
+              const userResponse = await getUserResponseByNovataReference(metric.novataReference);
+              return {
+                ...metric,
+                response: userResponse?.response_value || undefined,
+                responseData: userResponse?.response_data || undefined
+              };
+            }
+            return metric;
+          })
+        );
+        
+        setMetrics(metricsWithResponses);
       }
     };
     
@@ -39,7 +58,7 @@ const Metrics = () => {
     if (metricsLastUpdated) {
       setLastUpdated(metricsLastUpdated);
     }
-  }, [loadStaticMetrics]);
+  }, [loadStaticMetrics, getUserResponseByNovataReference]);
 
   console.log('Total metrics:', metrics.length);
   

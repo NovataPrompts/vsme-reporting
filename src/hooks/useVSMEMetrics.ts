@@ -4,10 +4,12 @@ import { useToast } from "@/hooks/use-toast";
 import { VSMEMetric } from "@/types/vsmeMetrics";
 import { useNavigate } from "react-router-dom";
 import { useVSMEDatabase } from "./useVSMEDatabase";
+import { useVSMEUserResponses } from "./useVSMEUserResponses";
 
 export const useVSMEMetrics = () => {
   const { toast } = useToast();
   const { loadStaticMetrics, upsertMetrics } = useVSMEDatabase();
+  const { getUserResponseByNovataReference } = useVSMEUserResponses();
   const [searchQuery, setSearchQuery] = useState("");
   const navigate = useNavigate();
   const [lastUpdated, setLastUpdated] = useState<string | null>(null);
@@ -16,11 +18,27 @@ export const useVSMEMetrics = () => {
   useEffect(() => {
     const fetchMetrics = async () => {
       const data = await loadStaticMetrics();
-      setMetrics(data);
+      
+      // Load user responses for each metric
+      const metricsWithResponses = await Promise.all(
+        data.map(async (metric) => {
+          if (metric.novataReference) {
+            const userResponse = await getUserResponseByNovataReference(metric.novataReference);
+            return {
+              ...metric,
+              response: userResponse?.response_value || undefined,
+              responseData: userResponse?.response_data || undefined
+            };
+          }
+          return metric;
+        })
+      );
+      
+      setMetrics(metricsWithResponses);
     };
     
     fetchMetrics();
-  }, [loadStaticMetrics]);
+  }, [loadStaticMetrics, getUserResponseByNovataReference]);
   
   // Get unique topics for filtering - filter out empty/null topics
   const topics = Array.from(new Set(

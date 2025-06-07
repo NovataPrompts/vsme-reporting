@@ -27,6 +27,33 @@ export const useVSMEUserResponses = () => {
     }
   }, [toast]);
 
+  const getUserResponseByNovataReference = useCallback(async (novataReference: string) => {
+    try {
+      // First, find the metric ID based on the Novata Reference
+      const { data: metric, error: lookupError } = await supabase
+        .from('consol')
+        .select('id')
+        .eq('novata_reference', novataReference)
+        .maybeSingle();
+
+      if (lookupError) throw lookupError;
+      if (!metric) return null;
+
+      // Then get the user response for that metric
+      const { data, error } = await supabase
+        .from('vsme_user_responses')
+        .select('*')
+        .eq('metric_id', metric.id)
+        .maybeSingle();
+
+      if (error) throw error;
+      return data;
+    } catch (error) {
+      console.error('Error loading user response by Novata reference:', error);
+      return null;
+    }
+  }, []);
+
   const saveUserResponse = useCallback(async (novataReference: string, responseValue: string, responseData?: any) => {
     try {
       // First, find the metric ID based on the Novata Reference
@@ -75,6 +102,7 @@ export const useVSMEUserResponses = () => {
 
   return {
     getUserResponse,
+    getUserResponseByNovataReference,
     saveUserResponse
   };
 };
