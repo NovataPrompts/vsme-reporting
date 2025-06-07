@@ -1,4 +1,5 @@
 
+
 import { useState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -29,8 +30,27 @@ export const DisclosureBox = ({
   const handleGenerateResponse = async () => {
     setIsGenerating(true);
     try {
-      // Filter metrics relevant to this disclosure
-      const relevantMetrics = vsmeMetricsData.filter(metric => metric.response || metric.responseData);
+      // Filter metrics relevant to this specific disclosure only
+      const relevantMetrics = vsmeMetricsData.filter(metric => {
+        // Check if metric has a response or responseData
+        const hasData = metric.response || metric.responseData;
+        
+        // Check if metric belongs to this disclosure
+        const belongsToDisclosure = metric.disclosure === disclosure.id;
+        
+        return hasData && belongsToDisclosure;
+      });
+
+      console.log(`Filtering metrics for disclosure ${disclosure.id}:`, {
+        totalMetrics: vsmeMetricsData.length,
+        relevantMetrics: relevantMetrics.length,
+        filteredMetrics: relevantMetrics.map(m => ({ 
+          metric: m.metric, 
+          disclosure: m.disclosure, 
+          hasResponse: !!m.response,
+          hasResponseData: !!m.responseData 
+        }))
+      });
 
       const { data, error } = await supabase.functions.invoke('generate-disclosure', {
         body: {
@@ -48,7 +68,7 @@ export const DisclosureBox = ({
       setResponse(data.generatedResponse);
       toast({
         title: "Response Generated",
-        description: `Disclosure response for ${disclosure.title} has been generated successfully.`
+        description: `Disclosure response for ${disclosure.title} has been generated successfully using ${relevantMetrics.length} relevant metrics.`
       });
     } catch (error) {
       console.error('Error generating response:', error);
@@ -113,3 +133,4 @@ export const DisclosureBox = ({
     </Card>
   );
 };
+
