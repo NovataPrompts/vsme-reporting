@@ -3,7 +3,7 @@ import { useState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import { Loader2, Sparkles, Trash2, Edit } from "lucide-react";
+import { Loader2, Sparkles, Trash2, Edit, BarChart3 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useVSMEMetrics } from "@/hooks/useVSMEMetrics";
 import { supabase } from "@/integrations/supabase/client";
@@ -23,6 +23,7 @@ export const DisclosureBox = ({
 }: DisclosureBoxProps) => {
   const [response, setResponse] = useState("");
   const [isGenerating, setIsGenerating] = useState(false);
+  const [isRecommendingGraphics, setIsRecommendingGraphics] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const { toast } = useToast();
   const { vsmeMetricsData } = useVSMEMetrics();
@@ -80,6 +81,53 @@ export const DisclosureBox = ({
       });
     } finally {
       setIsGenerating(false);
+    }
+  };
+
+  const handleRecommendGraphics = async () => {
+    setIsRecommendingGraphics(true);
+    try {
+      // Filter metrics relevant to this specific disclosure only
+      const relevantMetrics = vsmeMetricsData.filter(metric => {
+        // Check if metric has a response or responseData
+        const hasData = metric.response || metric.responseData;
+        
+        // Check if metric belongs to this disclosure
+        const belongsToDisclosure = metric.disclosure === disclosure.id;
+        
+        return hasData && belongsToDisclosure;
+      });
+
+      const { data, error } = await supabase.functions.invoke('recommend-graphics', {
+        body: {
+          disclosureId: disclosure.id,
+          disclosureTitle: disclosure.title,
+          disclosureDescription: disclosure.description,
+          metrics: relevantMetrics
+        }
+      });
+
+      if (error) {
+        throw new Error(error.message || 'Failed to generate graphics recommendations');
+      }
+
+      toast({
+        title: "Graphics Recommendations Generated",
+        description: `Visualization recommendations for ${disclosure.title} have been generated.`
+      });
+
+      // You can handle the recommendations data here - for now just showing in console
+      console.log('Graphics recommendations:', data.recommendations);
+      
+    } catch (error) {
+      console.error('Error generating graphics recommendations:', error);
+      toast({
+        title: "Recommendation Failed",
+        description: "Failed to generate graphics recommendations. Please try again.",
+        variant: "destructive"
+      });
+    } finally {
+      setIsRecommendingGraphics(false);
     }
   };
 
@@ -144,6 +192,19 @@ export const DisclosureBox = ({
                 <Sparkles className="h-4 w-4" />
               )}
               {isGenerating ? "Generating..." : "Generate Response"}
+            </Button>
+            <Button 
+              onClick={handleRecommendGraphics} 
+              disabled={isRecommendingGraphics} 
+              variant="outline"
+              className="flex items-center gap-2"
+            >
+              {isRecommendingGraphics ? (
+                <Loader2 className="h-4 w-4 animate-spin" />
+              ) : (
+                <BarChart3 className="h-4 w-4" />
+              )}
+              {isRecommendingGraphics ? "Analyzing..." : "Recommend Graphics"}
             </Button>
             {response && (
               <>
