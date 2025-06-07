@@ -14,9 +14,9 @@ serve(async (req) => {
   try {
     const { disclosureId, disclosureTitle, disclosureDescription, metrics } = await req.json()
 
-    const openaiApiKey = Deno.env.get('OPENAI_API_KEY')
-    if (!openaiApiKey) {
-      throw new Error('OpenAI API key not configured')
+    const geminiApiKey = Deno.env.get('GEMINI_API_KEY')
+    if (!geminiApiKey) {
+      throw new Error('Gemini API key not configured')
     }
 
     // Prepare metrics data for the prompt
@@ -55,26 +55,23 @@ Instructions:
 
 Please generate a detailed disclosure response:`
 
-    const response = await fetch('https://api.openai.com/v1/chat/completions', {
+    const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=${geminiApiKey}`, {
       method: 'POST',
       headers: {
-        'Authorization': `Bearer ${openaiApiKey}`,
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        model: 'gpt-4o',
-        messages: [
-          {
-            role: 'system',
-            content: 'You are an expert sustainability reporting consultant with deep knowledge of disclosure requirements and best practices.'
-          },
-          {
-            role: 'user',
-            content: prompt
-          }
-        ],
-        temperature: 0.7,
-        max_tokens: 2000,
+        contents: [{
+          parts: [{
+            text: prompt
+          }]
+        }],
+        generationConfig: {
+          temperature: 0.7,
+          topK: 40,
+          topP: 0.95,
+          maxOutputTokens: 2048,
+        }
       }),
     })
 
@@ -84,7 +81,7 @@ Please generate a detailed disclosure response:`
     }
 
     const data = await response.json()
-    const generatedResponse = data.choices[0].message.content
+    const generatedResponse = data.candidates[0].content.parts[0].text
 
     return new Response(
       JSON.stringify({ generatedResponse }),
