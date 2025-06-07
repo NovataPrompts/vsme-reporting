@@ -169,7 +169,7 @@ Currently, there are no quantitative metrics available for this disclosure that 
 
     const prompt = `You are a data visualization expert analyzing sustainability metrics for ${disclosureTitle}.
 
-**CRITICAL INSTRUCTION: Generate actual React/Recharts chart components, not just descriptions**
+**CRITICAL INSTRUCTION: Generate actual React/Recharts chart components as CODE STRINGS, not just descriptions**
 
 **Disclosure Context:**
 - ID: ${disclosureId}
@@ -206,7 +206,7 @@ Provide a JSON response with this exact structure:
       "title": "Chart Title",
       "description": "Brief description of insights",
       "chartType": "BarChart|LineChart|PieChart|ScatterChart",
-      "code": "COMPLETE React component code using Recharts",
+      "code": "COMPLETE React component code using Recharts as a STRING",
       "data": [chart data array],
       "insights": ["Key insight 1", "Key insight 2"]
     }
@@ -216,15 +216,14 @@ Provide a JSON response with this exact structure:
 
 **Chart Code Requirements:**
 - Use Recharts library (BarChart, LineChart, PieChart, etc.)
-- Include proper imports: import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts'
+- Include proper imports as strings
 - Make charts responsive with ResponsiveContainer
 - Use meaningful colors and proper formatting
 - Include data labels where appropriate
 - Calculate rates per 100 employees, per 1000 hours, percentages, etc. using contextual data
 
-**Example of what I want:**
-```javascript
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
+**Example of React component code as STRING:**
+"import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 
 const WorkplaceAccidentsChart = () => {
   const data = [
@@ -233,19 +232,18 @@ const WorkplaceAccidentsChart = () => {
   ];
 
   return (
-    <ResponsiveContainer width="100%" height={300}>
+    <ResponsiveContainer width=\"100%\" height={300}>
       <BarChart data={data}>
-        <CartesianGrid strokeDasharray="3 3" />
-        <XAxis dataKey="category" />
+        <CartesianGrid strokeDasharray=\"3 3\" />
+        <XAxis dataKey=\"category\" />
         <YAxis />
         <Tooltip formatter={(value, name) => [value, name === 'rate' ? 'Per 100 Employees' : 'Total Count']} />
-        <Bar dataKey="count" fill="#8884d8" name="Total Count" />
-        <Bar dataKey="rate" fill="#82ca9d" name="Rate per 100 Employees" />
+        <Bar dataKey=\"count\" fill=\"#8884d8\" name=\"Total Count\" />
+        <Bar dataKey=\"rate\" fill=\"#82ca9d\" name=\"Rate per 100 Employees\" />
       </BarChart>
     </ResponsiveContainer>
   );
-};
-```
+};"
 
 Generate 1-3 specific, actionable charts with complete code that can be directly used.`
 
