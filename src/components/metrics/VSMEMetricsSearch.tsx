@@ -20,6 +20,7 @@ interface VSMEMetricsSearchProps {
   onSubSectionChange: (value: string) => void;
   onInputTypeChange: (value: string) => void;
   onClearFilters: () => void;
+  showTableAlways?: boolean;
 }
 
 export const VSMEMetricsSearch = ({
@@ -36,6 +37,7 @@ export const VSMEMetricsSearch = ({
   onSubSectionChange,
   onInputTypeChange,
   onClearFilters,
+  showTableAlways = false,
 }: VSMEMetricsSearchProps) => {
   return (
     <div className="mb-6">
@@ -62,9 +64,16 @@ export const VSMEMetricsSearch = ({
         />
       </div>
       
-      {searchQuery && (
+      {(searchQuery || showTableAlways) && (
         <div className="mt-4">
-          <h2 className="text-lg font-medium mb-3">Search Results</h2>
+          <h2 className="text-lg font-medium mb-3">
+            {searchQuery ? "Search Results" : "All Metrics"}
+            {filteredMetrics.length > 0 && (
+              <span className="ml-2 text-sm text-gray-500">
+                ({filteredMetrics.length} {filteredMetrics.length === 1 ? 'metric' : 'metrics'})
+              </span>
+            )}
+          </h2>
           <Card className="shadow-sm">
             <CardContent className="p-4">
               <VSMEMetricsTable metrics={filteredMetrics} />

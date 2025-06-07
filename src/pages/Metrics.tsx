@@ -1,5 +1,5 @@
+
 import { VSMEMetricsSearch } from "@/components/metrics/VSMEMetricsSearch";
-import { VSMEMetricsTabs } from "@/components/metrics/VSMEMetricsTabs";
 import { VSMEMetricsDropdown } from "@/components/metrics/VSMEMetricsDropdown";
 import { useVSMEDatabase } from "@/hooks/useVSMEDatabase";
 import { Button } from "@/components/ui/button";
@@ -41,14 +41,6 @@ const Metrics = () => {
     }
   }, [loadStaticMetrics]);
 
-  // Get unique topics for filtering - only include valid topics
-  const topics = Array.from(new Set(
-    metrics
-      .map(metric => metric.topic)
-      .filter((topic): topic is string => Boolean(topic && topic.trim() !== ''))
-  ));
-
-  console.log('Topics:', topics);
   console.log('Total metrics:', metrics.length);
   
   // Apply filters first
@@ -80,15 +72,7 @@ const Metrics = () => {
         metric.novataReference?.toLowerCase().includes(searchQuery.toLowerCase()) ||
         metric.definition?.toLowerCase().includes(searchQuery.toLowerCase())
       )
-    : [];
-
-  // Group metrics by topic - use filtered metrics for tabs
-  const metricsByTopic: Record<string, VSMEMetric[]> = {};
-  topics.forEach(topic => {
-    metricsByTopic[topic] = filteredByFilters.filter(metric => metric.topic === topic);
-  });
-
-  console.log('Metrics by topic:', metricsByTopic);
+    : filteredByFilters;
 
   const goToImport = () => {
     navigate("/import");
@@ -165,11 +149,7 @@ const Metrics = () => {
               onSubSectionChange={setSelectedSubSection}
               onInputTypeChange={setSelectedInputType}
               onClearFilters={handleClearFilters}
-            />
-
-            <VSMEMetricsTabs
-              topics={topics}
-              metricsByTopic={metricsByTopic}
+              showTableAlways={true}
             />
           </div>
         </div>
