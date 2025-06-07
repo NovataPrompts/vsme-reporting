@@ -58,97 +58,141 @@ export const MetricsUpload = () => {
           
           // Process main sheet (usually the first one or one with "ESG" in name)
           const mainSheetName = workbook.SheetNames.find(name => 
-            name.toLowerCase().includes('esg') || name.toLowerCase().includes('report')
+            name.toLowerCase().includes('esg') || 
+            name.toLowerCase().includes('report') ||
+            name.toLowerCase().includes('vsme') ||
+            name.toLowerCase().includes('basic')
           ) || workbook.SheetNames[0];
+          
+          console.log('Processing sheet:', mainSheetName);
           
           const mainSheet = workbook.Sheets[mainSheetName];
           const mainData = XLSX.utils.sheet_to_json(mainSheet, { header: 1 });
           
-          console.log('Main sheet data:', mainData);
+          console.log('Main sheet data rows:', mainData.length);
+          console.log('First 5 rows:', mainData.slice(0, 5));
           
           // Process each row in the main sheet
           let savedCount = 0;
           const totalRows = mainData.length;
           
-          // Find header row and column indices
-          let headerRowIndex = 0;
+          // Find header row and column indices - be more flexible with column names
+          let headerRowIndex = -1;
           let novataRefIndex = -1;
           let responseIndex = -1;
           
-          for (let i = 0; i < Math.min(5, totalRows); i++) {
+          // Look through first 10 rows to find headers
+          for (let i = 0; i < Math.min(10, totalRows); i++) {
             const row = mainData[i] as any[];
             if (!row) continue;
             
+            console.log(`Checking row ${i}:`, row);
+            
             for (let j = 0; j < row.length; j++) {
-              const cellValue = String(row[j] || '').toLowerCase();
-              if (cellValue.includes('novata') && cellValue.includes('reference')) {
+              const cellValue = String(row[j] || '').toLowerCase().trim();
+              console.log(`  Column ${j}: "${cellValue}"`);
+              
+              // More flexible matching for Novata Reference column
+              if ((cellValue.includes('novata') && cellValue.includes('ref')) ||
+                  cellValue === 'novata reference' ||
+                  cellValue === 'novata_reference' ||
+                  cellValue === 'reference') {
                 headerRowIndex = i;
                 novataRefIndex = j;
-              } else if (cellValue === 'response') {
+                console.log(`Found Novata Reference column at row ${i}, col ${j}`);
+              }
+              
+              // More flexible matching for Response column
+              if (cellValue === 'response' || 
+                  cellValue === 'answer' || 
+                  cellValue === 'value' ||
+                  cellValue.includes('response')) {
                 responseIndex = j;
+                console.log(`Found Response column at row ${i}, col ${j}`);
               }
             }
             
-            if (novataRefIndex !== -1 && responseIndex !== -1) break;
+            // If we found both columns in this row, we're done
+            if (novataRefIndex !== -1 && responseIndex !== -1) {
+              break;
+            }
           }
           
+          console.log('Header analysis complete:');
           console.log('Header found at row:', headerRowIndex);
           console.log('Novata Reference column:', novataRefIndex);
           console.log('Response column:', responseIndex);
           
-          if (novataRefIndex === -1 || responseIndex === -1) {
-            throw new Error('Could not find required columns (Novata Reference and Response)');
+          if (novataRefIndex === -1) {
+            throw new Error('Could not find Novata Reference column. Expected column names: "Novata Reference", "novata_reference", or "reference"');
           }
           
-          for (let i = headerRowIndex + 1; i < totalRows; i++) {
+          if (responseIndex === -1) {
+            throw new Error('Could not find Response column. Expected column names: "Response", "answer", or "value"');
+          }
+          
+          // Process data rows starting after the header
+          const startRow = Math.max(headerRowIndex + 1, 0);
+          console.log(`Processing data starting from row ${startRow}`);
+          
+          for (let i = startRow; i < totalRows; i++) {
             const row = mainData[i] as any[];
             if (!row || row.length === 0) continue;
             
             const reference = row[novataRefIndex];
             const response = row[responseIndex];
             
-            console.log(`Processing row ${i}: Reference=${reference}, Response=${response}`);
+            console.log(`Processing row ${i}: Reference="${reference}", Response="${response}"`);
             
-            if (!reference) continue;
+            // Skip rows without a reference
+            if (!reference || String(reference).trim() === '') {
+              console.log(`Skipping row ${i}: no reference`);
+              continue;
+            }
             
-            // Skip empty responses unless they're explicitly empty strings
-            if (response === undefined || response === null) continue;
+            // Skip empty responses unless they're explicitly empty strings or 0
+            if (response === undefined || response === null || String(response).trim() === '') {
+              console.log(`Skipping row ${i}: empty response`);
+              continue;
+            }
             
             // Check if this is a tabular data reference
-            if (typeof response === 'string' && response.toLowerCase().includes('tabular data')) {
+            const responseStr = String(response);
+            if (responseStr.toLowerCase().includes('tabular data')) {
               // Look for corresponding tabular data sheet
+              const referenceStr = String(reference);
               const tabularSheetName = workbook.SheetNames.find(name => 
-                name.includes(reference) || name === reference
+                name.includes(referenceStr) || name === referenceStr
               );
               
               if (tabularSheetName) {
-                console.log(`Found tabular sheet for ${reference}: ${tabularSheetName}`);
+                console.log(`Found tabular sheet for ${referenceStr}: ${tabularSheetName}`);
                 const tabularSheet = workbook.Sheets[tabularSheetName];
                 const tabularData = XLSX.utils.sheet_to_json(tabularSheet);
                 
                 // Save with tabular data
                 const success = await saveUserResponse(
-                  reference, 
+                  referenceStr, 
                   'Tabular data provided', 
                   tabularData
                 );
                 
                 if (success) {
                   savedCount++;
-                  console.log(`Saved tabular data for ${reference}`);
+                  console.log(`Saved tabular data for ${referenceStr}`);
                 }
               } else {
-                console.warn(`No tabular sheet found for reference: ${reference}`);
+                console.warn(`No tabular sheet found for reference: ${referenceStr}`);
                 // Save the text response as is
-                const success = await saveUserResponse(reference, String(response));
+                const success = await saveUserResponse(referenceStr, responseStr);
                 if (success) {
                   savedCount++;
-                  console.log(`Saved text response for ${reference}`);
+                  console.log(`Saved text response for ${referenceStr}`);
                 }
               }
             } else {
               // Regular text/number response
-              const success = await saveUserResponse(reference, String(response));
+              const success = await saveUserResponse(String(reference), responseStr);
               if (success) {
                 savedCount++;
                 console.log(`Saved response for ${reference}: ${response}`);
@@ -156,10 +200,11 @@ export const MetricsUpload = () => {
             }
             
             // Update progress
-            const progress = Math.round((i / totalRows) * 100);
+            const progress = Math.round(((i - startRow + 1) / (totalRows - startRow)) * 100);
             setUploadProgress(progress);
           }
           
+          console.log(`Processing complete. Saved ${savedCount} responses out of ${totalRows - startRow} rows processed.`);
           setProcessedCount(savedCount);
           resolve(savedCount);
           
