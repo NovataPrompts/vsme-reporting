@@ -12,10 +12,11 @@ serve(async (req) => {
   }
 
   try {
-    const { disclosureId, disclosureTitle, disclosureDescription, metrics } = await req.json()
+    const { disclosureId, disclosureTitle, disclosureDescription, metrics, allMetrics } = await req.json()
 
     console.log(`Processing graphics recommendations for disclosure ${disclosureId}:`, {
       totalMetrics: metrics.length,
+      totalDatasetMetrics: allMetrics?.length || 0,
       disclosureTitle
     })
 
@@ -36,7 +37,6 @@ serve(async (req) => {
         responseData.forEach((item, index) => {
           if (typeof item === 'object' && item !== null) {
             Object.entries(item).forEach(([key, value]) => {
-              // Check if value is numeric or contains numeric data
               if (typeof value === 'number') {
                 quantitativeData.push({
                   category: key,
@@ -46,7 +46,6 @@ serve(async (req) => {
                   type: 'numeric'
                 });
               } else if (typeof value === 'string') {
-                // Try to extract numbers from strings
                 const numericMatch = value.match(/(\d+(?:\.\d+)?)/g);
                 if (numericMatch) {
                   numericMatch.forEach((num) => {
@@ -64,7 +63,6 @@ serve(async (req) => {
           }
         });
       } else {
-        // Handle object data
         Object.entries(responseData).forEach(([key, value]) => {
           if (typeof value === 'number') {
             quantitativeData.push({
@@ -81,12 +79,11 @@ serve(async (req) => {
       return quantitativeData;
     };
 
-    // Filter metrics that have quantitative data
+    // Filter metrics that have quantitative data for this disclosure
     const quantitativeMetrics = metrics.filter((metric: any) => {
       const hasData = metric.response || metric.responseData;
       const belongsToDisclosure = metric.disclosure === disclosureId;
       
-      // Check if the data appears to be quantitative
       const isQuantitative = 
         metric.inputType === 'Decimal' || 
         metric.inputType === 'Integer' ||
@@ -97,21 +94,29 @@ serve(async (req) => {
       return hasData && belongsToDisclosure && isQuantitative;
     });
 
-    console.log(`Analyzing quantitative data for disclosure ${disclosureId}:`, {
-      totalMetrics: metrics.length,
-      quantitativeMetrics: quantitativeMetrics.length,
-      quantitativeData: quantitativeMetrics.map(m => ({ 
-        metric: m.metric, 
-        value: m.response,
-        unit: m.unit,
-        inputType: m.inputType,
-        hasTabularData: !!m.responseData
-      }))
+    // Analyze ALL metrics for context (not just this disclosure)
+    const contextualMetrics = (allMetrics || []).filter((metric: any) => {
+      const hasData = metric.response || metric.responseData;
+      const isQuantitative = 
+        metric.inputType === 'Decimal' || 
+        metric.inputType === 'Integer' ||
+        metric.unit || 
+        (metric.response && /^\d+(\.\d+)?/.test(metric.response)) ||
+        (metric.responseData && typeof metric.responseData === 'object');
+      
+      return hasData && isQuantitative;
     });
 
-    // If no quantitative metrics, return a message indicating no visualizable data
+    console.log(`Analyzing quantitative data with full context:`, {
+      disclosureMetrics: quantitativeMetrics.length,
+      contextualMetrics: contextualMetrics.length,
+      totalDataset: allMetrics?.length || 0
+    });
+
     if (quantitativeMetrics.length === 0) {
-      const noDataResponse = `**No Quantitative Data Available for Visualization**
+      const noDataResponse = {
+        hasCharts: false,
+        message: `**No Quantitative Data Available for Visualization**
 
 **Disclosure ${disclosureId}: ${disclosureTitle}**
 
@@ -127,17 +132,18 @@ Currently, there are no quantitative metrics available for this disclosure that 
 - Bar charts for comparisons
 - Line charts for trends over time
 - Pie charts for proportional data
-- Tables for detailed breakdowns`;
+- Tables for detailed breakdowns`
+      };
 
       return new Response(
-        JSON.stringify({ recommendations: noDataResponse }),
+        JSON.stringify(noDataResponse),
         {
           headers: { ...corsHeaders, 'Content-Type': 'application/json' },
         },
       )
     }
 
-    // Prepare quantitative data for analysis with tabular data extraction
+    // Prepare data for analysis with full context
     const dataForAnalysis = quantitativeMetrics.map((metric: any) => {
       const extractedTabularData = metric.responseData ? extractQuantitativeData(metric.responseData) : [];
       
@@ -152,23 +158,29 @@ Currently, there are no quantitative metrics available for this disclosure that 
       };
     });
 
+    // Prepare contextual data summary
+    const contextualSummary = contextualMetrics.map((metric: any) => ({
+      disclosure: metric.disclosure,
+      metric: metric.metric,
+      value: metric.response,
+      unit: metric.unit,
+      topic: metric.topic
+    }));
+
     const prompt = `You are a data visualization expert analyzing sustainability metrics for ${disclosureTitle}.
+
+**CRITICAL INSTRUCTION: Generate actual React/Recharts chart components, not just descriptions**
 
 **Disclosure Context:**
 - ID: ${disclosureId}
 - Title: ${disclosureTitle}
 - Description: ${disclosureDescription}
 
-**INSTRUCTIONS:**
-1. Analyze the quantitative data provided below, including extracted data from tabular sources
-2. Recommend specific, appropriate visualizations for this data
-3. Focus on charts and graphics that would best communicate the sustainability information
-4. Consider the audience (stakeholders, investors, regulators)
-5. Suggest chart types, data groupings, and key insights to highlight
-6. Be specific about which metrics should be visualized together vs. separately
-7. When tabular data is available, suggest how to best visualize the relationships and patterns
+**FULL DATASET CONTEXT (for calculating rates, percentages, and meaningful comparisons):**
+${contextualSummary.slice(0, 50).map((ctx: any) => `
+- ${ctx.disclosure}: ${ctx.metric} = ${ctx.value} ${ctx.unit || ''}`).join('')}
 
-**Available Quantitative Data for ${disclosureId}:**
+**TARGET DISCLOSURE DATA for ${disclosureId}:**
 ${dataForAnalysis.map((d: any) => `
 **Metric:** ${d.metric}
 **Value:** ${d.value || 'Not provided'}
@@ -176,21 +188,66 @@ ${dataForAnalysis.map((d: any) => `
 **Input Type:** ${d.inputType || 'Not specified'}
 **Definition:** ${d.definition || 'Not provided'}
 **Tabular Data:** ${d.responseData ? JSON.stringify(d.responseData, null, 2) : 'None'}
-**Extracted Quantitative Elements:** ${d.extractedQuantitativeData.length > 0 ? 
+**Extracted Elements:** ${d.extractedQuantitativeData.length > 0 ? 
   d.extractedQuantitativeData.map((item: any) => `${item.category}: ${item.value} ${item.unit}`).join(', ') : 'None'}
 `).join('\n')}
 
-**Provide specific visualization recommendations including:**
-1. Chart type (bar, line, pie, scatter, table, etc.)
-2. Which metrics to include in each visualization
-3. How to group or categorize the data
-4. Key insights each chart should highlight
-5. Suggested titles and labels
-6. Any time-based analysis if applicable
-7. How to best represent tabular data relationships
-8. Specific recommendations for extracted quantitative elements
+**YOUR TASK:**
+1. **USE THE FULL DATASET** to calculate meaningful rates, percentages, and contextual metrics
+2. **GENERATE ACTUAL CHART CODE** using React and Recharts library
+3. **CREATE SPECIFIC VISUALIZATIONS** that tell the story of the data
 
-Format your response as clear, actionable recommendations for creating meaningful visualizations. Use markdown formatting for better readability.`
+**REQUIRED OUTPUT FORMAT:**
+Provide a JSON response with this exact structure:
+{
+  "hasCharts": true,
+  "charts": [
+    {
+      "title": "Chart Title",
+      "description": "Brief description of insights",
+      "chartType": "BarChart|LineChart|PieChart|ScatterChart",
+      "code": "COMPLETE React component code using Recharts",
+      "data": [chart data array],
+      "insights": ["Key insight 1", "Key insight 2"]
+    }
+  ],
+  "contextualAnalysis": "Analysis using full dataset context for rates and comparisons"
+}
+
+**Chart Code Requirements:**
+- Use Recharts library (BarChart, LineChart, PieChart, etc.)
+- Include proper imports: import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts'
+- Make charts responsive with ResponsiveContainer
+- Use meaningful colors and proper formatting
+- Include data labels where appropriate
+- Calculate rates per 100 employees, per 1000 hours, percentages, etc. using contextual data
+
+**Example of what I want:**
+```javascript
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
+
+const WorkplaceAccidentsChart = () => {
+  const data = [
+    { category: 'Fatal Accidents', count: 2, rate: 0.5 },
+    { category: 'Non-Fatal Accidents', count: 15, rate: 3.75 }
+  ];
+
+  return (
+    <ResponsiveContainer width="100%" height={300}>
+      <BarChart data={data}>
+        <CartesianGrid strokeDasharray="3 3" />
+        <XAxis dataKey="category" />
+        <YAxis />
+        <Tooltip formatter={(value, name) => [value, name === 'rate' ? 'Per 100 Employees' : 'Total Count']} />
+        <Bar dataKey="count" fill="#8884d8" name="Total Count" />
+        <Bar dataKey="rate" fill="#82ca9d" name="Rate per 100 Employees" />
+      </BarChart>
+    </ResponsiveContainer>
+  );
+};
+```
+
+Generate 1-3 specific, actionable charts with complete code that can be directly used.`
 
     const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=${geminiApiKey}`, {
       method: 'POST',
@@ -204,10 +261,10 @@ Format your response as clear, actionable recommendations for creating meaningfu
           }]
         }],
         generationConfig: {
-          temperature: 0.4,
+          temperature: 0.3,
           topK: 20,
           topP: 0.8,
-          maxOutputTokens: 1500,
+          maxOutputTokens: 2500,
         }
       }),
     })
@@ -221,10 +278,28 @@ Format your response as clear, actionable recommendations for creating meaningfu
     const data = await response.json()
     const recommendations = data.candidates[0].content.parts[0].text
 
-    console.log('Graphics recommendations generated successfully')
+    // Try to parse JSON response, fallback to text if needed
+    let parsedRecommendations;
+    try {
+      // Extract JSON from the response if it's wrapped in markdown
+      const jsonMatch = recommendations.match(/```json\n([\s\S]*?)\n```/) || recommendations.match(/\{[\s\S]*\}/);
+      if (jsonMatch) {
+        parsedRecommendations = JSON.parse(jsonMatch[1] || jsonMatch[0]);
+      } else {
+        parsedRecommendations = JSON.parse(recommendations);
+      }
+    } catch (parseError) {
+      console.log('Could not parse as JSON, returning as text:', parseError);
+      parsedRecommendations = {
+        hasCharts: false,
+        message: recommendations
+      };
+    }
+
+    console.log('Graphics recommendations generated successfully');
 
     return new Response(
-      JSON.stringify({ recommendations }),
+      JSON.stringify(parsedRecommendations),
       {
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       },
@@ -232,7 +307,10 @@ Format your response as clear, actionable recommendations for creating meaningfu
   } catch (error) {
     console.error('Error in recommend-graphics function:', error)
     return new Response(
-      JSON.stringify({ error: error.message }),
+      JSON.stringify({ 
+        hasCharts: false,
+        error: error.message 
+      }),
       {
         status: 500,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
