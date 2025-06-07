@@ -1,6 +1,6 @@
 
 import React, { useState } from "react";
-import { ChevronDown, Eye, SquareCheckBig, ToggleLeft, ListChecks, Sheet, LetterText, Hash, FileDigit } from "lucide-react";
+import { ChevronDown, Eye, SquareCheckBig, ToggleLeft, ListChecks, Sheet, LetterText, Hash, FileDigit, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Table, TableHeader, TableBody, TableHead, TableRow, TableCell } from "@/components/ui/table";
 import { VSMEMetric } from "@/types/vsmeMetrics";
@@ -39,6 +39,7 @@ export const VSMEMetricsTable = ({ metrics }: VSMEMetricsTableProps) => {
   const [selectedMetric, setSelectedMetric] = useState<VSMEMetric | null>(null);
   const [selectedMetricId, setSelectedMetricId] = useState<string | null>(null);
   const [isResponseDialogOpen, setIsResponseDialogOpen] = useState(false);
+  const [showSubSection, setShowSubSection] = useState(false);
   
   const toggleMetric = (metricRef: string) => {
     setOpenMetric(openMetric === metricRef ? null : metricRef);
@@ -58,8 +59,24 @@ export const VSMEMetricsTable = ({ metrics }: VSMEMetricsTableProps) => {
             <TableRow>
               <TableHead className="w-24">Disclosure</TableHead>
               <TableHead className="w-32">Topic</TableHead>
-              <TableHead className="w-48">Section</TableHead>
-              <TableHead className="w-40">Sub-Section</TableHead>
+              <TableHead className="w-48">
+                <div className="flex items-center gap-2">
+                  <button
+                    onClick={() => setShowSubSection(!showSubSection)}
+                    className="flex items-center gap-1 hover:text-[#057cc1] transition-colors"
+                  >
+                    Section
+                    {showSubSection ? (
+                      <ChevronDown className="h-4 w-4" />
+                    ) : (
+                      <ChevronRight className="h-4 w-4" />
+                    )}
+                  </button>
+                </div>
+              </TableHead>
+              {showSubSection && (
+                <TableHead className="w-40">Sub-Section</TableHead>
+              )}
               <TableHead className="w-32">VSME Reference</TableHead>
               <TableHead>Metric</TableHead>
               <TableHead className="w-16 text-center">Type</TableHead>
@@ -78,7 +95,9 @@ export const VSMEMetricsTable = ({ metrics }: VSMEMetricsTableProps) => {
                       <TableCell>{metric.disclosure}</TableCell>
                       <TableCell>{metric.topic}</TableCell>
                       <TableCell>{metric.section}</TableCell>
-                      <TableCell>{metric.subSection}</TableCell>
+                      {showSubSection && (
+                        <TableCell>{metric.subSection}</TableCell>
+                      )}
                       <TableCell>{metric.reference}</TableCell>
                       <TableCell>{metric.metric}</TableCell>
                       <TableCell className="text-center">
@@ -100,7 +119,7 @@ export const VSMEMetricsTable = ({ metrics }: VSMEMetricsTableProps) => {
                       </TableCell>
                     </TableRow>
                     <TableRow>
-                      <TableCell colSpan={8} className="p-0 border-0">
+                      <TableCell colSpan={showSubSection ? 8 : 7} className="p-0 border-0">
                         <Collapsible open={openMetric === metricRefKey}>
                           <CollapsibleContent>
                             <div className="p-4 mx-4 mb-4 rounded-md bg-[ffffff] bg-slate-50 shadow-sm border border-slate-200">
@@ -173,7 +192,7 @@ export const VSMEMetricsTable = ({ metrics }: VSMEMetricsTableProps) => {
               })
             ) : (
               <TableRow>
-                <TableCell colSpan={8} className="h-24 text-center">
+                <TableCell colSpan={showSubSection ? 8 : 7} className="h-24 text-center">
                   No metrics found
                 </TableCell>
               </TableRow>
