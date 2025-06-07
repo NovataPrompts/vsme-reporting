@@ -1,10 +1,10 @@
 
 import React, { useState } from "react";
-import { ChevronDown, Eye, SquareCheckBig, ToggleLeft, ListChecks, Sheet, LetterText, Hash, FileDigit, ChevronRight } from "lucide-react";
+import { ChevronDown, SquareCheckBig, ToggleLeft, ListChecks, Sheet, LetterText, Hash, FileDigit, ChevronRight, Table } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Switch } from "@/components/ui/switch";
-import { Table, TableHeader, TableBody, TableHead, TableRow, TableCell } from "@/components/ui/table";
+import { Table as TableComponent, TableHeader, TableBody, TableHead, TableRow, TableCell } from "@/components/ui/table";
 import { VSMEMetric } from "@/types/vsmeMetrics";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { UserResponseDialog } from "./UserResponseDialog";
@@ -54,10 +54,14 @@ export const VSMEMetricsTable = ({ metrics }: VSMEMetricsTableProps) => {
     setIsResponseDialogOpen(true);
   };
 
+  const isTabularMetric = (inputType: string | undefined) => {
+    return inputType?.toLowerCase() === 'tabular';
+  };
+
   return (
     <>
       <div className="overflow-x-auto">
-        <Table>
+        <TableComponent>
           <TableHeader>
             <TableRow>
               <TableHead className="w-24">Disclosure</TableHead>
@@ -128,7 +132,7 @@ export const VSMEMetricsTable = ({ metrics }: VSMEMetricsTableProps) => {
                             <div className="p-4 mx-4 mb-4 rounded-md bg-[ffffff] bg-slate-50 shadow-sm border border-slate-200">
                               <div className="flex items-center justify-between mb-4">
                                 <div className="flex items-center gap-3">
-                                  <Badge variant="outline" className="bg-[#057cc1] text-white border-[#057cc1] px-3 py-1 text-sm font-medium">
+                                  <Badge variant="outline" className="bg-[#057cc1] text-white border-[#057cc1] px-4 py-2 text-sm font-medium">
                                     {showNovataReference 
                                       ? (metric.novataReference || "N/A")
                                       : (metric.reference || "N/A")
@@ -180,15 +184,26 @@ export const VSMEMetricsTable = ({ metrics }: VSMEMetricsTableProps) => {
                                 
                                 <div>
                                   <p className="text-sm font-medium mb-1 text-[#00344d]">Response:</p>
-                                  <div className="mt-2">
-                                    <Button 
-                                      className="bg-[#057cc1] hover:bg-[#057cc1]/90 text-white flex items-center gap-2"
-                                      onClick={() => handleViewResponse(metric)}
-                                    >
-                                      <Eye className="h-4 w-4" />
-                                      View Response
-                                    </Button>
-                                  </div>
+                                  {isTabularMetric(metric.inputType) ? (
+                                    <div className="mt-2">
+                                      <Button 
+                                        className="bg-[#057cc1] hover:bg-[#057cc1]/90 text-white flex items-center gap-2"
+                                        onClick={() => handleViewResponse(metric)}
+                                      >
+                                        <Table className="h-4 w-4" />
+                                        View Table
+                                      </Button>
+                                    </div>
+                                  ) : (
+                                    <div className="mt-2 p-3 bg-gray-50 rounded border">
+                                      <div className="text-sm text-[#00344d]">
+                                        {metric.response || "No response provided"}
+                                        {metric.response && metric.unit && (
+                                          <span className="ml-1 text-gray-500">({metric.unit})</span>
+                                        )}
+                                      </div>
+                                    </div>
+                                  )}
                                 </div>
                               </div>
                             </div>
@@ -207,7 +222,7 @@ export const VSMEMetricsTable = ({ metrics }: VSMEMetricsTableProps) => {
               </TableRow>
             )}
           </TableBody>
-        </Table>
+        </TableComponent>
       </div>
 
       <UserResponseDialog
