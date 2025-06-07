@@ -100,6 +100,8 @@ export const UserResponseDialog = ({
     );
   };
 
+  const isTabularMetric = metric?.inputType?.toLowerCase() === 'tabular';
+
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto">
@@ -119,24 +121,26 @@ export const UserResponseDialog = ({
             <div className="text-center py-4">Loading response...</div>
           ) : response ? (
             <div className="space-y-4">
-              <div>
-                <Label htmlFor="response-value" className="text-sm font-medium">
-                  Response Value:
-                </Label>
-                {isEditing ? (
-                  <Textarea
-                    id="response-value"
-                    value={responseValue}
-                    onChange={(e) => setResponseValue(e.target.value)}
-                    className="mt-1"
-                    rows={3}
-                  />
-                ) : (
-                  <div className="mt-1 p-3 bg-gray-50 rounded border">
-                    {responseValue || "No response value"}
-                  </div>
-                )}
-              </div>
+              {!isTabularMetric && (
+                <div>
+                  <Label htmlFor="response-value" className="text-sm font-medium">
+                    Response Value:
+                  </Label>
+                  {isEditing ? (
+                    <Textarea
+                      id="response-value"
+                      value={responseValue}
+                      onChange={(e) => setResponseValue(e.target.value)}
+                      className="mt-1"
+                      rows={3}
+                    />
+                  ) : (
+                    <div className="mt-1 p-3 bg-gray-50 rounded border">
+                      {responseValue || "No response value"}
+                    </div>
+                  )}
+                </div>
+              )}
 
               {renderResponseData()}
 
@@ -149,22 +153,26 @@ export const UserResponseDialog = ({
                     </Button>
                   </>
                 ) : (
-                  <Button onClick={() => setIsEditing(true)}>Edit Response</Button>
+                  !isTabularMetric && (
+                    <Button onClick={() => setIsEditing(true)}>Edit Response</Button>
+                  )
                 )}
               </div>
             </div>
           ) : (
             <div className="text-center py-8 text-gray-500">
               <p>No response found for this metric.</p>
-              <Button 
-                className="mt-4" 
-                onClick={() => {
-                  setIsEditing(true);
-                  setResponseValue("");
-                }}
-              >
-                Add Response
-              </Button>
+              {!isTabularMetric && (
+                <Button 
+                  className="mt-4" 
+                  onClick={() => {
+                    setIsEditing(true);
+                    setResponseValue("");
+                  }}
+                >
+                  Add Response
+                </Button>
+              )}
             </div>
           )}
         </div>
