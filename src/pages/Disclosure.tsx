@@ -1,6 +1,5 @@
 
 import { Header } from "@/components/layout/Header";
-import { QuickNav } from "@/components/navigation/QuickNav";
 import { DisclosureBox } from "@/components/disclosure/DisclosureBox";
 
 const Disclosure = () => {
@@ -84,7 +83,6 @@ const Disclosure = () => {
           </div>
         </div>
       </main>
-      <QuickNav />
     </div>
   );
 };
