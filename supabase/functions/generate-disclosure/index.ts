@@ -226,8 +226,9 @@ CRITICAL INSTRUCTIONS:
 4. When tabular data has been synthesized, use the specific details provided and convert them into professional prose
 5. NEVER display raw tables, data grids, or formatted lists - always write in complete, professional sentences
 6. Be factual and conservative - only state what can be directly derived from the provided metrics
-7. If a specific data point is missing, explicitly state "data not available" rather than making assumptions
+7. ONLY mention missing data if it's truly critical to the disclosure and would be expected by regulators
 8. Write in a professional, formal disclosure style appropriate for sustainability reporting
+9. Focus on presenting the available data comprehensively rather than highlighting gaps
 
 Available Metrics Data for ${disclosureId}:
 ${metricsData.map((m: any) => `
@@ -238,16 +239,16 @@ Definition: ${m.definition || 'Not provided'}
 `).join('\n')}
 
 Instructions for Response:
-1. Structure the response to address the ${disclosureTitle} requirements using ONLY the provided data
+1. Structure the response to address the ${disclosureTitle} requirements using ALL the provided data comprehensively
 2. For each metric listed above, incorporate the actual response/value and synthesized data into flowing, professional sentences
 3. Convert all tabular information into well-written prose that naturally integrates into the disclosure narrative
-4. If any required information is missing, clearly state "This information is not currently available in our data collection"
+4. Present the information as a complete, professional disclosure response that demonstrates transparency and compliance
 5. Do not add hypothetical examples, industry benchmarks, or generic sustainability statements
-6. Keep the response factual, concise, and directly tied to the provided metrics and synthesized data
+6. Keep the response factual, comprehensive, and directly tied to the provided metrics and synthesized data
 7. Write in complete paragraphs with proper sentence structure - avoid bullet points, lists, or table formats
-8. If the data is insufficient for a complete disclosure, acknowledge this limitation in professional language
+8. Create a cohesive narrative that flows naturally from one data point to the next
 
-Generate a professional disclosure response written entirely in prose format based STRICTLY on the provided data:`
+Generate a comprehensive, professional disclosure response written entirely in prose format that maximizes the value of all provided data:`
 
     const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=${geminiApiKey}`, {
       method: 'POST',
