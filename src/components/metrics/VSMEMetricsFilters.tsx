@@ -1,4 +1,3 @@
-
 import React from "react";
 import { Filter, X } from "lucide-react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -31,30 +30,86 @@ export const VSMEMetricsFilters = ({
   onInputTypeChange,
   onClearFilters,
 }: VSMEMetricsFiltersProps) => {
-  // Get unique values for each filter
-  const topics = Array.from(new Set(
+  // Custom sort function for topics
+  const sortTopics = (topics: string[]) => {
+    const topicOrder = ["General Information", "Environment metrics", "Social metrics", "Governance metrics"];
+    return topics.sort((a, b) => {
+      const aIndex = topicOrder.indexOf(a);
+      const bIndex = topicOrder.indexOf(b);
+      
+      // If both topics are in the order array, sort by their position
+      if (aIndex !== -1 && bIndex !== -1) {
+        return aIndex - bIndex;
+      }
+      // If only one is in the order array, prioritize it
+      if (aIndex !== -1) return -1;
+      if (bIndex !== -1) return 1;
+      // If neither is in the order array, sort alphabetically
+      return a.localeCompare(b);
+    });
+  };
+
+  // Custom sort function for sections based on disclosure number
+  const sortSections = (sections: string[]) => {
+    return sections.sort((a, b) => {
+      // Extract the disclosure number (e.g., "B3" from "Energy and greenhouse gas emissions")
+      // We'll use the metrics data to find the disclosure for each section
+      const aMetric = metrics.find(m => m.section === a);
+      const bMetric = metrics.find(m => m.section === b);
+      
+      const aDisclosure = aMetric?.disclosure || "";
+      const bDisclosure = bMetric?.disclosure || "";
+      
+      // Extract numeric part from disclosure (e.g., "3" from "B3")
+      const aNum = parseInt(aDisclosure.replace(/[^0-9]/g, '')) || 999;
+      const bNum = parseInt(bDisclosure.replace(/[^0-9]/g, '')) || 999;
+      
+      return aNum - bNum;
+    });
+  };
+
+  // Custom sort function for sub-sections based on disclosure number
+  const sortSubSections = (subSections: string[]) => {
+    return subSections.sort((a, b) => {
+      // Find metrics for each sub-section to get their disclosure info
+      const aMetric = metrics.find(m => m.subSection === a);
+      const bMetric = metrics.find(m => m.subSection === b);
+      
+      const aDisclosure = aMetric?.disclosure || "";
+      const bDisclosure = bMetric?.disclosure || "";
+      
+      // Extract numeric part from disclosure
+      const aNum = parseInt(aDisclosure.replace(/[^0-9]/g, '')) || 999;
+      const bNum = parseInt(bDisclosure.replace(/[^0-9]/g, '')) || 999;
+      
+      return aNum - bNum;
+    });
+  };
+
+  // Get unique values for each filter with custom sorting
+  const topics = sortTopics(Array.from(new Set(
     metrics
       .map(metric => metric.topic)
       .filter((topic): topic is string => Boolean(topic && topic.trim() !== ''))
-  )).sort();
+  )));
 
   // Filter sections based on selected topic
   const availableSections = selectedTopic 
-    ? Array.from(new Set(
+    ? sortSections(Array.from(new Set(
         metrics
           .filter(metric => metric.topic === selectedTopic)
           .map(metric => metric.section)
           .filter((section): section is string => Boolean(section && section.trim() !== ''))
-      )).sort()
-    : Array.from(new Set(
+      )))
+    : sortSections(Array.from(new Set(
         metrics
           .map(metric => metric.section)
           .filter((section): section is string => Boolean(section && section.trim() !== ''))
-      )).sort();
+      )));
 
   // Filter sub-sections based on selected topic and section
   const availableSubSections = selectedTopic && selectedSection
-    ? Array.from(new Set(
+    ? sortSubSections(Array.from(new Set(
         metrics
           .filter(metric => 
             metric.topic === selectedTopic && 
@@ -62,19 +117,19 @@ export const VSMEMetricsFilters = ({
           )
           .map(metric => metric.subSection)
           .filter((subSection): subSection is string => Boolean(subSection && subSection.trim() !== ''))
-      )).sort()
+      )))
     : selectedTopic
-    ? Array.from(new Set(
+    ? sortSubSections(Array.from(new Set(
         metrics
           .filter(metric => metric.topic === selectedTopic)
           .map(metric => metric.subSection)
           .filter((subSection): subSection is string => Boolean(subSection && subSection.trim() !== ''))
-      )).sort()
-    : Array.from(new Set(
+      )))
+    : sortSubSections(Array.from(new Set(
         metrics
           .map(metric => metric.subSection)
           .filter((subSection): subSection is string => Boolean(subSection && subSection.trim() !== ''))
-      )).sort();
+      )));
 
   // Input types can be filtered based on current selections
   const availableInputTypes = selectedTopic || selectedSection || selectedSubSection
