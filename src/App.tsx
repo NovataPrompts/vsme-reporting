@@ -13,6 +13,7 @@ import MetricDetail from "./pages/MetricDetail";
 import Standards from "./pages/Standards";
 import Import from "./pages/Import";
 import Welcome from "./pages/Welcome";
+import Disclosure from "./pages/Disclosure";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -81,6 +82,14 @@ const App = () => (
             element={
               <ProtectedRoute>
                 <Standards />
+              </ProtectedRoute>
+            } 
+          />
+          <Route 
+            path="/disclosure" 
+            element={
+              <ProtectedRoute>
+                <Disclosure />
               </ProtectedRoute>
             } 
           />

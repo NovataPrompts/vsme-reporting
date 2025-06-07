@@ -35,6 +35,16 @@ export const DesktopNavigation = () => {
         VSME Standard
       </NavLink>
       <NavLink 
+        to="/disclosure" 
+        className={({ isActive }) => `px-4 py-2 rounded-md transition-all-ease ${
+          isActive 
+            ? "text-secondary font-medium" 
+            : "text-primary/80 dark:text-white/80 hover:text-primary dark:hover:text-white"
+        }`}
+      >
+        Disclosure
+      </NavLink>
+      <NavLink 
         to="/metrics" 
         className={({ isActive }) => `px-4 py-2 rounded-md transition-all-ease ${
           isActive 
