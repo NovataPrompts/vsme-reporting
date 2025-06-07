@@ -1,3 +1,4 @@
+
 import React from "react";
 import { Filter, X } from "lucide-react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -238,7 +239,7 @@ export const VSMEMetricsFilters = ({
         )}
       </div>
       
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3">
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-3">
         <div>
           <label className="text-xs font-medium text-gray-600 mb-1 block">Topic</label>
           <Select value={selectedTopic || "all"} onValueChange={handleTopicChange}>
