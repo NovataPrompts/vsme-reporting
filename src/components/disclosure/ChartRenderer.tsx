@@ -24,20 +24,12 @@ export const ChartRenderer = ({ chartType, data, title, description, originalCol
     let columns: string[];
     
     if (originalColumnOrder && originalColumnOrder.length > 0) {
-      // Use the preserved column order from Excel
+      // Use the preserved column order from Excel - filter out any empty columns
       columns = originalColumnOrder.filter(col => col && col.trim() !== '');
     } else {
       // Fallback to existing logic for data that doesn't have preserved order
       const allKeys = Array.from(new Set(data.flatMap(item => Object.keys(item))));
-      columns = allKeys.filter(key => key.trim() !== '').sort((a, b) => {
-        // Put implementation status columns first
-        if (a.toLowerCase().includes('implement') && !b.toLowerCase().includes('implement')) return -1;
-        if (b.toLowerCase().includes('implement') && !a.toLowerCase().includes('implement')) return 1;
-        // Then practice/area columns
-        if (a.toLowerCase().includes('practice') || a.toLowerCase().includes('area')) return -1;
-        if (b.toLowerCase().includes('practice') || b.toLowerCase().includes('area')) return 1;
-        return a.localeCompare(b);
-      });
+      columns = allKeys.filter(key => key.trim() !== '');
     }
 
     const renderCellContent = (value: any, columnKey: string) => {
@@ -52,26 +44,30 @@ export const ChartRenderer = ({ chartType, data, title, description, originalCol
                                    columnLower.includes('completed') ||
                                    columnLower.includes('done') ||
                                    columnLower.includes('in place') ||
-                                   columnLower.includes('active');
+                                   columnLower.includes('active') ||
+                                   columnLower.includes('yes/no') ||
+                                   columnLower.includes('y/n');
 
       if (isImplementationColumn) {
-        const valueLower = value?.toString().toLowerCase() || '';
-        const isImplemented = value === 'Yes' || 
-                             value === 'Implemented' || 
+        const valueStr = value?.toString().toLowerCase().trim() || '';
+        const isImplemented = valueStr === 'yes' || 
+                             valueStr === 'y' ||
+                             valueStr === 'implemented' ||
+                             valueStr === 'complete' ||
+                             valueStr === 'completed' ||
+                             valueStr === 'done' ||
+                             valueStr === 'active' ||
+                             valueStr === 'in place' ||
+                             valueStr === 'true' ||
+                             value === true ||
+                             value === 'Yes' ||
+                             value === 'Y' ||
+                             value === 'Implemented' ||
                              value === 'Complete' ||
                              value === 'Completed' ||
                              value === 'Done' ||
                              value === 'Active' ||
-                             value === 'In Place' ||
-                             value === true || 
-                             valueLower === 'yes' ||
-                             valueLower === 'implemented' ||
-                             valueLower === 'complete' ||
-                             valueLower === 'completed' ||
-                             valueLower === 'done' ||
-                             valueLower === 'active' ||
-                             valueLower === 'in place' ||
-                             valueLower === 'true';
+                             value === 'In Place';
 
         return (
           <div className="flex justify-center">
@@ -104,11 +100,13 @@ export const ChartRenderer = ({ chartType, data, title, description, originalCol
                                                columnLower.includes('completed') ||
                                                columnLower.includes('done') ||
                                                columnLower.includes('in place') ||
-                                               columnLower.includes('active');
+                                               columnLower.includes('active') ||
+                                               columnLower.includes('yes/no') ||
+                                               columnLower.includes('y/n');
                   
                   return (
                     <TableHead key={column} className={isImplementationColumn ? 'text-center' : ''}>
-                      {column.replace(/[_-]/g, ' ').replace(/\b\w/g, l => l.toUpperCase())}
+                      {column}
                     </TableHead>
                   );
                 })}
@@ -124,7 +122,9 @@ export const ChartRenderer = ({ chartType, data, title, description, originalCol
                                                  columnLower.includes('completed') ||
                                                  columnLower.includes('done') ||
                                                  columnLower.includes('in place') ||
-                                                 columnLower.includes('active');
+                                                 columnLower.includes('active') ||
+                                                 columnLower.includes('yes/no') ||
+                                                 columnLower.includes('y/n');
                     
                     return (
                       <TableCell key={column} className={isImplementationColumn ? 'text-center' : ''}>
