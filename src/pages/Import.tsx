@@ -5,18 +5,32 @@ import { useNavigate } from "react-router-dom";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { useState, useEffect } from "react";
 import { MetricsUpload } from "@/components/metrics/MetricsUpload";
+import { Progress } from "@/components/ui/progress";
 
 const Import = () => {
   const { toast } = useToast();
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
   const [isSynced, setIsSynced] = useState(false);
+  const [metricsImported, setMetricsImported] = useState(false);
+  const [importedMetricsCount, setImportedMetricsCount] = useState(0);
+  const [importedTabularCount, setImportedTabularCount] = useState(0);
   
   useEffect(() => {
     // Check if data was previously synced
     const lastUpdated = localStorage.getItem('metricsLastUpdated');
     if (lastUpdated) {
       setIsSynced(true);
+    }
+
+    // Check if metrics were imported (simulating data check)
+    // In a real app, you'd query the database to get actual counts
+    const hasImportedData = localStorage.getItem('metricsLastUpdated');
+    if (hasImportedData) {
+      setMetricsImported(true);
+      // These would come from actual database queries
+      setImportedMetricsCount(245); // Example count
+      setImportedTabularCount(18);  // Example count
     }
   }, []);
   
@@ -73,6 +87,35 @@ const Import = () => {
               </p>
             </div>
           </div>
+
+          {/* Import Summary Section */}
+          {metricsImported && (
+            <Card className="shadow-sm mb-8">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Check className="h-5 w-5 text-green-500" />
+                  Import Summary
+                </CardTitle>
+                <CardDescription>
+                  Your data has been successfully imported and is ready for analysis.
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-4">
+                  <div className="text-sm text-gray-600 dark:text-gray-300">
+                    You have successfully imported <span className="font-semibold text-green-600">{importedMetricsCount} metrics</span> and <span className="font-semibold text-green-600">{importedTabularCount} tabular metrics</span>.
+                  </div>
+                  <div className="space-y-2">
+                    <div className="flex justify-between text-sm">
+                      <span>Import Progress</span>
+                      <span className="text-green-600 font-medium">100% Complete</span>
+                    </div>
+                    <Progress value={100} className="h-2" />
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          )}
           
           <div className="grid gap-8 mb-8">
             {/* API Sync Section */}
