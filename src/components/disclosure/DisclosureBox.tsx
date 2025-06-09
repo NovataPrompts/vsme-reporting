@@ -1,11 +1,12 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import { Loader2, Sparkles, Trash2, Edit, BarChart3 } from "lucide-react";
+import { Loader2, Sparkles, Trash2, Edit, BarChart3, Save } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useVSMEMetrics } from "@/hooks/useVSMEMetrics";
+import { useDisclosureResponses } from "@/hooks/useDisclosureResponses";
 import { supabase } from "@/integrations/supabase/client";
 import { GraphicsModal } from "./GraphicsModal";
 
@@ -28,12 +29,35 @@ export const DisclosureBox = ({
   const [isRecommendingGraphics, setIsRecommendingGraphics] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [showGraphicsModal, setShowGraphicsModal] = useState(false);
+  const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
   const { toast } = useToast();
   const { vsmeMetricsData } = useVSMEMetrics();
+  const { saveDisclosureResponse, loadDisclosureResponse, deleteDisclosureResponse, isLoading: isSaving } = useDisclosureResponses();
 
   // Define which disclosures need graphics
   const disclosuresWithGraphics = ['B2', 'B3'];
   const showGraphicsButton = disclosuresWithGraphics.includes(disclosure.id);
+
+  // Load saved response on component mount
+  useEffect(() => {
+    const loadSavedResponse = async () => {
+      const savedResponse = await loadDisclosureResponse(disclosure.id);
+      if (savedResponse) {
+        setResponse(savedResponse.response_content);
+        if (savedResponse.graphics_recommendations) {
+          setGraphicsRecommendations(savedResponse.graphics_recommendations);
+        }
+        setHasUnsavedChanges(false);
+      }
+    };
+
+    loadSavedResponse();
+  }, [disclosure.id, loadDisclosureResponse]);
+
+  // Track changes to response content
+  useEffect(() => {
+    setHasUnsavedChanges(true);
+  }, [response]);
 
   const handleGenerateResponse = async () => {
     setIsGenerating(true);
@@ -75,6 +99,7 @@ export const DisclosureBox = ({
 
       setResponse(data.generatedResponse);
       setIsEditing(false); // Exit edit mode after generation
+      setHasUnsavedChanges(true);
       toast({
         title: "Response Generated",
         description: `Disclosure response for ${disclosure.title} has been generated successfully using ${relevantMetrics.length} relevant metrics.`
@@ -128,6 +153,7 @@ export const DisclosureBox = ({
 
       setGraphicsRecommendations(data);
       setShowGraphicsModal(true);
+      setHasUnsavedChanges(true);
       
       toast({
         title: "Graphics Recommendations Generated",
@@ -146,14 +172,27 @@ export const DisclosureBox = ({
     }
   };
 
-  const handleClear = () => {
-    setResponse("");
-    setGraphicsRecommendations(null);
-    setIsEditing(false);
-    toast({
-      title: "Content Cleared",
-      description: `All content for ${disclosure.title} has been cleared.`
-    });
+  const handleSave = async () => {
+    const success = await saveDisclosureResponse(
+      disclosure.id,
+      disclosure.title,
+      response,
+      graphicsRecommendations
+    );
+    
+    if (success) {
+      setHasUnsavedChanges(false);
+    }
+  };
+
+  const handleClear = async () => {
+    const success = await deleteDisclosureResponse(disclosure.id);
+    if (success) {
+      setResponse("");
+      setGraphicsRecommendations(null);
+      setIsEditing(false);
+      setHasUnsavedChanges(false);
+    }
   };
 
   const handleEdit = () => {
@@ -167,9 +206,14 @@ export const DisclosureBox = ({
   const handleSaveEdit = () => {
     setIsEditing(false);
     toast({
-      title: "Changes Saved",
-      description: "Your changes have been saved."
+      title: "Edit Mode Disabled",
+      description: "Remember to save your changes using the Save button."
     });
+  };
+
+  const handleResponseChange = (value: string) => {
+    setResponse(value);
+    setHasUnsavedChanges(true);
   };
 
   // Split title at hyphen for multi-line display
@@ -225,15 +269,28 @@ export const DisclosureBox = ({
                   {isRecommendingGraphics ? "Analyzing..." : "Recommend Graphics"}
                 </Button>
               )}
-              {(response || graphicsRecommendations) && (
+              {response && (
                 <>
+                  <Button 
+                    onClick={handleSave}
+                    disabled={isSaving || !hasUnsavedChanges}
+                    variant="outline"
+                    className="flex items-center gap-2"
+                  >
+                    {isSaving ? (
+                      <Loader2 className="h-4 w-4 animate-spin" />
+                    ) : (
+                      <Save className="h-4 w-4" />
+                    )}
+                    {isSaving ? "Saving..." : hasUnsavedChanges ? "Save" : "Saved"}
+                  </Button>
                   <Button 
                     variant="outline"
                     onClick={isEditing ? handleSaveEdit : handleEdit}
                     className="flex items-center gap-2"
                   >
                     <Edit className="h-4 w-4" />
-                    {isEditing ? "Save" : "Edit"}
+                    {isEditing ? "Done Editing" : "Edit"}
                   </Button>
                   <Button 
                     variant="outline"
@@ -254,10 +311,15 @@ export const DisclosureBox = ({
               <Textarea 
                 placeholder={`Enter or generate disclosure response for ${disclosure.title}...`}
                 value={response}
-                onChange={(e) => setResponse(e.target.value)}
+                onChange={(e) => handleResponseChange(e.target.value)}
                 className="min-h-[200px] resize-y"
                 readOnly={!isEditing && response !== ""}
               />
+              {hasUnsavedChanges && response && (
+                <p className="text-sm text-amber-600 mt-2">
+                  You have unsaved changes. Click "Save" to preserve your work.
+                </p>
+              )}
             </div>
           </div>
         </CardContent>

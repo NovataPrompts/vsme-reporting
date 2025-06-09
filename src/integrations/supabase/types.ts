@@ -147,6 +147,39 @@ export type Database = {
         }
         Relationships: []
       }
+      disclosure_responses: {
+        Row: {
+          created_at: string
+          disclosure_id: string
+          disclosure_title: string
+          graphics_recommendations: Json | null
+          id: string
+          response_content: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          disclosure_id: string
+          disclosure_title: string
+          graphics_recommendations?: Json | null
+          id?: string
+          response_content: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          disclosure_id?: string
+          disclosure_title?: string
+          graphics_recommendations?: Json | null
+          id?: string
+          response_content?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       section_info: {
         Row: {
           created_at: string
