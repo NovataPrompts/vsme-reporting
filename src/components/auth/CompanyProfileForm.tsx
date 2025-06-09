@@ -22,7 +22,16 @@ export const CompanyProfileForm = ({ onComplete }: CompanyProfileFormProps) => {
   const { saveCompanyProfile, isLoading } = useCompanyProfile();
   const [fiscalYearEnd, setFiscalYearEnd] = useState<Date>();
   
-  const { register, handleSubmit, setValue, watch, formState: { errors } } = useForm<Omit<CompanyProfile, 'id' | 'fiscal_year_end'> & { fiscal_year_end?: Date }>();
+  const { register, handleSubmit, setValue, watch, formState: { errors } } = useForm<{
+    name: string;
+    company_structure: string;
+    dba_name: string;
+    year_of_incorporation: number;
+    company_description: string;
+    website: string;
+    country_of_domicile: string;
+    primary_currency: string;
+  }>();
 
   const currentYear = new Date().getFullYear();
   const years = Array.from({ length: 50 }, (_, i) => currentYear - i);
@@ -41,11 +50,23 @@ export const CompanyProfileForm = ({ onComplete }: CompanyProfileFormProps) => {
   ];
 
   const onSubmit = async (data: any) => {
+    console.log('Form data before saving:', data);
+    console.log('Fiscal year end:', fiscalYearEnd);
+    
     const profileData = {
-      ...data,
+      name: data.name,
+      company_structure: data.company_structure || '',
+      dba_name: data.dba_name || '',
+      year_of_incorporation: data.year_of_incorporation || null,
+      company_description: data.company_description || '',
+      website: data.website || '',
+      country_of_domicile: data.country_of_domicile,
+      primary_currency: data.primary_currency || 'USD',
       fiscal_year_end: fiscalYearEnd ? format(fiscalYearEnd, 'yyyy-MM-dd') : ''
     };
 
+    console.log('Profile data to save:', profileData);
+    
     const success = await saveCompanyProfile(profileData);
     if (success) {
       onComplete();
@@ -76,11 +97,18 @@ export const CompanyProfileForm = ({ onComplete }: CompanyProfileFormProps) => {
 
               <div className="space-y-2">
                 <Label htmlFor="company_structure">Company Structure</Label>
-                <Input
-                  id="company_structure"
-                  {...register('company_structure')}
-                  placeholder="e.g., Public, Private"
-                />
+                <Select onValueChange={(value) => setValue('company_structure', value)}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="e.g., Public, Private" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="Public">Public</SelectItem>
+                    <SelectItem value="Private">Private</SelectItem>
+                    <SelectItem value="Partnership">Partnership</SelectItem>
+                    <SelectItem value="LLC">LLC</SelectItem>
+                    <SelectItem value="Corporation">Corporation</SelectItem>
+                  </SelectContent>
+                </Select>
               </div>
             </div>
 
