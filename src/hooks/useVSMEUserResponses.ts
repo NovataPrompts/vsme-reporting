@@ -49,7 +49,7 @@ export const useVSMEUserResponses = () => {
       if (error) throw error;
 
       // If we have response data, also try to get the tabular data with column order
-      if (data && data.response_data) {
+      if (data && data.response_data && typeof data.response_data === 'object') {
         const { data: tabularData, error: tabularError } = await supabase
           .from('tabular_data')
           .select('*')
@@ -61,7 +61,7 @@ export const useVSMEUserResponses = () => {
           return {
             ...data,
             response_data: {
-              ...data.response_data,
+              ...(data.response_data as object),
               tabularData: tabularData.data,
               originalColumnOrder: tabularData.column_order,
               sheetName: tabularData.sheet_name,
