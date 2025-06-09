@@ -32,52 +32,61 @@ export const ChartRenderer = ({ chartType, data, title, description, originalCol
       columns = allKeys.filter(key => key.trim() !== '');
     }
 
+    // Helper function to check if a column should show status icons
+    const isStatusColumn = (columnKey: string) => {
+      const columnLower = columnKey.toLowerCase();
+      return columnLower.includes('implement') || 
+             columnLower.includes('status') ||
+             columnLower.includes('completed') ||
+             columnLower.includes('done') ||
+             columnLower.includes('in place') ||
+             columnLower.includes('active') ||
+             columnLower.includes('yes/no') ||
+             columnLower.includes('y/n') ||
+             columnLower.includes('whether') ||
+             columnLower.includes('practice') ||
+             columnLower.includes('policy');
+    };
+
+    // Helper function to check if a value should show a check mark
+    const isPositiveValue = (value: any) => {
+      if (value === null || value === undefined || value === '') return false;
+      
+      const valueStr = value.toString().toLowerCase().trim();
+      return valueStr === 'yes' || 
+             valueStr === 'y' ||
+             valueStr === 'implemented' ||
+             valueStr === 'complete' ||
+             valueStr === 'completed' ||
+             valueStr === 'done' ||
+             valueStr === 'active' ||
+             valueStr === 'in place' ||
+             valueStr === 'true' ||
+             value === true;
+    };
+
     const renderCellContent = (value: any, columnKey: string) => {
       if (value === null || value === undefined || value === '') {
         return <span className="text-muted-foreground">-</span>;
       }
 
-      // Check if this is an implementation status column - more comprehensive check
-      const columnLower = columnKey.toLowerCase();
-      const isImplementationColumn = columnLower.includes('implement') || 
-                                   columnLower.includes('status') ||
-                                   columnLower.includes('completed') ||
-                                   columnLower.includes('done') ||
-                                   columnLower.includes('in place') ||
-                                   columnLower.includes('active') ||
-                                   columnLower.includes('yes/no') ||
-                                   columnLower.includes('y/n');
-
-      if (isImplementationColumn) {
-        const valueStr = value?.toString().toLowerCase().trim() || '';
-        const isImplemented = valueStr === 'yes' || 
-                             valueStr === 'y' ||
-                             valueStr === 'implemented' ||
-                             valueStr === 'complete' ||
-                             valueStr === 'completed' ||
-                             valueStr === 'done' ||
-                             valueStr === 'active' ||
-                             valueStr === 'in place' ||
-                             valueStr === 'true' ||
-                             value === true ||
-                             value === 'Yes' ||
-                             value === 'Y' ||
-                             value === 'Implemented' ||
-                             value === 'Complete' ||
-                             value === 'Completed' ||
-                             value === 'Done' ||
-                             value === 'Active' ||
-                             value === 'In Place';
-
-        return (
-          <div className="flex justify-center">
-            {isImplemented ? (
+      // Check if this column should show status icons
+      if (isStatusColumn(columnKey)) {
+        console.log(`Status column detected: ${columnKey}, value: ${value}`);
+        
+        if (isPositiveValue(value)) {
+          return (
+            <div className="flex justify-center">
               <Check className="h-5 w-5 text-green-600" />
-            ) : (
+            </div>
+          );
+        } else {
+          return (
+            <div className="flex justify-center">
               <X className="h-5 w-5 text-red-600" />
-            )}
-          </div>
-        );
+            </div>
+          );
+        }
       }
 
       return <span>{value.toString()}</span>;
@@ -94,18 +103,10 @@ export const ChartRenderer = ({ chartType, data, title, description, originalCol
             <TableHeader>
               <TableRow>
                 {columns.map((column) => {
-                  const columnLower = column.toLowerCase();
-                  const isImplementationColumn = columnLower.includes('implement') || 
-                                               columnLower.includes('status') ||
-                                               columnLower.includes('completed') ||
-                                               columnLower.includes('done') ||
-                                               columnLower.includes('in place') ||
-                                               columnLower.includes('active') ||
-                                               columnLower.includes('yes/no') ||
-                                               columnLower.includes('y/n');
+                  const isStatus = isStatusColumn(column);
                   
                   return (
-                    <TableHead key={column} className={isImplementationColumn ? 'text-center' : ''}>
+                    <TableHead key={column} className={isStatus ? 'text-center' : ''}>
                       {column}
                     </TableHead>
                   );
@@ -116,18 +117,10 @@ export const ChartRenderer = ({ chartType, data, title, description, originalCol
               {data.map((item, index) => (
                 <TableRow key={index}>
                   {columns.map((column) => {
-                    const columnLower = column.toLowerCase();
-                    const isImplementationColumn = columnLower.includes('implement') || 
-                                                 columnLower.includes('status') ||
-                                                 columnLower.includes('completed') ||
-                                                 columnLower.includes('done') ||
-                                                 columnLower.includes('in place') ||
-                                                 columnLower.includes('active') ||
-                                                 columnLower.includes('yes/no') ||
-                                                 columnLower.includes('y/n');
+                    const isStatus = isStatusColumn(column);
                     
                     return (
-                      <TableCell key={column} className={isImplementationColumn ? 'text-center' : ''}>
+                      <TableCell key={column} className={isStatus ? 'text-center' : ''}>
                         {renderCellContent(item[column], column)}
                       </TableCell>
                     );
