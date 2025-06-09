@@ -68,46 +68,16 @@ function handleB2Graphics(metrics: any[], disclosureTitle: string) {
     )
   }
 
-  // Create a table with green checkmarks and red X's
-  const tableCode = `import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Check, X } from "lucide-react";
+  // Extract original column order if available
+  let originalColumnOrder = null
+  if (vsmeMetric.responseData.originalColumnOrder) {
+    originalColumnOrder = vsmeMetric.responseData.originalColumnOrder
+  } else if (vsmeMetric.responseData.tabularData && vsmeMetric.responseData.tabularData.length > 0) {
+    // Fallback: get column order from first row
+    originalColumnOrder = Object.keys(vsmeMetric.responseData.tabularData[0])
+  }
 
-const VSMEPracticesTable = () => {
-  const data = ${JSON.stringify(vsmeMetric.responseData, null, 2)};
-
-  return (
-    <div className="w-full overflow-auto">
-      <Table>
-        <TableHeader>
-          <TableRow>
-            <TableHead>Practice/Policy Area</TableHead>
-            <TableHead className="text-center">Implementation Status</TableHead>
-            <TableHead>Details</TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {data.map((item, index) => (
-            <TableRow key={index}>
-              <TableCell className="font-medium">
-                {item.practice || item.area || item.category || item.name || \`Item \${index + 1}\`}
-              </TableCell>
-              <TableCell className="text-center">
-                {(item.implemented === 'Yes' || item.status === 'Implemented' || item.implemented === true) ? (
-                  <Check className="h-5 w-5 text-green-600 mx-auto" />
-                ) : (
-                  <X className="h-5 w-5 text-red-600 mx-auto" />
-                )}
-              </TableCell>
-              <TableCell>
-                {item.details || item.description || item.notes || 'No additional details'}
-              </TableCell>
-            </TableRow>
-          ))}
-        </TableBody>
-      </Table>
-    </div>
-  );
-};`
+  const tableData = vsmeMetric.responseData.tabularData || vsmeMetric.responseData
 
   const response = {
     hasCharts: true,
@@ -115,8 +85,8 @@ const VSMEPracticesTable = () => {
       title: "VSME B2.26 - Sustainability Practices Implementation Status",
       description: "Table showing implementation status of sustainability practices and policies",
       chartType: "Table",
-      code: tableCode,
-      data: vsmeMetric.responseData,
+      data: tableData,
+      originalColumnOrder: originalColumnOrder,
       insights: [
         "Visual representation of sustainability practices implementation",
         "Green checkmarks indicate implemented practices",
@@ -186,45 +156,12 @@ function handleB3Graphics(metrics: any[], disclosureTitle: string, allMetrics: a
     }
   })
 
-  const stackedBarCode = `import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell } from 'recharts';
-
-const EnergyConsumptionChart = () => {
-  const data = [
-    { name: 'Energy Consumption', total: ${totalMWh.toFixed(2)}, ${chartData.map(item => `"${item.category}": ${item.value}`).join(', ')} }
-  ];
-
-  const colors = ['#8884d8', '#82ca9d', '#ffc658', '#ff7300', '#0088aa', '#00C49F'];
-
-  return (
-    <div className="w-full">
-      <div className="mb-4 text-center">
-        <h3 className="text-lg font-semibold">Total Energy Consumption: ${totalMWh.toFixed(2)} MWh</h3>
-      </div>
-      <ResponsiveContainer width="100%" height={400}>
-        <BarChart data={data} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
-          <CartesianGrid strokeDasharray="3 3" />
-          <XAxis dataKey="name" />
-          <YAxis label={{ value: 'Energy (MWh)', angle: -90, position: 'insideLeft' }} />
-          <Tooltip 
-            formatter={(value, name) => [\`\${value} MWh\`, name]}
-            labelFormatter={() => 'Energy Breakdown'}
-          />
-          ${chartData.map((item, index) => 
-            `<Bar dataKey="${item.category}" stackId="energy" fill="${colors[index % colors.length]}" />`
-          ).join('\n          ')}
-        </BarChart>
-      </ResponsiveContainer>
-    </div>
-  );
-};`
-
   const response = {
     hasCharts: true,
     charts: [{
       title: "B3 - Energy Consumption Breakdown",
       description: `Stacked bar chart showing energy consumption by source with total of ${totalMWh.toFixed(2)} MWh`,
       chartType: "StackedBarChart",
-      code: stackedBarCode,
       data: chartData,
       insights: [
         `Total energy consumption: ${totalMWh.toFixed(2)} MWh`,

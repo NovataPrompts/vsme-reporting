@@ -45,16 +45,33 @@ export const ChartRenderer = ({ chartType, data, title, description, originalCol
         return <span className="text-muted-foreground">-</span>;
       }
 
-      // Check if this is an implementation status column
-      const isImplementationColumn = columnKey.toLowerCase().includes('implement') || 
-                                   columnKey.toLowerCase().includes('status');
+      // Check if this is an implementation status column - more comprehensive check
+      const columnLower = columnKey.toLowerCase();
+      const isImplementationColumn = columnLower.includes('implement') || 
+                                   columnLower.includes('status') ||
+                                   columnLower.includes('completed') ||
+                                   columnLower.includes('done') ||
+                                   columnLower.includes('in place') ||
+                                   columnLower.includes('active');
 
       if (isImplementationColumn) {
+        const valueLower = value?.toString().toLowerCase() || '';
         const isImplemented = value === 'Yes' || 
                              value === 'Implemented' || 
+                             value === 'Complete' ||
+                             value === 'Completed' ||
+                             value === 'Done' ||
+                             value === 'Active' ||
+                             value === 'In Place' ||
                              value === true || 
-                             value?.toString().toLowerCase() === 'yes' ||
-                             value?.toString().toLowerCase() === 'implemented';
+                             valueLower === 'yes' ||
+                             valueLower === 'implemented' ||
+                             valueLower === 'complete' ||
+                             valueLower === 'completed' ||
+                             valueLower === 'done' ||
+                             valueLower === 'active' ||
+                             valueLower === 'in place' ||
+                             valueLower === 'true';
 
         return (
           <div className="flex justify-center">
@@ -80,21 +97,41 @@ export const ChartRenderer = ({ chartType, data, title, description, originalCol
           <Table>
             <TableHeader>
               <TableRow>
-                {columns.map((column) => (
-                  <TableHead key={column} className={column.toLowerCase().includes('implement') || column.toLowerCase().includes('status') ? 'text-center' : ''}>
-                    {column.replace(/[_-]/g, ' ').replace(/\b\w/g, l => l.toUpperCase())}
-                  </TableHead>
-                ))}
+                {columns.map((column) => {
+                  const columnLower = column.toLowerCase();
+                  const isImplementationColumn = columnLower.includes('implement') || 
+                                               columnLower.includes('status') ||
+                                               columnLower.includes('completed') ||
+                                               columnLower.includes('done') ||
+                                               columnLower.includes('in place') ||
+                                               columnLower.includes('active');
+                  
+                  return (
+                    <TableHead key={column} className={isImplementationColumn ? 'text-center' : ''}>
+                      {column.replace(/[_-]/g, ' ').replace(/\b\w/g, l => l.toUpperCase())}
+                    </TableHead>
+                  );
+                })}
               </TableRow>
             </TableHeader>
             <TableBody>
               {data.map((item, index) => (
                 <TableRow key={index}>
-                  {columns.map((column) => (
-                    <TableCell key={column} className={column.toLowerCase().includes('implement') || column.toLowerCase().includes('status') ? 'text-center' : ''}>
-                      {renderCellContent(item[column], column)}
-                    </TableCell>
-                  ))}
+                  {columns.map((column) => {
+                    const columnLower = column.toLowerCase();
+                    const isImplementationColumn = columnLower.includes('implement') || 
+                                                 columnLower.includes('status') ||
+                                                 columnLower.includes('completed') ||
+                                                 columnLower.includes('done') ||
+                                                 columnLower.includes('in place') ||
+                                                 columnLower.includes('active');
+                    
+                    return (
+                      <TableCell key={column} className={isImplementationColumn ? 'text-center' : ''}>
+                        {renderCellContent(item[column], column)}
+                      </TableCell>
+                    );
+                  })}
                 </TableRow>
               ))}
             </TableBody>
