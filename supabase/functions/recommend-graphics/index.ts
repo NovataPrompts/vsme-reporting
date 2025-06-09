@@ -1,4 +1,3 @@
-
 import { serve } from 'https://deno.land/std@0.168.0/http/server.ts'
 
 const corsHeaders = {
@@ -359,26 +358,46 @@ function handleB3Graphics(metrics: any[], disclosureTitle: string, allMetrics: a
     }
   }
 
-  // 5. FIXED Bar chart for GHG Emissions (Scope 1, 2, 3)
-  console.log('Looking for GHG metrics...')
+  // 5. UPDATED Bar chart for GHG Emissions using the correct references
+  console.log('Looking for GHG metrics with correct references...')
   const ghgMetrics = []
   
-  // Find GHG metrics with better error handling
+  // Find GHG metrics using the exact references you specified
   const scope1Metric = metrics.find(m => m.novataReference === 'VSME.B3.30.a')
   const scope2Metric = metrics.find(m => m.novataReference === 'VSME.B3.30.b') 
   const scope3Metric = metrics.find(m => m.novataReference === 'VSME.C2.50')
   
-  console.log('Found GHG metrics:', {
-    scope1: scope1Metric ? 'YES' : 'NO',
-    scope2: scope2Metric ? 'YES' : 'NO', 
-    scope3: scope3Metric ? 'YES' : 'NO'
+  console.log('Found GHG metrics with correct references:', {
+    'VSME.B3.30.a': scope1Metric ? 'YES' : 'NO',
+    'VSME.B3.30.b': scope2Metric ? 'YES' : 'NO', 
+    'VSME.C2.50': scope3Metric ? 'YES' : 'NO'
   })
 
-  if (scope1Metric) ghgMetrics.push(scope1Metric)
-  if (scope2Metric) ghgMetrics.push(scope2Metric)
-  if (scope3Metric) ghgMetrics.push(scope3Metric)
+  if (scope1Metric) {
+    console.log('Scope 1 metric data:', {
+      response: scope1Metric.response,
+      responseData: scope1Metric.responseData
+    })
+    ghgMetrics.push(scope1Metric)
+  }
+  
+  if (scope2Metric) {
+    console.log('Scope 2 metric data:', {
+      response: scope2Metric.response,
+      responseData: scope2Metric.responseData
+    })
+    ghgMetrics.push(scope2Metric)
+  }
+  
+  if (scope3Metric) {
+    console.log('Scope 3 metric data:', {
+      response: scope3Metric.response,
+      responseData: scope3Metric.responseData
+    })
+    ghgMetrics.push(scope3Metric)
+  }
 
-  console.log('GHG metrics to process:', ghgMetrics.length)
+  console.log('Total GHG metrics found:', ghgMetrics.length)
 
   if (ghgMetrics.length > 0) {
     let chartData = []
@@ -396,13 +415,16 @@ function handleB3Graphics(metrics: any[], disclosureTitle: string, allMetrics: a
       let value = 0
       if (metric.response && !isNaN(parseFloat(metric.response))) {
         value = parseFloat(metric.response)
+        console.log(`Got value from response: ${value}`)
       } else if (metric.responseData && typeof metric.responseData === 'object' && metric.responseData.value) {
         value = parseFloat(metric.responseData.value)
+        console.log(`Got value from responseData.value: ${value}`)
       } else if (metric.responseData && !isNaN(parseFloat(metric.responseData))) {
         value = parseFloat(metric.responseData)
+        console.log(`Got value from responseData directly: ${value}`)
       }
 
-      console.log(`Extracted value for ${metric.novataReference}: ${value}`)
+      console.log(`Final extracted value for ${metric.novataReference}: ${value}`)
 
       let scope = 'Unknown'
       if (metric.novataReference === 'VSME.B3.30.a') scope = 'Scope 1'
@@ -428,13 +450,14 @@ function handleB3Graphics(metrics: any[], disclosureTitle: string, allMetrics: a
       totalEmissions += value
     })
 
-    console.log('Final chart data:', chartData)
-    console.log('Total emissions:', totalEmissions)
+    console.log('Final GHG chart data:', chartData)
+    console.log('Final GHG table data:', tableData)
+    console.log('Total emissions calculated:', totalEmissions)
 
     // Always create the bar chart, even with zero values
     charts.push({
       title: "GHG Emissions by Scope",
-      description: `Bar chart showing GHG emissions by scope with total of ${totalEmissions.toFixed(2)} tCO2e (VSME B3.30.a, VSME B3.30.b, VSME C2.50)`,
+      description: `Bar chart showing GHG emissions by scope with total of ${totalEmissions.toFixed(2)} tCO2e (VSME.B3.30.a, VSME.B3.30.b, VSME.C2.50)`,
       chartType: "BarChart",
       data: chartData,
       insights: [
@@ -447,7 +470,7 @@ function handleB3Graphics(metrics: any[], disclosureTitle: string, allMetrics: a
     // Always create the summary table
     charts.push({
       title: "GHG Emissions Summary Table",
-      description: "Summary table of Scope 1, 2, and 3 emissions with units (VSME B3.30.a, VSME B3.30.b, VSME C2.50)",
+      description: "Summary table of Scope 1, 2, and 3 emissions with units (VSME.B3.30.a, VSME.B3.30.b, VSME.C2.50)",
       chartType: "Table",
       data: tableData,
       originalColumnOrder: ['Emission Scope', 'Value', 'Unit', 'Metric Reference', 'Description'],
@@ -458,7 +481,7 @@ function handleB3Graphics(metrics: any[], disclosureTitle: string, allMetrics: a
       ]
     })
   } else {
-    console.log('No GHG metrics found, creating placeholder charts')
+    console.log('No GHG metrics found, creating placeholder charts with correct references')
     // Create placeholder charts even if no data is available
     const placeholderChartData = [
       { category: 'Scope 1', value: 0, unit: 'tCO2e' },

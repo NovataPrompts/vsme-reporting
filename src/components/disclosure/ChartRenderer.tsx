@@ -197,8 +197,12 @@ export const ChartRenderer = ({ chartType, data, title, description, originalCol
               verticalAlign="bottom" 
               height={36}
               formatter={(value, entry) => {
-                const item = entry.payload;
-                return `${item.category}: ${item.value} ${item.unit || ''} (${item.percentage})`;
+                // Access the data from the entry payload
+                if (entry && entry.payload) {
+                  const item = entry.payload;
+                  return `${item.category}: ${item.value} ${item.unit || ''} (${item.percentage})`;
+                }
+                return value;
               }}
             />
           </PieChart>
