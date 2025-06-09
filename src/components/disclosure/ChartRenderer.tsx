@@ -1,5 +1,5 @@
 
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell, PieChart, Pie } from 'recharts';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell, PieChart, Pie, Legend } from 'recharts';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Check, X } from "lucide-react";
 
@@ -12,6 +12,9 @@ interface ChartRendererProps {
 }
 
 export const ChartRenderer = ({ chartType, data, title, description, originalColumnOrder }: ChartRendererProps) => {
+  // Blue and navy color scheme using design system colors
+  const chartColors = ['#00344d', '#008099', '#539db5', '#0088aa', '#00C49F', '#82ca9d'];
+
   const renderCellContent = (value: any) => {
     if (value === null || value === undefined || value === '') {
       return <span className="text-muted-foreground">-</span>;
@@ -110,8 +113,6 @@ export const ChartRenderer = ({ chartType, data, title, description, originalCol
       );
     }
 
-    const colors = ['#8884d8', '#82ca9d', '#ffc658', '#ff7300', '#0088aa', '#00C49F'];
-
     // Enhanced label function positioned outside the pie with larger, more legible text
     const renderCustomLabel = ({ cx, cy, midAngle, innerRadius, outerRadius, value, category, percentage }) => {
       const RADIAN = Math.PI / 180;
@@ -179,7 +180,7 @@ export const ChartRenderer = ({ chartType, data, title, description, originalCol
               dataKey="value"
             >
               {data.map((entry, index) => (
-                <Cell key={`cell-${index}`} fill={colors[index % colors.length]} />
+                <Cell key={`cell-${index}`} fill={chartColors[index % chartColors.length]} />
               ))}
             </Pie>
             <Tooltip 
@@ -190,6 +191,14 @@ export const ChartRenderer = ({ chartType, data, title, description, originalCol
                   return `${item.category}: ${item.percentage}`;
                 }
                 return label;
+              }}
+            />
+            <Legend 
+              verticalAlign="bottom" 
+              height={36}
+              formatter={(value, entry) => {
+                const item = entry.payload;
+                return `${item.category}: ${item.value} ${item.unit || ''} (${item.percentage})`;
               }}
             />
           </PieChart>
@@ -234,13 +243,14 @@ export const ChartRenderer = ({ chartType, data, title, description, originalCol
           <p className="text-sm text-muted-foreground">{description}</p>
         </div>
         <ResponsiveContainer width="100%" height={400}>
-          <BarChart data={data} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
+          <BarChart data={data} margin={{ top: 20, right: 30, left: 20, bottom: 60 }}>
             <CartesianGrid strokeDasharray="3 3" />
             <XAxis dataKey="category" />
             <YAxis label={{ value: `Energy (${data[0]?.unit || ''})`, angle: -90, position: 'insideLeft' }} />
             <Tooltip formatter={(value, name) => [`${value} ${data[0]?.unit || ''}`, name]} />
-            <Bar dataKey="renewable" stackId="energy" fill="#82ca9d" name="Renewable" label={renderBarLabel} />
-            <Bar dataKey="nonRenewable" stackId="energy" fill="#ff7300" name="Non-renewable" label={renderBarLabel} />
+            <Legend />
+            <Bar dataKey="renewable" stackId="energy" fill="#008099" name="Renewable" label={renderBarLabel} />
+            <Bar dataKey="nonRenewable" stackId="energy" fill="#00344d" name="Non-renewable" label={renderBarLabel} />
           </BarChart>
         </ResponsiveContainer>
       </div>
@@ -263,12 +273,13 @@ export const ChartRenderer = ({ chartType, data, title, description, originalCol
           <p className="text-sm text-muted-foreground">{description}</p>
         </div>
         <ResponsiveContainer width="100%" height={400}>
-          <BarChart data={data} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
+          <BarChart data={data} margin={{ top: 20, right: 30, left: 20, bottom: 60 }}>
             <CartesianGrid strokeDasharray="3 3" />
             <XAxis dataKey="category" />
             <YAxis label={{ value: `Value (${data[0]?.unit || ''})`, angle: -90, position: 'insideLeft' }} />
             <Tooltip formatter={(value, name) => [`${value} ${data[0]?.unit || ''}`, name]} />
-            <Bar dataKey="value" fill="#8884d8" />
+            <Legend />
+            <Bar dataKey="value" fill="#00344d" />
           </BarChart>
         </ResponsiveContainer>
       </div>
