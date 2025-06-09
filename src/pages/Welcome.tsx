@@ -1,17 +1,73 @@
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { FileText, BarChart3, RefreshCw } from "lucide-react";
+import { FileText, BarChart3, RefreshCw, Building } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { CompanyProfileModal } from "@/components/auth/CompanyProfileModal";
+import { useCompanyProfile } from '@/hooks/useCompanyProfile';
+
 const Welcome = () => {
   const navigate = useNavigate();
-  return <div className="min-h-screen flex flex-col">
+  const { getCompanyProfile } = useCompanyProfile();
+  const [hasCompanyProfile, setHasCompanyProfile] = useState(false);
+  const [showProfileModal, setShowProfileModal] = useState(false);
+  const [checkingProfile, setCheckingProfile] = useState(true);
+
+  useEffect(() => {
+    const checkCompanyProfile = async () => {
+      const profile = await getCompanyProfile();
+      const hasProfile = !!profile;
+      setHasCompanyProfile(hasProfile);
+      setCheckingProfile(false);
+      
+      // Show modal if no profile exists
+      if (!hasProfile) {
+        setShowProfileModal(true);
+      }
+    };
+
+    checkCompanyProfile();
+  }, [getCompanyProfile]);
+
+  const handleProfileComplete = () => {
+    setHasCompanyProfile(true);
+    setShowProfileModal(false);
+  };
+
+  const handleOpenProfile = () => {
+    setShowProfileModal(true);
+  };
+
+  if (checkingProfile) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-lg">Loading...</div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="min-h-screen flex flex-col">
       <main className="flex-1 pt-12 pb-12">
         <div className="container mx-auto px-4 md:px-6">
           <div className="mb-6">
-            <h1 className="text-2xl font-bold mb-2">Welcome to VSME Sustainability Reporting</h1>
-            <p className="text-base text-gray-600 dark:text-gray-300 max-w-2xl">Complete these three steps to create your VSME report.</p>
+            <div className="flex items-center justify-between">
+              <div>
+                <h1 className="text-2xl font-bold mb-2">Welcome to VSME Sustainability Reporting</h1>
+                <p className="text-base text-gray-600 dark:text-gray-300 max-w-2xl">Complete these three steps to create your VSME report.</p>
+              </div>
+              {hasCompanyProfile && (
+                <Button
+                  onClick={handleOpenProfile}
+                  variant="outline"
+                  className="flex items-center gap-2"
+                >
+                  <Building className="h-4 w-4" />
+                  Edit Company Profile
+                </Button>
+              )}
+            </div>
           </div>
           
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl mx-auto">
@@ -64,6 +120,14 @@ const Welcome = () => {
           </div>
         </div>
       </main>
-    </div>;
+
+      <CompanyProfileModal
+        isOpen={showProfileModal}
+        onComplete={handleProfileComplete}
+        onClose={() => setShowProfileModal(false)}
+      />
+    </div>
+  );
 };
+
 export default Welcome;
