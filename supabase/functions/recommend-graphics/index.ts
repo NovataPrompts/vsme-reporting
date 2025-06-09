@@ -210,8 +210,14 @@ function handleB3Graphics(metrics: any[], disclosureTitle: string, allMetrics: a
           }
         })
 
-        // Create proper column order: preserve original order and add percentage at the end
-        const enhancedColumnOrder = originalColumnOrder ? [...originalColumnOrder, 'Percentage (%)'] : null
+        // Set the specific column order requested: Energy consumption type, renewable, non-renewable, total, percentage
+        const enhancedColumnOrder = [
+          'Energy Consumption Type',
+          'Renewable (MWh)',
+          'Non-renewable (MWh)', 
+          'Total (MWh)',
+          'Percentage (%)'
+        ]
         
         console.log('Enhanced column order:', enhancedColumnOrder)
         console.log('Enhanced table data sample:', enhancedTableData[0])
@@ -314,12 +320,19 @@ function handleB3Graphics(metrics: any[], disclosureTitle: string, allMetrics: a
         }
       } else {
         // Fallback: just show the table without percentage calculation
+        const fallbackColumnOrder = [
+          'Energy Consumption Type',
+          'Renewable (MWh)',
+          'Non-renewable (MWh)', 
+          'Total (MWh)'
+        ]
+        
         charts.push({
           title: "Energy Consumption Breakdown",
           description: "Table showing detailed energy consumption metrics (VSME B3.29)",
           chartType: "Table",
           data: tableData,
-          originalColumnOrder: originalColumnOrder,
+          originalColumnOrder: fallbackColumnOrder,
           insights: [
             "Detailed breakdown of energy consumption by source",
             "Values presented in standardized units for comparison"
