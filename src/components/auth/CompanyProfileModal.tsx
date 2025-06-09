@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
@@ -55,7 +54,7 @@ export const CompanyProfileModal = ({ isOpen, onComplete, onClose }: CompanyProf
             setValue('name', profile.name || '');
             setValue('company_structure', profile.company_structure || '');
             setValue('dba_name', profile.dba_name || '');
-            setValue('year_of_incorporation', profile.year_of_incorporation || '');
+            setValue('year_of_incorporation', profile.year_of_incorporation || undefined);
             setValue('company_description', profile.company_description || '');
             setValue('website', profile.website || '');
             setValue('country_of_domicile', profile.country_of_domicile || '');
@@ -194,7 +193,7 @@ export const CompanyProfileModal = ({ isOpen, onComplete, onClose }: CompanyProf
               <div className="space-y-2">
                 <Label htmlFor="year_of_incorporation">Year of Incorporation</Label>
                 <Select 
-                  onValueChange={(value) => setValue('year_of_incorporation', parseInt(value))}
+                  onValueChange={(value) => setValue('year_of_incorporation', value ? parseInt(value) : undefined)}
                   value={watch('year_of_incorporation')?.toString() || ''}
                 >
                   <SelectTrigger>
