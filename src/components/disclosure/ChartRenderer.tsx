@@ -1,3 +1,4 @@
+
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell } from 'recharts';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Check, X } from "lucide-react";
@@ -11,6 +12,35 @@ interface ChartRendererProps {
 }
 
 export const ChartRenderer = ({ chartType, data, title, description, originalColumnOrder }: ChartRendererProps) => {
+  const renderCellContent = (value: any) => {
+    if (value === null || value === undefined || value === '') {
+      return <span className="text-muted-foreground">-</span>;
+    }
+
+    const valueStr = value.toString().trim();
+    
+    // Show green check for "Yes"
+    if (valueStr === "Yes") {
+      return (
+        <div className="flex justify-center">
+          <Check className="h-5 w-5 text-green-600" />
+        </div>
+      );
+    }
+    
+    // Show red X for "No"  
+    if (valueStr === "No") {
+      return (
+        <div className="flex justify-center">
+          <X className="h-5 w-5 text-red-600" />
+        </div>
+      );
+    }
+
+    // For all other values, just show the text
+    return <span>{valueStr}</span>;
+  };
+
   if (chartType === "Table") {
     if (!data || data.length === 0) {
       return (
@@ -31,35 +61,6 @@ export const ChartRenderer = ({ chartType, data, title, description, originalCol
       const allKeys = Array.from(new Set(data.flatMap(item => Object.keys(item))));
       columns = allKeys.filter(key => key.trim() !== '');
     }
-
-    const renderCellContent = (value: any) => {
-      if (value === null || value === undefined || value === '') {
-        return <span className="text-muted-foreground">-</span>;
-      }
-
-      const valueStr = value.toString().trim();
-      
-      // Show green check for "Yes"
-      if (valueStr === "Yes") {
-        return (
-          <div className="flex justify-center">
-            <Check className="h-5 w-5 text-green-600" />
-          </div>
-        );
-      }
-      
-      // Show red X for "No"  
-      if (valueStr === "No") {
-        return (
-          <div className="flex justify-center">
-            <X className="h-5 w-5 text-red-600" />
-          </div>
-        );
-      }
-
-      // For all other values, just show the text
-      return <span>{valueStr}</span>;
-    };
 
     return (
       <div className="w-full">
