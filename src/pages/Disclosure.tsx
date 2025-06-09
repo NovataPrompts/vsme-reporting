@@ -1,8 +1,17 @@
 
 import { Header } from "@/components/layout/Header";
 import { DisclosureBox } from "@/components/disclosure/DisclosureBox";
+import { Button } from "@/components/ui/button";
+import { RefreshCw } from "lucide-react";
+import { useVSMEMetrics } from "@/hooks/useVSMEMetrics";
+import { useState } from "react";
+import { useToast } from "@/hooks/use-toast";
 
 const Disclosure = () => {
+  const { refreshMetrics } = useVSMEMetrics();
+  const [isRefreshing, setIsRefreshing] = useState(false);
+  const { toast } = useToast();
+
   const disclosures = [
     {
       id: "B1",
@@ -61,16 +70,46 @@ const Disclosure = () => {
     }
   ];
 
+  const handleRefresh = async () => {
+    setIsRefreshing(true);
+    try {
+      await refreshMetrics();
+      toast({
+        title: "Data Refreshed",
+        description: "All metrics data has been reloaded from the database.",
+      });
+    } catch (error) {
+      toast({
+        title: "Refresh Failed",
+        description: "Failed to refresh metrics data. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsRefreshing(false);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-background">
       <Header />
       <main className="container mx-auto px-4 pt-20 pb-24">
         <div className="max-w-6xl mx-auto">
-          <div className="mb-8">
-            <h1 className="text-3xl font-bold text-primary mb-2">Disclosure Responses</h1>
-            <p className="text-muted-foreground">
-              Generate comprehensive disclosure responses based on your metrics data.
-            </p>
+          <div className="mb-8 flex items-center justify-between">
+            <div>
+              <h1 className="text-3xl font-bold text-primary mb-2">Disclosure Responses</h1>
+              <p className="text-muted-foreground">
+                Generate comprehensive disclosure responses based on your metrics data.
+              </p>
+            </div>
+            <Button
+              onClick={handleRefresh}
+              disabled={isRefreshing}
+              variant="outline"
+              className="flex items-center gap-2"
+            >
+              <RefreshCw className={`h-4 w-4 ${isRefreshing ? 'animate-spin' : ''}`} />
+              {isRefreshing ? "Refreshing..." : "Refresh Data"}
+            </Button>
           </div>
 
           <div className="grid gap-6">

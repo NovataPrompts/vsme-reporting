@@ -15,30 +15,31 @@ export const useVSMEMetrics = () => {
   const [lastUpdated, setLastUpdated] = useState<string | null>(null);
   const [metrics, setMetrics] = useState<VSMEMetric[]>([]);
 
-  useEffect(() => {
-    const fetchMetrics = async () => {
-      const data = await loadStaticMetrics();
-      
-      // Load user responses for each metric
-      const metricsWithResponses = await Promise.all(
-        data.map(async (metric) => {
-          if (metric.novataReference) {
-            const userResponse = await getUserResponseByNovataReference(metric.novataReference);
-            return {
-              ...metric,
-              response: userResponse?.response_value || undefined,
-              responseData: userResponse?.response_data || undefined
-            };
-          }
-          return metric;
-        })
-      );
-      
-      setMetrics(metricsWithResponses);
-    };
+  const loadMetricsWithResponses = useCallback(async () => {
+    const data = await loadStaticMetrics();
     
-    fetchMetrics();
+    // Load user responses for each metric
+    const metricsWithResponses = await Promise.all(
+      data.map(async (metric) => {
+        if (metric.novataReference) {
+          const userResponse = await getUserResponseByNovataReference(metric.novataReference);
+          return {
+            ...metric,
+            response: userResponse?.response_value || undefined,
+            responseData: userResponse?.response_data || undefined
+          };
+        }
+        return metric;
+      })
+    );
+    
+    setMetrics(metricsWithResponses);
+    return metricsWithResponses;
   }, [loadStaticMetrics, getUserResponseByNovataReference]);
+
+  useEffect(() => {
+    loadMetricsWithResponses();
+  }, [loadMetricsWithResponses]);
   
   // Get unique topics for filtering - filter out empty/null topics
   const topics = Array.from(new Set(
@@ -104,8 +105,7 @@ export const useVSMEMetrics = () => {
       setLastUpdated(now);
       
       // Refresh metrics after successful import
-      const updatedMetrics = await loadStaticMetrics();
-      setMetrics(updatedMetrics);
+      await loadMetricsWithResponses();
       
       toast({
         title: "Metrics Imported",
@@ -113,7 +113,11 @@ export const useVSMEMetrics = () => {
         duration: 3000,
       });
     }
-  }, [upsertMetrics, loadStaticMetrics, toast]);
+  }, [upsertMetrics, loadMetricsWithResponses, toast]);
+
+  const refreshMetrics = useCallback(async () => {
+    return await loadMetricsWithResponses();
+  }, [loadMetricsWithResponses]);
 
   return {
     searchQuery,
@@ -126,6 +130,7 @@ export const useVSMEMetrics = () => {
     handleLearnMore,
     goToImport,
     lastUpdated,
-    handleImportMetrics
+    handleImportMetrics,
+    refreshMetrics
   };
 };
