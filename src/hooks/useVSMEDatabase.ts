@@ -18,6 +18,20 @@ export const useVSMEDatabase = () => {
     try {
       console.log('Loading consolidated metrics from Supabase...');
       
+      // Check if user is authenticated and has organization
+      const { data: user } = await supabase.auth.getUser();
+      console.log('Current user:', user.user?.email);
+      
+      if (user.user) {
+        const { data: userOrg } = await supabase
+          .from('user_organizations')
+          .select('organization_id, organization:organizations(name)')
+          .eq('user_id', user.user.id)
+          .maybeSingle();
+        
+        console.log('User organization:', userOrg);
+      }
+      
       // Load data from the consol table, ordered by display_order
       const { data: consolMetrics, error } = await supabase
         .from('consol')
@@ -25,8 +39,12 @@ export const useVSMEDatabase = () => {
         .order('display_order', { nullsFirst: false });
 
       console.log('Consol metrics loaded:', consolMetrics?.length || 0);
+      console.log('Sample consol data:', consolMetrics?.slice(0, 2));
 
-      if (error) throw error;
+      if (error) {
+        console.error('Error loading consol metrics:', error);
+        throw error;
+      }
 
       if (!consolMetrics || consolMetrics.length === 0) {
         console.log('No consol metrics found, inserting provided data...');
@@ -38,7 +56,10 @@ export const useVSMEDatabase = () => {
           .select('*')
           .order('display_order', { nullsFirst: false });
 
-        if (retryError) throw retryError;
+        if (retryError) {
+          console.error('Error on retry load:', retryError);
+          throw retryError;
+        }
         
         if (!retryData || retryData.length === 0) {
           console.log('Still no data after insertion');
@@ -64,6 +85,7 @@ export const useVSMEDatabase = () => {
           order: metric.display_order || 0
         }));
 
+        console.log('Processed retry metrics:', retryMetrics.length);
         return retryMetrics;
       }
 
@@ -87,7 +109,7 @@ export const useVSMEDatabase = () => {
       }));
 
       console.log('Processed metrics:', metrics.length);
-      console.log('Sample metrics:', metrics.slice(0, 3));
+      console.log('Sample processed metrics:', metrics.slice(0, 3));
       console.log('Unique topics found:', [...new Set(metrics.map(m => m.topic))]);
       console.log('Unique sections found:', [...new Set(metrics.map(m => m.section))]);
 

@@ -8,6 +8,7 @@ import { Upload } from "lucide-react";
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { VSMEMetric } from "@/types/vsmeMetrics";
+import { OrganizationManager } from "@/components/OrganizationManager";
 
 const Metrics = () => {
   const { loadStaticMetrics, isLoading } = useVSMEDatabase();
@@ -113,6 +114,57 @@ const Metrics = () => {
               <div className="text-center">
                 <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#057cc1] mx-auto mb-4"></div>
                 <p className="text-gray-600">Loading metrics...</p>
+              </div>
+            </div>
+          </div>
+        </main>
+      </div>
+    );
+  }
+
+  // Show organization manager if no metrics are loaded
+  if (metrics.length === 0) {
+    return (
+      <div className="min-h-screen flex flex-col">
+        <main className="flex-1 pt-12 pb-12">
+          <div className="container mx-auto px-4 md:px-6">
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
+              <div>
+                <h1 className="text-3xl font-bold mb-2">VSME Metrics</h1>
+                <p className="text-gray-600 dark:text-gray-300 mb-4">
+                  Collect, manage, and report on your VSME sustainability metrics
+                </p>
+              </div>
+              <div className="flex gap-3">
+                <Button 
+                  variant="outline" 
+                  className="flex items-center gap-2"
+                  onClick={goToImport}
+                >
+                  <Upload className="h-4 w-4" />
+                  Import Updated Data
+                </Button>
+              </div>
+            </div>
+            
+            <div className="max-w-2xl mx-auto">
+              <OrganizationManager />
+              <div className="mt-8 p-6 bg-blue-50 rounded-lg border border-blue-200">
+                <h3 className="text-lg font-semibold text-blue-900 mb-2">No Metrics Data Found</h3>
+                <p className="text-blue-800 mb-4">
+                  It looks like there's no metrics data available. This could be because:
+                </p>
+                <ul className="list-disc list-inside text-blue-800 space-y-1 mb-4">
+                  <li>The metrics database is empty</li>
+                  <li>There's an issue with data synchronization</li>
+                  <li>You need to import metrics data first</li>
+                </ul>
+                <Button 
+                  onClick={goToImport}
+                  className="bg-blue-600 hover:bg-blue-700 text-white"
+                >
+                  Import Metrics Data
+                </Button>
               </div>
             </div>
           </div>
