@@ -13,6 +13,7 @@ import { format, parseISO } from "date-fns";
 import { cn } from "@/lib/utils";
 import { useCompanyProfile } from '@/hooks/useCompanyProfile';
 import { useToast } from '@/hooks/use-toast';
+import { supabase } from '@/integrations/supabase/client';
 
 interface CompanyProfileModalProps {
   isOpen: boolean;
