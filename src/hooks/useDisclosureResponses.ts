@@ -26,22 +26,38 @@ export const useDisclosureResponses = () => {
   ) => {
     setIsLoading(true);
     try {
-      const { data: user } = await supabase.auth.getUser();
-      if (!user.user) {
+      const { data: { user }, error: userError } = await supabase.auth.getUser();
+      
+      if (userError) {
+        console.error('Auth error:', userError);
+        throw new Error('Authentication failed');
+      }
+      
+      if (!user) {
         throw new Error('User not authenticated');
       }
+
+      console.log('Saving disclosure response for user:', user.id);
+      console.log('Disclosure data:', { disclosureId, disclosureTitle, responseContent: responseContent.substring(0, 100) + '...' });
 
       const { error } = await supabase
         .from('disclosure_responses')
         .upsert({
-          user_id: user.user.id,
+          user_id: user.id,
           disclosure_id: disclosureId,
           disclosure_title: disclosureTitle,
           response_content: responseContent,
           graphics_recommendations: graphicsRecommendations
+        }, {
+          onConflict: 'user_id,disclosure_id'
         });
 
-      if (error) throw error;
+      if (error) {
+        console.error('Database error:', error);
+        throw error;
+      }
+
+      console.log('Successfully saved disclosure response');
 
       toast({
         title: "Response Saved",
@@ -53,7 +69,7 @@ export const useDisclosureResponses = () => {
       console.error('Error saving disclosure response:', error);
       toast({
         title: "Save Failed",
-        description: "Failed to save disclosure response. Please try again.",
+        description: error instanceof Error ? error.message : "Failed to save disclosure response. Please try again.",
         variant: "destructive"
       });
       return false;
@@ -64,19 +80,25 @@ export const useDisclosureResponses = () => {
 
   const loadDisclosureResponse = useCallback(async (disclosureId: string): Promise<DisclosureResponse | null> => {
     try {
-      const { data: user } = await supabase.auth.getUser();
-      if (!user.user) {
+      const { data: { user }, error: userError } = await supabase.auth.getUser();
+      
+      if (userError || !user) {
+        console.log('User not authenticated, skipping load');
         return null;
       }
 
       const { data, error } = await supabase
         .from('disclosure_responses')
         .select('*')
-        .eq('user_id', user.user.id)
+        .eq('user_id', user.id)
         .eq('disclosure_id', disclosureId)
         .maybeSingle();
 
-      if (error) throw error;
+      if (error) {
+        console.error('Error loading disclosure response:', error);
+        throw error;
+      }
+      
       return data;
     } catch (error) {
       console.error('Error loading disclosure response:', error);
@@ -86,18 +108,27 @@ export const useDisclosureResponses = () => {
 
   const deleteDisclosureResponse = useCallback(async (disclosureId: string) => {
     try {
-      const { data: user } = await supabase.auth.getUser();
-      if (!user.user) {
+      const { data: { user }, error: userError } = await supabase.auth.getUser();
+      
+      if (userError) {
+        console.error('Auth error:', userError);
+        throw new Error('Authentication failed');
+      }
+      
+      if (!user) {
         throw new Error('User not authenticated');
       }
 
       const { error } = await supabase
         .from('disclosure_responses')
         .delete()
-        .eq('user_id', user.user.id)
+        .eq('user_id', user.id)
         .eq('disclosure_id', disclosureId);
 
-      if (error) throw error;
+      if (error) {
+        console.error('Database error:', error);
+        throw error;
+      }
 
       toast({
         title: "Response Deleted",
@@ -109,7 +140,7 @@ export const useDisclosureResponses = () => {
       console.error('Error deleting disclosure response:', error);
       toast({
         title: "Delete Failed",
-        description: "Failed to delete disclosure response. Please try again.",
+        description: error instanceof Error ? error.message : "Failed to delete disclosure response. Please try again.",
         variant: "destructive"
       });
       return false;
