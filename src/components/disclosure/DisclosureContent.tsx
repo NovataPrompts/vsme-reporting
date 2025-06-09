@@ -89,6 +89,34 @@ export const DisclosureContent = ({
     return "Graphics recommendations available";
   };
 
+  // Default recommendations when no graphics recommendations are loaded yet
+  const getDefaultRecommendationDisplay = () => {
+    if (disclosure.id === "B1") {
+      return null; // No graphics for B1
+    } else if (disclosure.id === "B2") {
+      return (
+        <div className="flex items-center gap-2 text-sm text-muted-foreground">
+          <Table className="h-4 w-4" />
+          <span>1 Table Recommended</span>
+        </div>
+      );
+    } else if (disclosure.id === "B3") {
+      return (
+        <div className="flex flex-wrap gap-4">
+          <div className="flex items-center gap-2 text-sm text-muted-foreground">
+            <Table className="h-4 w-4" />
+            <span>2 Tables Recommended</span>
+          </div>
+          <div className="flex items-center gap-2 text-sm text-muted-foreground">
+            <ChartBarBig className="h-4 w-4" />
+            <span>1 Bar Chart Recommended</span>
+          </div>
+        </div>
+      );
+    }
+    return null;
+  };
+
   return (
     <div className="space-y-4">
       <div>
@@ -106,7 +134,7 @@ export const DisclosureContent = ({
         )}
         
         {/* Graphics Recommendations Section */}
-        {showGraphicsButton && graphicsRecommendations && (
+        {showGraphicsButton && (
           <div className="mt-4 p-3 bg-slate-50 border rounded-lg">
             <div className="flex items-center justify-between mb-2">
               <div className="flex items-center gap-2">
@@ -125,7 +153,10 @@ export const DisclosureContent = ({
               For {disclosure.id} - {getRecommendationSummary()}
             </p>
             <div className="flex flex-wrap gap-4">
-              {getGraphicsTypeDisplay()}
+              {graphicsRecommendations && graphicsRecommendations.hasCharts 
+                ? getGraphicsTypeDisplay()
+                : getDefaultRecommendationDisplay()
+              }
             </div>
           </div>
         )}
