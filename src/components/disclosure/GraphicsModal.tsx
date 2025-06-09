@@ -11,6 +11,7 @@ interface Chart {
   code: string;
   data: any[];
   insights: string[];
+  originalColumnOrder?: string[];
 }
 
 interface GraphicsModalProps {
@@ -86,6 +87,7 @@ export const GraphicsModal = ({ isOpen, onClose, recommendations, disclosureTitl
                         data={chart.data}
                         title={chart.title}
                         description={chart.description}
+                        originalColumnOrder={chart.originalColumnOrder}
                       />
                     </div>
 

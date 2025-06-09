@@ -1,4 +1,3 @@
-
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell } from 'recharts';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Check, X } from "lucide-react";
@@ -8,9 +7,10 @@ interface ChartRendererProps {
   data: any[];
   title: string;
   description: string;
+  originalColumnOrder?: string[];
 }
 
-export const ChartRenderer = ({ chartType, data, title, description }: ChartRendererProps) => {
+export const ChartRenderer = ({ chartType, data, title, description, originalColumnOrder }: ChartRendererProps) => {
   if (chartType === "Table") {
     if (!data || data.length === 0) {
       return (
@@ -20,19 +20,25 @@ export const ChartRenderer = ({ chartType, data, title, description }: ChartRend
       );
     }
 
-    // Get all unique keys from the data to create dynamic columns
-    const allKeys = Array.from(new Set(data.flatMap(item => Object.keys(item))));
+    // Use original column order if provided, otherwise fall back to existing logic
+    let columns: string[];
     
-    // Filter out empty keys and sort them logically
-    const columns = allKeys.filter(key => key.trim() !== '').sort((a, b) => {
-      // Put implementation status columns first
-      if (a.toLowerCase().includes('implement') && !b.toLowerCase().includes('implement')) return -1;
-      if (b.toLowerCase().includes('implement') && !a.toLowerCase().includes('implement')) return 1;
-      // Then practice/area columns
-      if (a.toLowerCase().includes('practice') || a.toLowerCase().includes('area')) return -1;
-      if (b.toLowerCase().includes('practice') || b.toLowerCase().includes('area')) return 1;
-      return a.localeCompare(b);
-    });
+    if (originalColumnOrder && originalColumnOrder.length > 0) {
+      // Use the preserved column order from Excel
+      columns = originalColumnOrder.filter(col => col && col.trim() !== '');
+    } else {
+      // Fallback to existing logic for data that doesn't have preserved order
+      const allKeys = Array.from(new Set(data.flatMap(item => Object.keys(item))));
+      columns = allKeys.filter(key => key.trim() !== '').sort((a, b) => {
+        // Put implementation status columns first
+        if (a.toLowerCase().includes('implement') && !b.toLowerCase().includes('implement')) return -1;
+        if (b.toLowerCase().includes('implement') && !a.toLowerCase().includes('implement')) return 1;
+        // Then practice/area columns
+        if (a.toLowerCase().includes('practice') || a.toLowerCase().includes('area')) return -1;
+        if (b.toLowerCase().includes('practice') || b.toLowerCase().includes('area')) return 1;
+        return a.localeCompare(b);
+      });
+    }
 
     const renderCellContent = (value: any, columnKey: string) => {
       if (value === null || value === undefined || value === '') {

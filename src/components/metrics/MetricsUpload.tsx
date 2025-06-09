@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -7,12 +6,14 @@ import { useToast } from "@/components/ui/use-toast";
 import { Progress } from "@/components/ui/progress";
 import { useNavigate } from "react-router-dom";
 import { useVSMEDatabase } from "@/hooks/useVSMEDatabase";
+import { useTabularData } from "@/hooks/useTabularData";
 import * as XLSX from 'xlsx';
 
 export const MetricsUpload = () => {
   const { toast } = useToast();
   const navigate = useNavigate();
   const { saveUserResponse } = useVSMEDatabase();
+  const { saveTabularData } = useTabularData();
   const [isDragging, setIsDragging] = useState(false);
   const [uploadStatus, setUploadStatus] = useState<'idle' | 'uploading' | 'success' | 'error'>('idle');
   const [fileName, setFileName] = useState<string | null>(null);
@@ -169,21 +170,63 @@ export const MetricsUpload = () => {
               if (tabularSheetName) {
                 console.log(`Found tabular sheet for ${referenceStr}: ${tabularSheetName}`);
                 const tabularSheet = workbook.Sheets[tabularSheetName];
-                const tabularData = XLSX.utils.sheet_to_json(tabularSheet);
                 
-                // Save with tabular data
-                const success = await saveUserResponse(
-                  referenceStr, 
-                  'Tabular data provided', 
-                  tabularData
-                );
+                // Parse with header preservation
+                const tabularDataWithHeaders = XLSX.utils.sheet_to_json(tabularSheet, { header: 1 });
                 
-                if (success) {
-                  savedCount++;
-                  console.log(`Saved tabular data for ${referenceStr}`);
+                if (tabularDataWithHeaders.length > 0) {
+                  // First row contains headers - preserve their order
+                  const headers = tabularDataWithHeaders[0] as string[];
+                  const originalColumnOrder = headers.filter(header => header && String(header).trim() !== '');
+                  
+                  // Convert remaining rows to objects using the headers
+                  const tabularData = [];
+                  for (let rowIndex = 1; rowIndex < tabularDataWithHeaders.length; rowIndex++) {
+                    const rowData = tabularDataWithHeaders[rowIndex] as any[];
+                    if (!rowData || rowData.length === 0) continue;
+                    
+                    const rowObject: any = {};
+                    originalColumnOrder.forEach((header, colIndex) => {
+                      rowObject[header] = rowData[colIndex] || '';
+                    });
+                    
+                    // Only add rows that have at least one non-empty value
+                    if (Object.values(rowObject).some(value => value && String(value).trim() !== '')) {
+                      tabularData.push(rowObject);
+                    }
+                  }
+                  
+                  console.log(`Parsed tabular data with ${tabularData.length} rows and column order:`, originalColumnOrder);
+                  
+                  // Save tabular data to new table
+                  const tabularSaved = await saveTabularData(
+                    referenceStr,
+                    tabularData,
+                    originalColumnOrder,
+                    file.name,
+                    tabularSheetName
+                  );
+                  
+                  // Save with tabular data reference in user responses
+                  const success = await saveUserResponse(
+                    referenceStr, 
+                    'Tabular data provided', 
+                    { 
+                      tabularData,
+                      originalColumnOrder,
+                      sheetName: tabularSheetName 
+                    }
+                  );
+                  
+                  if (success && tabularSaved) {
+                    savedCount++;
+                    console.log(`Saved tabular data for ${referenceStr}`);
+                  } else {
+                    errorCount++;
+                    console.error(`Failed to save tabular data for ${referenceStr}`);
+                  }
                 } else {
-                  errorCount++;
-                  console.error(`Failed to save tabular data for ${referenceStr}`);
+                  console.warn(`Empty tabular sheet found for reference: ${referenceStr}`);
                 }
               } else {
                 console.warn(`No tabular sheet found for reference: ${referenceStr}`);

@@ -129,6 +129,42 @@ export type Database = {
         }
         Relationships: []
       }
+      tabular_data: {
+        Row: {
+          column_order: string[] | null
+          created_at: string
+          data: Json
+          id: string
+          novata_reference: string
+          original_filename: string | null
+          sheet_name: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          column_order?: string[] | null
+          created_at?: string
+          data: Json
+          id?: string
+          novata_reference: string
+          original_filename?: string | null
+          sheet_name?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          column_order?: string[] | null
+          created_at?: string
+          data?: Json
+          id?: string
+          novata_reference?: string
+          original_filename?: string | null
+          sheet_name?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       vsme_novata_ref_converter: {
         Row: {
           created_at: string

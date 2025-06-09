@@ -47,6 +47,30 @@ export const useVSMEUserResponses = () => {
         .maybeSingle();
 
       if (error) throw error;
+
+      // If we have response data, also try to get the tabular data with column order
+      if (data && data.response_data) {
+        const { data: tabularData, error: tabularError } = await supabase
+          .from('tabular_data')
+          .select('*')
+          .eq('novata_reference', novataReference)
+          .maybeSingle();
+
+        if (!tabularError && tabularData) {
+          // Enhance the response with preserved column order
+          return {
+            ...data,
+            response_data: {
+              ...data.response_data,
+              tabularData: tabularData.data,
+              originalColumnOrder: tabularData.column_order,
+              sheetName: tabularData.sheet_name,
+              originalFilename: tabularData.original_filename
+            }
+          };
+        }
+      }
+
       return data;
     } catch (error) {
       console.error('Error loading user response by Novata reference:', error);
