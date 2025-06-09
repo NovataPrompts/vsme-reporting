@@ -213,7 +213,7 @@ function handleB3Graphics(metrics: any[], disclosureTitle: string, allMetrics: a
         const enhancedColumnOrder = [
           'Energy Consumption Type',
           'Renewable (MWh)',
-          'Non-reewable (MWh)', 
+          'Non-renewable (MWh)', 
           'Total (MWh)',
           'Percentage (%)'
         ]
@@ -251,7 +251,7 @@ function handleB3Graphics(metrics: any[], disclosureTitle: string, allMetrics: a
         if (pieChartData.length > 0) {
           charts.push({
             title: "Energy Consumption by Source Type",
-            description: "Pie chart showing the breakdown between electricity and fuel consumption with percentages",
+            description: "Pie chart showing the breakdown between electricity and fuel consumption with percentages (VSME B3.29)",
             chartType: "PieChart",
             data: pieChartData,
             insights: [
@@ -280,7 +280,7 @@ function handleB3Graphics(metrics: any[], disclosureTitle: string, allMetrics: a
         if (stackedBarData.length > 0) {
           charts.push({
             title: "Renewable vs Non-Renewable Energy by Source",
-            description: "Stacked bar chart showing renewable and non-renewable energy breakdown by electricity and fuel with MWh values",
+            description: "Stacked bar chart showing renewable and non-renewable energy breakdown by electricity and fuel with MWh values (VSME B3.29)",
             chartType: "StackedBarChart",
             data: stackedBarData,
             insights: [
