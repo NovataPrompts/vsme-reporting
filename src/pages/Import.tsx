@@ -6,6 +6,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { useState, useEffect } from "react";
 import { MetricsUpload } from "@/components/metrics/MetricsUpload";
 import { Progress } from "@/components/ui/progress";
+import { supabase } from "@/integrations/supabase/client";
 
 const Import = () => {
   const { toast } = useToast();
@@ -16,6 +17,33 @@ const Import = () => {
   const [importedMetricsCount, setImportedMetricsCount] = useState(0);
   const [importedTabularCount, setImportedTabularCount] = useState(0);
   
+  const fetchImportCounts = async () => {
+    try {
+      // Get distinct metrics count from consol table
+      const { data: metricsData, error: metricsError } = await supabase
+        .from('consol')
+        .select('novata_reference', { count: 'exact' })
+        .not('novata_reference', 'is', null);
+
+      if (metricsError) throw metricsError;
+
+      // Get distinct tabular metrics count
+      const { data: tabularData, error: tabularError } = await supabase
+        .from('tabular_data')
+        .select('novata_reference', { count: 'exact' });
+
+      if (tabularError) throw tabularError;
+
+      console.log('Metrics count:', metricsData?.length || 0);
+      console.log('Tabular count:', tabularData?.length || 0);
+
+      setImportedMetricsCount(metricsData?.length || 0);
+      setImportedTabularCount(tabularData?.length || 0);
+    } catch (error) {
+      console.error('Error fetching import counts:', error);
+    }
+  };
+  
   useEffect(() => {
     // Check if data was previously synced
     const lastUpdated = localStorage.getItem('metricsLastUpdated');
@@ -23,14 +51,11 @@ const Import = () => {
       setIsSynced(true);
     }
 
-    // Check if metrics were imported (simulating data check)
-    // In a real app, you'd query the database to get actual counts
+    // Check if metrics were imported and fetch actual counts
     const hasImportedData = localStorage.getItem('metricsLastUpdated');
     if (hasImportedData) {
       setMetricsImported(true);
-      // These would come from actual database queries
-      setImportedMetricsCount(245); // Example count
-      setImportedTabularCount(18);  // Example count
+      fetchImportCounts();
     }
   }, []);
   
