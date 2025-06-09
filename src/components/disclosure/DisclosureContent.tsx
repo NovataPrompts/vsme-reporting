@@ -81,10 +81,14 @@ export const DisclosureContent = ({
     } else if (disclosure.id === "B2") {
       return "Our recommendation is one table";
     } else if (disclosure.id === "B3") {
-      const charts = graphicsRecommendations?.charts || [];
-      const tableCount = charts.filter(chart => chart.chartType === "Table").length;
-      const barChartCount = charts.filter(chart => chart.chartType === "BarChart").length;
-      return `Our recommendation includes ${tableCount} table${tableCount !== 1 ? 's' : ''} and ${barChartCount} bar chart${barChartCount !== 1 ? 's' : ''}`;
+      if (graphicsRecommendations && graphicsRecommendations.hasCharts) {
+        const charts = graphicsRecommendations.charts || [];
+        const tableCount = charts.filter(chart => chart.chartType === "Table").length;
+        const barChartCount = charts.filter(chart => chart.chartType === "BarChart").length;
+        return `Our recommendation includes ${tableCount} table${tableCount !== 1 ? 's' : ''} and ${barChartCount} bar chart${barChartCount !== 1 ? 's' : ''}`;
+      } else {
+        return "Our recommendation includes 2 tables and 1 bar chart";
+      }
     }
     return "Graphics recommendations available";
   };
