@@ -36,7 +36,7 @@ export const DisclosureBox = ({
   const { vsmeMetricsData } = useVSMEMetrics();
   const { saveDisclosureResponse, loadDisclosureResponse, deleteDisclosureResponse, isLoading: isSaving } = useDisclosureResponses();
 
-  // Define which disclosures need graphics
+  // Define which disclosures need graphics - now includes B3
   const disclosuresWithGraphics = ['B2', 'B3'];
   const showGraphicsButton = disclosuresWithGraphics.includes(disclosure.id);
 

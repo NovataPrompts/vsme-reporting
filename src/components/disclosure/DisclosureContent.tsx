@@ -76,10 +76,15 @@ export const DisclosureContent = ({
   };
 
   const getRecommendationSummary = () => {
-    if (disclosure.id === "B2") {
+    if (disclosure.id === "B1") {
+      return "No graphics required for this disclosure";
+    } else if (disclosure.id === "B2") {
       return "Our recommendation is one table";
     } else if (disclosure.id === "B3") {
-      return "Our recommendation includes energy consumption charts";
+      const charts = graphicsRecommendations?.charts || [];
+      const tableCount = charts.filter(chart => chart.chartType === "Table").length;
+      const barChartCount = charts.filter(chart => chart.chartType === "BarChart").length;
+      return `Our recommendation includes ${tableCount} table${tableCount !== 1 ? 's' : ''} and ${barChartCount} bar chart${barChartCount !== 1 ? 's' : ''}`;
     }
     return "Graphics recommendations available";
   };

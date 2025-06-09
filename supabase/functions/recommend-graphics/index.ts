@@ -21,7 +21,9 @@ serve(async (req) => {
     })
 
     // Handle specific disclosure requirements
-    if (disclosureId === 'B2') {
+    if (disclosureId === 'B1') {
+      return handleB1Graphics(disclosureTitle)
+    } else if (disclosureId === 'B2') {
       return handleB2Graphics(metrics, disclosureTitle)
     } else if (disclosureId === 'B3') {
       return handleB3Graphics(metrics, disclosureTitle, allMetrics)
@@ -52,32 +54,47 @@ serve(async (req) => {
   }
 })
 
+function handleB1Graphics(disclosureTitle: string) {
+  return new Response(
+    JSON.stringify({
+      hasCharts: false,
+      message: `No graphics are required for B1 - ${disclosureTitle}`
+    }),
+    {
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+    },
+  )
+}
+
 function handleB2Graphics(metrics: any[], disclosureTitle: string) {
   // Find the VSME.B2.26 metric
-  const vsmeMetric = metrics.find(m => m.metric === 'Practices, policies and future initiatives for transitioning towards a more sustainable economy')
+  const vsmeB226Metric = metrics.find(m => 
+    m.metric === 'Practices, policies and future initiatives for transitioning towards a more sustainable economy' ||
+    m.novataReference === 'VSME.B2.26'
+  )
   
-  if (!vsmeMetric || !vsmeMetric.responseData) {
+  if (!vsmeB226Metric || !vsmeB226Metric.responseData) {
     return new Response(
       JSON.stringify({
         hasCharts: false,
         message: `No data available for VSME.B2.26 table visualization in ${disclosureTitle}`
       }),
       {
-        headers: { 'Access-Control-Allow-Origin': '*', 'Content-Type': 'application/json' },
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       },
     )
   }
 
   // Extract original column order if available
   let originalColumnOrder = null
-  if (vsmeMetric.responseData.originalColumnOrder) {
-    originalColumnOrder = vsmeMetric.responseData.originalColumnOrder
-  } else if (vsmeMetric.responseData.tabularData && vsmeMetric.responseData.tabularData.length > 0) {
+  if (vsmeB226Metric.responseData.originalColumnOrder) {
+    originalColumnOrder = vsmeB226Metric.responseData.originalColumnOrder
+  } else if (vsmeB226Metric.responseData.tabularData && vsmeB226Metric.responseData.tabularData.length > 0) {
     // Fallback: get column order from first row
-    originalColumnOrder = Object.keys(vsmeMetric.responseData.tabularData[0])
+    originalColumnOrder = Object.keys(vsmeB226Metric.responseData.tabularData[0])
   }
 
-  const tableData = vsmeMetric.responseData.tabularData || vsmeMetric.responseData
+  const tableData = vsmeB226Metric.responseData.tabularData || vsmeB226Metric.responseData
 
   const response = {
     hasCharts: true,
@@ -99,83 +116,136 @@ function handleB2Graphics(metrics: any[], disclosureTitle: string) {
   return new Response(
     JSON.stringify(response),
     {
-      headers: { 'Access-Control-Allow-Origin': '*', 'Content-Type': 'application/json' },
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     },
   )
 }
 
 function handleB3Graphics(metrics: any[], disclosureTitle: string, allMetrics: any[]) {
-  // Find energy-related metrics for stacked bar chart
-  const energyMetrics = metrics.filter(m => 
-    m.metric.toLowerCase().includes('energy') || 
-    m.unit?.toLowerCase().includes('mwh') ||
-    m.responseData
-  )
+  const charts = []
 
-  if (energyMetrics.length === 0) {
+  // 1. Table based on VSME.B3.29
+  const vsmeB329Metric = metrics.find(m => m.novataReference === 'VSME.B3.29')
+  if (vsmeB329Metric && vsmeB329Metric.responseData) {
+    let originalColumnOrder = null
+    if (vsmeB329Metric.responseData.originalColumnOrder) {
+      originalColumnOrder = vsmeB329Metric.responseData.originalColumnOrder
+    } else if (vsmeB329Metric.responseData.tabularData && vsmeB329Metric.responseData.tabularData.length > 0) {
+      originalColumnOrder = Object.keys(vsmeB329Metric.responseData.tabularData[0])
+    }
+
+    const tableData = vsmeB329Metric.responseData.tabularData || vsmeB329Metric.responseData
+
+    charts.push({
+      title: "VSME B3.29 - Energy Consumption Data",
+      description: "Table showing detailed energy consumption metrics",
+      chartType: "Table",
+      data: tableData,
+      originalColumnOrder: originalColumnOrder,
+      insights: [
+        "Detailed breakdown of energy consumption by source",
+        "Values presented in standardized units for comparison"
+      ]
+    })
+  }
+
+  // 2. Bar chart for GHG Emissions (Scope 1, 2, 3)
+  const ghgMetrics = [
+    metrics.find(m => m.novataReference === 'VSME.B3.30.a'),
+    metrics.find(m => m.novataReference === 'VSME.B3.30.b'),
+    metrics.find(m => m.novataReference === 'VSME.C2.50')
+  ].filter(Boolean)
+
+  if (ghgMetrics.length > 0) {
+    let chartData = []
+    let totalEmissions = 0
+
+    ghgMetrics.forEach(metric => {
+      if (metric.response) {
+        const value = parseFloat(metric.response)
+        if (value > 0) {
+          let scope = 'Unknown'
+          if (metric.novataReference === 'VSME.B3.30.a') scope = 'Scope 1'
+          else if (metric.novataReference === 'VSME.B3.30.b') scope = 'Scope 2'
+          else if (metric.novataReference === 'VSME.C2.50') scope = 'Scope 3'
+
+          chartData.push({
+            category: scope,
+            value: value,
+            unit: 'tCO2e'
+          })
+          totalEmissions += value
+        }
+      }
+    })
+
+    if (chartData.length > 0) {
+      charts.push({
+        title: "Green House Gas Emissions (Scope 1, 2, 3)",
+        description: `Bar chart showing GHG emissions by scope with total of ${totalEmissions.toFixed(2)} tCO2e`,
+        chartType: "BarChart",
+        data: chartData,
+        insights: [
+          `Total GHG emissions: ${totalEmissions.toFixed(2)} tCO2e`,
+          "Comparison across different emission scopes",
+          "Values displayed in tonnes of CO2 equivalent"
+        ]
+      })
+    }
+  }
+
+  // 3. Table showing Scope 1, 2, and 3 with units
+  if (ghgMetrics.length > 0) {
+    const scopeTableData = ghgMetrics.map(metric => {
+      let scope = 'Unknown'
+      if (metric.novataReference === 'VSME.B3.30.a') scope = 'Scope 1'
+      else if (metric.novataReference === 'VSME.B3.30.b') scope = 'Scope 2'
+      else if (metric.novataReference === 'VSME.C2.50') scope = 'Scope 3'
+
+      return {
+        'Emission Scope': scope,
+        'Value': metric.response || '0',
+        'Unit': 'tCO2e',
+        'Description': metric.metric || ''
+      }
+    })
+
+    charts.push({
+      title: "GHG Emissions Summary Table",
+      description: "Summary table of Scope 1, 2, and 3 emissions with units",
+      chartType: "Table",
+      data: scopeTableData,
+      originalColumnOrder: ['Emission Scope', 'Value', 'Unit', 'Description'],
+      insights: [
+        "Structured overview of all emission scopes",
+        "Standardized units for regulatory compliance",
+        "Clear categorization of emission sources"
+      ]
+    })
+  }
+
+  if (charts.length === 0) {
     return new Response(
       JSON.stringify({
         hasCharts: false,
-        message: `No energy data available for stacked bar chart visualization in ${disclosureTitle}`
+        message: `No data available for B3 graphics visualization in ${disclosureTitle}`
       }),
       {
-        headers: { 'Access-Control-Allow-Origin': '*', 'Content-Type': 'application/json' },
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       },
     )
   }
 
-  // Process energy data for stacked bar chart
-  let chartData = []
-  let totalMWh = 0
-
-  energyMetrics.forEach(metric => {
-    if (metric.responseData && Array.isArray(metric.responseData)) {
-      metric.responseData.forEach(item => {
-        const energyValue = parseFloat(item.consumption || item.amount || item.value || '0')
-        const energyType = item.type || item.category || item['Energy Type'] || 'Unknown'
-        
-        if (energyValue > 0) {
-          chartData.push({
-            category: energyType,
-            value: energyValue,
-            unit: 'MWh'
-          })
-          totalMWh += energyValue
-        }
-      })
-    } else if (metric.response && metric.unit?.toLowerCase().includes('mwh')) {
-      const value = parseFloat(metric.response)
-      if (value > 0) {
-        chartData.push({
-          category: metric.metric,
-          value: value,
-          unit: 'MWh'
-        })
-        totalMWh += value
-      }
-    }
-  })
-
   const response = {
     hasCharts: true,
-    charts: [{
-      title: "B3 - Energy Consumption Breakdown",
-      description: `Stacked bar chart showing energy consumption by source with total of ${totalMWh.toFixed(2)} MWh`,
-      chartType: "StackedBarChart",
-      data: chartData,
-      insights: [
-        `Total energy consumption: ${totalMWh.toFixed(2)} MWh`,
-        "Stacked visualization shows contribution of each energy source",
-        "Values displayed in MWh for regulatory compliance"
-      ]
-    }],
-    contextualAnalysis: `This stacked bar chart presents the organization's energy consumption data for B3 disclosure requirements, showing a total consumption of ${totalMWh.toFixed(2)} MWh across different energy sources.`
+    charts: charts,
+    contextualAnalysis: `This visualization package for B3 includes ${charts.length} graphics covering energy consumption and greenhouse gas emissions data across different scopes and categories.`
   }
 
   return new Response(
     JSON.stringify(response),
     {
-      headers: { 'Access-Control-Allow-Origin': '*', 'Content-Type': 'application/json' },
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     },
   )
 }
