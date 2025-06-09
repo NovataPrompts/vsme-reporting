@@ -1,3 +1,4 @@
+
 import { Button } from "@/components/ui/button";
 import { ChevronRight, RefreshCw, Check } from "lucide-react";
 import { useToast } from "@/components/ui/use-toast";
@@ -83,6 +84,9 @@ const Import = () => {
       localStorage.setItem('metricsLastUpdated', new Date().toISOString());
       setIsSynced(true);
       
+      // Fetch import counts after successful sync
+      await fetchImportCounts();
+      
       toast({
         title: "Data Synced Successfully",
         description: "Your sustainability metrics data has been updated from the API.",
@@ -165,12 +169,22 @@ const Import = () => {
                   <h3 className="text-xl font-semibold mb-4">
                     {isSynced ? "Data Synced Successfully" : "Ready to Sync Data"}
                   </h3>
-                  <p className="text-gray-600 dark:text-gray-300 text-center mb-8 max-w-md">
+                  <p className="text-gray-600 dark:text-gray-300 text-center mb-4 max-w-md">
                     {isSynced 
                       ? "Your sustainability metrics data has been successfully synced from the API."
                       : "Click the button below to fetch the latest sustainability metrics data from your connected data source."
                     }
                   </p>
+                  
+                  {/* Display import counts under the success message */}
+                  {isSynced && (importedMetricsCount > 0 || importedTabularCount > 0) && (
+                    <div className="mb-6 text-center">
+                      <p className="text-sm text-gray-600 dark:text-gray-300">
+                        You have successfully imported <span className="font-semibold text-green-600">{importedMetricsCount} metrics</span> and <span className="font-semibold text-green-600">{importedTabularCount} tabular metrics</span>.
+                      </p>
+                    </div>
+                  )}
+                  
                   {!isSynced && (
                     <Button 
                       onClick={handleSyncData}
