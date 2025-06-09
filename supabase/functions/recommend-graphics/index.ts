@@ -236,17 +236,19 @@ function handleB3Graphics(metrics: any[], disclosureTitle: string, allMetrics: a
           unit: 'MWh'
         }))
 
-        charts.push({
-          title: "Energy Consumption by Source Type",
-          description: "Pie chart showing the breakdown between electricity and fuel consumption",
-          chartType: "PieChart",
-          data: pieChartData,
-          insights: [
-            "Visual comparison of electricity vs fuel consumption",
-            "Shows relative proportion of each energy source",
-            "Helps identify primary energy consumption patterns"
-          ]
-        })
+        if (pieChartData.length > 0) {
+          charts.push({
+            title: "Energy Consumption by Source Type",
+            description: "Pie chart showing the breakdown between electricity and fuel consumption",
+            chartType: "PieChart",
+            data: pieChartData,
+            insights: [
+              "Visual comparison of electricity vs fuel consumption",
+              "Shows relative proportion of each energy source",
+              "Helps identify primary energy consumption patterns"
+            ]
+          })
+        }
 
         // 3. Stacked Bar Chart - Renewable vs Non-renewable by type
         const stackedBarData = dataRowsOnly.map(item => {
@@ -261,17 +263,19 @@ function handleB3Graphics(metrics: any[], disclosureTitle: string, allMetrics: a
           }
         })
 
-        charts.push({
-          title: "Renewable vs Non-Renewable Energy by Source",
-          description: "Stacked bar chart showing renewable and non-renewable energy breakdown by electricity and fuel",
-          chartType: "StackedBarChart",
-          data: stackedBarData,
-          insights: [
-            "Compares renewable vs non-renewable energy across source types",
-            "Shows sustainability performance by energy category",
-            "Identifies opportunities for increasing renewable energy use"
-          ]
-        })
+        if (stackedBarData.length > 0) {
+          charts.push({
+            title: "Renewable vs Non-Renewable Energy by Source",
+            description: "Stacked bar chart showing renewable and non-renewable energy breakdown by electricity and fuel",
+            chartType: "StackedBarChart",
+            data: stackedBarData,
+            insights: [
+              "Compares renewable vs non-renewable energy across source types",
+              "Shows sustainability performance by energy category",
+              "Identifies opportunities for increasing renewable energy use"
+            ]
+          })
+        }
 
         // 4. Pie Chart - Overall Renewable vs Non-renewable
         let totalRenewable = 0
@@ -282,30 +286,32 @@ function handleB3Graphics(metrics: any[], disclosureTitle: string, allMetrics: a
           totalNonRenewable += parseFloat(item['Non-renewable (MWh)'] || item['nonrenewable'] || item['non_renewable'] || '0')
         })
 
-        const renewablePieData = [
-          {
-            category: 'Renewable',
-            value: totalRenewable,
-            unit: 'MWh'
-          },
-          {
-            category: 'Non-renewable',
-            value: totalNonRenewable,
-            unit: 'MWh'
-          }
-        ]
-
-        charts.push({
-          title: "Overall Renewable vs Non-Renewable Energy",
-          description: `Pie chart showing the overall breakdown of renewable (${totalRenewable.toFixed(1)} MWh) vs non-renewable (${totalNonRenewable.toFixed(1)} MWh) energy`,
-          chartType: "PieChart",
-          data: renewablePieData,
-          insights: [
-            `${((totalRenewable / (totalRenewable + totalNonRenewable)) * 100).toFixed(1)}% of total energy consumption is renewable`,
-            "Overall sustainability performance indicator",
-            "Key metric for environmental impact assessment"
+        if (totalRenewable > 0 || totalNonRenewable > 0) {
+          const renewablePieData = [
+            {
+              category: 'Renewable',
+              value: totalRenewable,
+              unit: 'MWh'
+            },
+            {
+              category: 'Non-renewable',
+              value: totalNonRenewable,
+              unit: 'MWh'
+            }
           ]
-        })
+
+          charts.push({
+            title: "Overall Renewable vs Non-Renewable Energy",
+            description: `Pie chart showing the overall breakdown of renewable (${totalRenewable.toFixed(1)} MWh) vs non-renewable (${totalNonRenewable.toFixed(1)} MWh) energy`,
+            chartType: "PieChart",
+            data: renewablePieData,
+            insights: [
+              `${((totalRenewable / (totalRenewable + totalNonRenewable)) * 100).toFixed(1)}% of total energy consumption is renewable`,
+              "Overall sustainability performance indicator",
+              "Key metric for environmental impact assessment"
+            ]
+          })
+        }
       } else {
         // Fallback: just show the table without percentage calculation
         charts.push({
