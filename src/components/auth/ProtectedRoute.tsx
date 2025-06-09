@@ -2,6 +2,8 @@
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { AuthForm } from "./AuthForm";
+import { CompanyProfileForm } from "./CompanyProfileForm";
+import { useCompanyProfile } from "@/hooks/useCompanyProfile";
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
@@ -10,6 +12,9 @@ interface ProtectedRouteProps {
 export const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [hasCompanyProfile, setHasCompanyProfile] = useState(false);
+  const [checkingProfile, setCheckingProfile] = useState(true);
+  const { getCompanyProfile } = useCompanyProfile();
 
   useEffect(() => {
     // Get initial session
@@ -29,7 +34,28 @@ export const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
     return () => subscription.unsubscribe();
   }, []);
 
-  if (loading) {
+  useEffect(() => {
+    const checkCompanyProfile = async () => {
+      if (user) {
+        setCheckingProfile(true);
+        const profile = await getCompanyProfile();
+        setHasCompanyProfile(!!profile);
+        setCheckingProfile(false);
+      } else {
+        setCheckingProfile(false);
+      }
+    };
+
+    if (!loading) {
+      checkCompanyProfile();
+    }
+  }, [user, loading, getCompanyProfile]);
+
+  const handleProfileComplete = () => {
+    setHasCompanyProfile(true);
+  };
+
+  if (loading || checkingProfile) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-lg">Loading...</div>
@@ -43,6 +69,10 @@ export const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
         <AuthForm />
       </div>
     );
+  }
+
+  if (!hasCompanyProfile) {
+    return <CompanyProfileForm onComplete={handleProfileComplete} />;
   }
 
   return <>{children}</>;

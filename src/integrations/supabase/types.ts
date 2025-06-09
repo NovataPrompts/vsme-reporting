@@ -9,6 +9,54 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      company_profiles: {
+        Row: {
+          company_description: string | null
+          company_structure: string | null
+          country_of_domicile: string
+          created_at: string
+          dba_name: string | null
+          fiscal_year_end: string | null
+          id: string
+          name: string
+          primary_currency: string
+          updated_at: string
+          user_id: string
+          website: string | null
+          year_of_incorporation: number | null
+        }
+        Insert: {
+          company_description?: string | null
+          company_structure?: string | null
+          country_of_domicile: string
+          created_at?: string
+          dba_name?: string | null
+          fiscal_year_end?: string | null
+          id?: string
+          name: string
+          primary_currency?: string
+          updated_at?: string
+          user_id: string
+          website?: string | null
+          year_of_incorporation?: number | null
+        }
+        Update: {
+          company_description?: string | null
+          company_structure?: string | null
+          country_of_domicile?: string
+          created_at?: string
+          dba_name?: string | null
+          fiscal_year_end?: string | null
+          id?: string
+          name?: string
+          primary_currency?: string
+          updated_at?: string
+          user_id?: string
+          website?: string | null
+          year_of_incorporation?: number | null
+        }
+        Relationships: []
+      }
       consol: {
         Row: {
           created_at: string
