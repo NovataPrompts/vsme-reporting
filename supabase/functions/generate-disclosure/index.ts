@@ -1,3 +1,4 @@
+
 import { serve } from 'https://deno.land/std@0.168.0/http/server.ts'
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
 
@@ -86,13 +87,19 @@ Once the necessary data is available, this disclosure response can be generated 
         return 'No detailed data available';
       }
 
-      if (Array.isArray(responseData)) {
-        if (responseData.length === 0) {
+      // Handle nested tabular data structure
+      let dataToProcess = responseData;
+      if (responseData.tabularData && Array.isArray(responseData.tabularData)) {
+        dataToProcess = responseData.tabularData;
+      }
+
+      if (Array.isArray(dataToProcess)) {
+        if (dataToProcess.length === 0) {
           return 'No entries found in the data';
         }
 
         // Enhanced synthesis for different data types
-        const synthesizedItems = responseData.map((item, index) => {
+        const synthesizedItems = dataToProcess.map((item, index) => {
           if (typeof item === 'object' && item !== null) {
             const entries = Object.entries(item).filter(([key, value]) => 
               value !== null && value !== undefined && value !== ''
@@ -115,16 +122,38 @@ Once the necessary data is available, this disclosure response can be generated 
         }
 
         // Determine the type of data and create appropriate professional sentences
-        const firstItem = responseData[0];
+        const firstItem = dataToProcess[0];
         if (firstItem && typeof firstItem === 'object') {
           const keys = Object.keys(firstItem).map(k => k.toLowerCase());
+          
+          // Enhanced energy consumption detection and processing for B3
+          if (keys.some(k => k.includes('energy') || k.includes('fuel') || k.includes('electricity') || k.includes('consumption') || k.includes('kwh') || k.includes('mwh'))) {
+            console.log('Processing energy data for B3:', dataToProcess);
+            
+            let totalConsumption = 0;
+            const energyBreakdown = dataToProcess.map(item => {
+              const energyType = item['Energy Type'] || item['Type'] || item.type || item.category || item.source || 'energy source';
+              const consumption = parseFloat(item['Consumption'] || item.consumption || item.amount || item.value || '0');
+              const unit = item['Unit'] || item.unit || 'MWh';
+              
+              if (consumption > 0) {
+                totalConsumption += consumption;
+                return `${consumption.toFixed(2)} ${unit} from ${String(energyType).toLowerCase()}`;
+              }
+              return null;
+            }).filter(item => item !== null);
+            
+            if (energyBreakdown.length > 0) {
+              return `The organization's total energy consumption is ${totalConsumption.toFixed(2)} MWh, with the following breakdown: ${energyBreakdown.join(', ')}.`;
+            }
+          }
           
           // Enhanced gender/workforce composition detection and processing
           if (keys.some(k => k.includes('gender') || k.includes('sex')) || 
               keys.some(k => k.includes('male') || k.includes('female'))) {
             
             // Handle different data structures for gender data
-            let genderData = responseData;
+            let genderData = dataToProcess;
             
             // Filter out rows with no meaningful data (empty employee counts)
             genderData = genderData.filter(item => {
@@ -169,20 +198,9 @@ Once the necessary data is available, this disclosure response can be generated 
             return 'Gender composition data is available but requires further specification of employee counts.';
           }
           
-          // Energy consumption data
-          if (keys.some(k => k.includes('energy') || k.includes('fuel') || k.includes('electricity'))) {
-            const energyItems = responseData.map(item => {
-              const type = item['Energy Type'] || item.type || item.category || 'energy source';
-              const consumption = item['Consumption'] || item.consumption || item.amount || item.value;
-              const unit = item['Unit'] || item.unit || 'units';
-              return `${consumption} ${unit} from ${type.toLowerCase()}`;
-            });
-            return `Energy consumption breakdown includes ${energyItems.join(', ')}.`;
-          }
-          
           // Location/subsidiary data
           if (keys.some(k => k.includes('subsidiary') || k.includes('entity') || k.includes('company') || k.includes('location'))) {
-            const locationItems = responseData.map(item => {
+            const locationItems = dataToProcess.map(item => {
               const name = item.subsidiary || item.entity || item.company || item.name;
               const location = item.location || item.address || item.city || item.country;
               if (name && location) {
@@ -196,14 +214,14 @@ Once the necessary data is available, this disclosure response can be generated 
             }).filter(item => item !== 'unnamed entity');
             
             if (locationItems.length > 0) {
-              const entityWord = responseData.length === 1 ? 'subsidiary' : 'subsidiaries';
-              return `The organization operates through ${responseData.length} ${entityWord}: ${locationItems.join(', ')}.`;
+              const entityWord = dataToProcess.length === 1 ? 'subsidiary' : 'subsidiaries';
+              return `The organization operates through ${dataToProcess.length} ${entityWord}: ${locationItems.join(', ')}.`;
             }
           }
           
           // Emissions data
           if (keys.some(k => k.includes('emission') || k.includes('co2') || k.includes('carbon'))) {
-            const emissionItems = responseData.map(item => {
+            const emissionItems = dataToProcess.map(item => {
               const scope = item.scope || item.category || item.type;
               const amount = item.emissions || item.amount || item.value;
               const unit = item.unit || 'tCO2e';
@@ -214,7 +232,7 @@ Once the necessary data is available, this disclosure response can be generated 
           
           // Health and safety data
           if (keys.some(k => k.includes('accident') || k.includes('injury') || k.includes('incident') || k.includes('safety'))) {
-            const safetyItems = responseData.map(item => {
+            const safetyItems = dataToProcess.map(item => {
               const type = item.type || item.category || item.incident_type || 'safety incident';
               const count = item.count || item.number || item.incidents || item.accidents || '0';
               return `${count} ${type.toLowerCase()}${parseInt(count) !== 1 ? 's' : ''}`;
@@ -235,7 +253,7 @@ Once the necessary data is available, this disclosure response can be generated 
       }
 
       // For non-array objects, convert to readable format
-      const entries = Object.entries(responseData).filter(([key, value]) => 
+      const entries = Object.entries(dataToProcess).filter(([key, value]) => 
         value !== null && value !== undefined && value !== ''
       );
       
@@ -258,7 +276,9 @@ Once the necessary data is available, this disclosure response can be generated 
 
       // If there's tabular data, synthesize it into professional prose
       if (metric.responseData) {
+        console.log(`Processing responseData for metric ${metric.metric}:`, metric.responseData);
         synthesizedData = synthesizeTabularData(metric.responseData);
+        console.log(`Synthesized data: ${synthesizedData}`);
       }
 
       return {
@@ -314,6 +334,15 @@ CRITICAL INSTRUCTIONS:
 10. For B1 disclosures, incorporate the company profile information to provide context about the organization's basis for preparation
 11. Use the company structure, domicile, and other profile details to frame the sustainability reporting approach
 12. Reference the company name, structure, and geographical scope when describing the reporting basis`;
+    }
+
+    // Special instructions for B3 disclosure
+    if (disclosureId === 'B3') {
+      prompt += `
+10. For B3 disclosures, pay special attention to energy consumption data and ensure all tabular energy metrics are fully incorporated
+11. Present energy consumption figures with specific values, units, and breakdowns by energy type
+12. Calculate and present total energy consumption figures where applicable
+13. Include all energy-related data points from the synthesized tabular data`;
     }
 
     prompt += `
