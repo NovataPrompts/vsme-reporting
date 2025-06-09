@@ -1,4 +1,3 @@
-
 import { serve } from 'https://deno.land/std@0.168.0/http/server.ts'
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
 
@@ -48,6 +47,23 @@ serve(async (req) => {
       }
     }
 
+    // For B2 disclosures, fetch tabular data for VSME.B2.26
+    let b2TabularData = null
+    if (disclosureId === 'B2') {
+      const { data: tabularData, error: tabularError } = await supabase
+        .from('tabular_data')
+        .select('*')
+        .eq('novata_reference', 'VSME.B2.26')
+        .maybeSingle()
+
+      if (tabularError) {
+        console.error('Error fetching B2 tabular data:', tabularError)
+      } else {
+        b2TabularData = tabularData
+        console.log('Fetched B2 tabular data:', b2TabularData)
+      }
+    }
+
     // Double-check that all metrics belong to the specified disclosure
     const validMetrics = metrics.filter((metric: any) => 
       metric.disclosure === disclosureId && (metric.response || metric.responseData)
@@ -57,11 +73,12 @@ serve(async (req) => {
       receivedMetrics: metrics.length,
       validMetrics: validMetrics.length,
       disclosureId,
-      hasCompanyProfile: !!companyProfile
+      hasCompanyProfile: !!companyProfile,
+      hasB2TabularData: !!b2TabularData
     });
 
-    // If no valid metrics, return a message indicating data collection is needed
-    if (validMetrics.length === 0 && !companyProfile) {
+    // If no valid metrics and no special data, return a message indicating data collection is needed
+    if (validMetrics.length === 0 && !companyProfile && !b2TabularData) {
       const noDataResponse = `Disclosure ${disclosureId}: ${disclosureTitle}
 
 This disclosure requires specific data collection and metrics to provide a comprehensive response. Currently, no relevant data has been provided for this disclosure section.
@@ -269,6 +286,42 @@ Once the necessary data is available, this disclosure response can be generated 
       return `Data shows ${description}.`;
     };
 
+    // Special handling for B2 disclosure with VSME.B2.26 tabular data
+    const synthesizeB2PolicyData = (tabularData: any): string => {
+      if (!tabularData || !tabularData.data || !Array.isArray(tabularData.data)) {
+        return 'No policy data available';
+      }
+
+      console.log('Processing B2 policy data:', tabularData.data);
+
+      const policyData = tabularData.data;
+      const areasWithPolicies: string[] = [];
+      const areasWithTargets: string[] = [];
+      const areasWithoutPolicies: string[] = [];
+      
+      policyData.forEach((item: any) => {
+        const area = item['Sustainability area'] || item['Area'] || item.area || 'Unknown area';
+        const hasPolicy = item['Publicly available policies'] || item['Policy'] || item.policy;
+        const hasTarget = item['Targets established'] || item['Target'] || item.target;
+        
+        if (hasPolicy && (hasPolicy.toLowerCase() === 'yes' || hasPolicy.toLowerCase() === 'true' || hasPolicy === true)) {
+          areasWithPolicies.push(area.toLowerCase());
+        } else {
+          areasWithoutPolicies.push(area.toLowerCase());
+        }
+        
+        if (hasTarget && (hasTarget.toLowerCase() === 'yes' || hasTarget.toLowerCase() === 'true' || hasTarget === true)) {
+          areasWithTargets.push(area.toLowerCase());
+        }
+      });
+
+      return {
+        areasWithPolicies,
+        areasWithTargets,
+        areasWithoutPolicies
+      };
+    };
+
     // Prepare metrics data for the prompt with enhanced tabular data synthesis
     const metricsData = validMetrics.map((metric: any) => {
       let processedResponse = metric.response;
@@ -308,6 +361,18 @@ Company Profile Information:
 `;
     }
 
+    // Create B2 policy context
+    let b2PolicyContext = '';
+    if (disclosureId === 'B2' && b2TabularData) {
+      const policyAnalysis = synthesizeB2PolicyData(b2TabularData);
+      b2PolicyContext = `
+B2 Policy Data from VSME.B2.26:
+- Areas with publicly available policies: ${policyAnalysis.areasWithPolicies.join(', ')}
+- Areas with established targets: ${policyAnalysis.areasWithTargets.join(', ')}
+- Areas without policies: ${policyAnalysis.areasWithoutPolicies.join(', ')}
+`;
+    }
+
     let prompt = `You are a sustainability reporting expert tasked with creating a professional disclosure response for ${disclosureTitle}.
 
 Disclosure Context:
@@ -316,6 +381,7 @@ Disclosure Context:
 - Description: ${disclosureDescription}
 
 ${companyProfileContext}
+${b2PolicyContext}
 
 CRITICAL INSTRUCTIONS:
 1. ONLY use the specific data provided below from disclosure ${disclosureId}
@@ -334,6 +400,17 @@ CRITICAL INSTRUCTIONS:
 10. For B1 disclosures, incorporate the company profile information to provide context about the organization's basis for preparation
 11. Use the company structure, domicile, and other profile details to frame the sustainability reporting approach
 12. Reference the company name, structure, and geographical scope when describing the reporting basis`;
+    }
+
+    // Special instructions for B2 disclosure
+    if (disclosureId === 'B2') {
+      prompt += `
+10. For B2 disclosures, use the following template structure and incorporate the policy data from VSME.B2.26:
+    "{Company} has publicly available policies related to [list areas with policies]. Targets have been established for [list areas with targets]. For those areas without policies, {company} has existing practices and policies related to [list areas without policies] that will be addressed in the future."
+11. Replace {Company} with the actual company name if available from the company profile, otherwise use "The organization"
+12. Only mention areas that are specifically identified in the B2 policy data
+13. If no policy data is available, focus on the other metrics provided for this disclosure
+14. Present the policy information in a flowing, professional narrative rather than as a template`;
     }
 
     // Special instructions for B3 disclosure
