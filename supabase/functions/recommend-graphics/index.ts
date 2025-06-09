@@ -390,8 +390,8 @@ function handleB3Graphics(metrics: any[], disclosureTitle: string, allMetrics: a
 
     if (chartData.length > 0) {
       charts.push({
-        title: "Green House Gas Emissions (Scope 1, 2, 3)",
-        description: `Bar chart showing GHG emissions by scope with total of ${totalEmissions.toFixed(2)} tCO2e`,
+        title: "GHG Emissions by Scope",
+        description: `Bar chart showing GHG emissions by scope with total of ${totalEmissions.toFixed(2)} tCO2e (VSME B3.30.a, VSME B3.30.b, VSME C2.50)`,
         chartType: "BarChart",
         data: chartData,
         insights: [
@@ -403,10 +403,11 @@ function handleB3Graphics(metrics: any[], disclosureTitle: string, allMetrics: a
     }
   }
 
-  // 6. Table showing Scope 1, 2, and 3 with units
+  // 6. Summary table showing Scope 1, 2, and 3 with units
   if (ghgMetrics.length > 0) {
     const scopeTableData = ghgMetrics.map(metric => {
       let scope = 'Unknown'
+      let metricRef = metric.novataReference
       if (metric.novataReference === 'VSME.B3.30.a') scope = 'Scope 1'
       else if (metric.novataReference === 'VSME.B3.30.b') scope = 'Scope 2'
       else if (metric.novataReference === 'VSME.C2.50') scope = 'Scope 3'
@@ -415,20 +416,21 @@ function handleB3Graphics(metrics: any[], disclosureTitle: string, allMetrics: a
         'Emission Scope': scope,
         'Value': metric.response || '0',
         'Unit': 'tCO2e',
+        'Metric Reference': metricRef,
         'Description': metric.metric || ''
       }
     })
 
     charts.push({
       title: "GHG Emissions Summary Table",
-      description: "Summary table of Scope 1, 2, and 3 emissions with units",
+      description: "Summary table of Scope 1, 2, and 3 emissions with units (VSME B3.30.a, VSME B3.30.b, VSME C2.50)",
       chartType: "Table",
       data: scopeTableData,
-      originalColumnOrder: ['Emission Scope', 'Value', 'Unit', 'Description'],
+      originalColumnOrder: ['Emission Scope', 'Value', 'Unit', 'Metric Reference', 'Description'],
       insights: [
         "Structured overview of all emission scopes",
         "Standardized units for regulatory compliance",
-        "Clear categorization of emission sources"
+        "Clear categorization of emission sources with metric references"
       ]
     })
   }
