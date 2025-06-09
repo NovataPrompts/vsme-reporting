@@ -8,7 +8,7 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { CalendarIcon } from "lucide-react";
+import { CalendarIcon, Info } from "lucide-react";
 import { format, parseISO } from "date-fns";
 import { cn } from "@/lib/utils";
 import { useCompanyProfile } from '@/hooks/useCompanyProfile';
@@ -25,6 +25,7 @@ export const CompanyProfileModal = ({ isOpen, onComplete, onClose }: CompanyProf
   const { toast } = useToast();
   const [fiscalYearEnd, setFiscalYearEnd] = useState<Date>();
   const [isLoadingProfile, setIsLoadingProfile] = useState(false);
+  const [isPrefilledFromOrg, setIsPrefilledFromOrg] = useState(false);
   
   const { register, handleSubmit, setValue, watch, reset, formState: { errors } } = useForm<{
     name: string;
@@ -45,10 +46,21 @@ export const CompanyProfileModal = ({ isOpen, onComplete, onClose }: CompanyProf
     if (isOpen) {
       const loadProfile = async () => {
         setIsLoadingProfile(true);
+        setIsPrefilledFromOrg(false);
         try {
           const profile = await getCompanyProfile();
           if (profile) {
             console.log('Loaded profile data:', profile);
+            
+            // Check if this is from organization (no user_id or different user_id)
+            const { data: currentUser } = await supabase.auth.getUser();
+            if (profile.user_id !== currentUser.user?.id) {
+              setIsPrefilledFromOrg(true);
+              toast({
+                title: "Profile Pre-filled",
+                description: "Company information has been pre-filled from your organization. You can modify it as needed.",
+              });
+            }
             
             // Set form values
             setValue('name', profile.name || '');
@@ -77,8 +89,9 @@ export const CompanyProfileModal = ({ isOpen, onComplete, onClose }: CompanyProf
       // Reset form when modal closes
       reset();
       setFiscalYearEnd(undefined);
+      setIsPrefilledFromOrg(false);
     }
-  }, [isOpen, getCompanyProfile, setValue, reset]);
+  }, [isOpen, getCompanyProfile, setValue, reset, toast]);
 
   const currentYear = new Date().getFullYear();
   const years = Array.from({ length: 50 }, (_, i) => currentYear - i);
@@ -139,6 +152,14 @@ export const CompanyProfileModal = ({ isOpen, onComplete, onClose }: CompanyProf
         <DialogHeader>
           <DialogTitle className="text-2xl text-center">Company Profile Setup</DialogTitle>
           <p className="text-center text-gray-600">Please provide your company information to get started</p>
+          {isPrefilledFromOrg && (
+            <div className="flex items-center gap-2 p-3 bg-blue-50 rounded-lg border border-blue-200 mt-2">
+              <Info className="h-4 w-4 text-blue-600 flex-shrink-0" />
+              <p className="text-sm text-blue-800">
+                This form has been pre-filled with your organization's company information. You can modify any fields as needed.
+              </p>
+            </div>
+          )}
         </DialogHeader>
         
         {isLoadingProfile ? (

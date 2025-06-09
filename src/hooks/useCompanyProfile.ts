@@ -24,18 +24,68 @@ export const useCompanyProfile = () => {
   const getCompanyProfile = useCallback(async () => {
     try {
       console.log('Fetching company profile...');
-      const { data, error } = await supabase
+      
+      // First try to get the user's own profile
+      let { data, error } = await supabase
         .from('company_profiles')
         .select('*')
+        .eq('user_id', (await supabase.auth.getUser()).data.user?.id)
         .maybeSingle();
 
       if (error) {
-        console.error('Error fetching company profile:', error);
+        console.error('Error fetching user company profile:', error);
         throw error;
       }
+
+      // If user has their own profile, return it
+      if (data) {
+        console.log('Found user company profile:', data);
+        return data;
+      }
+
+      // If no personal profile, check for organization profile
+      console.log('No personal profile found, checking for organization profile...');
       
-      console.log('Company profile data:', data);
-      return data;
+      // Get user's organization
+      const { data: userOrg, error: orgError } = await supabase
+        .from('user_organizations')
+        .select('organization_id')
+        .eq('user_id', (await supabase.auth.getUser()).data.user?.id)
+        .maybeSingle();
+
+      if (orgError) {
+        console.error('Error fetching user organization:', orgError);
+        return null;
+      }
+
+      if (!userOrg?.organization_id) {
+        console.log('User has no organization');
+        return null;
+      }
+
+      // Look for any company profile in the same organization
+      const { data: orgProfile, error: orgProfileError } = await supabase
+        .from('company_profiles')
+        .select('*')
+        .eq('organization_id', userOrg.organization_id)
+        .maybeSingle();
+
+      if (orgProfileError) {
+        console.error('Error fetching organization company profile:', orgProfileError);
+        return null;
+      }
+
+      if (orgProfile) {
+        console.log('Found organization company profile:', orgProfile);
+        return {
+          ...orgProfile,
+          id: undefined, // Remove ID so it creates a new record for this user
+          user_id: undefined // Will be set when saving
+        };
+      }
+
+      console.log('No company profile found');
+      return null;
     } catch (error) {
       console.error('Error loading company profile:', error);
       return null;
