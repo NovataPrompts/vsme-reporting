@@ -54,13 +54,18 @@ export const ChartRenderer = ({ chartType, data, title, description, originalCol
     let columns: string[];
     
     if (originalColumnOrder && originalColumnOrder.length > 0) {
-      // Use the preserved column order from Excel - filter out any empty columns
+      // Use the preserved column order - filter out any empty columns
       columns = originalColumnOrder.filter(col => col && col.trim() !== '');
+      console.log('Using original column order:', columns);
     } else {
       // Fallback to existing logic for data that doesn't have preserved order
       const allKeys = Array.from(new Set(data.flatMap(item => Object.keys(item))));
       columns = allKeys.filter(key => key.trim() !== '');
+      console.log('Using fallback column order:', columns);
     }
+
+    console.log('Table data sample:', data[0]);
+    console.log('Available columns in data:', Object.keys(data[0] || {}));
 
     return (
       <div className="w-full">
@@ -135,6 +140,34 @@ export const ChartRenderer = ({ chartType, data, title, description, originalCol
                 fill={colors[index % colors.length]} 
               />
             ))}
+          </BarChart>
+        </ResponsiveContainer>
+      </div>
+    );
+  }
+
+  if (chartType === "BarChart") {
+    if (!data || data.length === 0) {
+      return (
+        <div className="w-full text-center p-8">
+          <p className="text-muted-foreground">No data available for chart visualization</p>
+        </div>
+      );
+    }
+
+    return (
+      <div className="w-full">
+        <div className="mb-4">
+          <h3 className="text-lg font-semibold">{title}</h3>
+          <p className="text-sm text-muted-foreground">{description}</p>
+        </div>
+        <ResponsiveContainer width="100%" height={400}>
+          <BarChart data={data} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
+            <CartesianGrid strokeDasharray="3 3" />
+            <XAxis dataKey="category" />
+            <YAxis label={{ value: `Value (${data[0]?.unit || ''})`, angle: -90, position: 'insideLeft' }} />
+            <Tooltip formatter={(value, name) => [`${value} ${data[0]?.unit || ''}`, name]} />
+            <Bar dataKey="value" fill="#8884d8" />
           </BarChart>
         </ResponsiveContainer>
       </div>
