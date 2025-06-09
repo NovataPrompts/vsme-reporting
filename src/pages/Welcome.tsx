@@ -1,8 +1,7 @@
-
 import React, { useState, useEffect } from 'react';
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { FileText, BarChart3, RefreshCw, Building, FileSpreadsheet } from "lucide-react";
+import { FileText, BarChart3, RefreshCw, Building, SquarePen } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { CompanyProfileModal } from "@/components/auth/CompanyProfileModal";
 import { useCompanyProfile } from '@/hooks/useCompanyProfile';
@@ -107,7 +106,7 @@ const Welcome = () => {
             <Card className="border-2 border-[#077bc0]/20 hover:border-[#077bc0]/80 transition-all duration-300 group">
               <div className="p-6 flex flex-col items-center text-center h-full">
                 <div className="bg-[#077bc0]/20 p-4 rounded-full mb-4 group-hover:bg-[#077bc0]/30 transition-all duration-300">
-                  <FileSpreadsheet className="h-8 w-8 text-[#077bc0]" />
+                  <SquarePen className="h-8 w-8 text-[#077bc0]" />
                 </div>
                 <h2 className="text-2xl font-bold mb-2">Step 3</h2>
                 <h3 className="text-xl font-semibold mb-4">Prepare Disclosure</h3>
