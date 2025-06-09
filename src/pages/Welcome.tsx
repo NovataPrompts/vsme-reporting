@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { FileText, BarChart3, RefreshCw, Building } from "lucide-react";
+import { FileText, BarChart3, RefreshCw, Building, FileSpreadsheet } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { CompanyProfileModal } from "@/components/auth/CompanyProfileModal";
 import { useCompanyProfile } from '@/hooks/useCompanyProfile';
@@ -55,7 +55,7 @@ const Welcome = () => {
             <div className="flex items-center justify-between">
               <div>
                 <h1 className="text-2xl font-bold mb-2">Welcome to VSME Sustainability Reporting</h1>
-                <p className="text-base text-gray-600 dark:text-gray-300 max-w-2xl">Complete these three steps to create your VSME report.</p>
+                <p className="text-base text-gray-600 dark:text-gray-300 max-w-2xl">Complete these four steps to create your VSME report.</p>
               </div>
               {hasCompanyProfile && (
                 <Button
@@ -70,7 +70,7 @@ const Welcome = () => {
             </div>
           </div>
           
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl mx-auto">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 max-w-7xl mx-auto">
             {/* Step 1: Sync Data */}
             <Card className="border-2 border-[#077bc0]/20 hover:border-[#077bc0]/80 transition-all duration-300 group">
               <div className="p-6 flex flex-col items-center text-center h-full">
@@ -102,14 +102,29 @@ const Welcome = () => {
                 </Button>
               </div>
             </Card>
+
+            {/* Step 3: Prepare Disclosure */}
+            <Card className="border-2 border-[#077bc0]/20 hover:border-[#077bc0]/80 transition-all duration-300 group">
+              <div className="p-6 flex flex-col items-center text-center h-full">
+                <div className="bg-[#077bc0]/20 p-4 rounded-full mb-4 group-hover:bg-[#077bc0]/30 transition-all duration-300">
+                  <FileSpreadsheet className="h-8 w-8 text-[#077bc0]" />
+                </div>
+                <h2 className="text-2xl font-bold mb-2">Step 3</h2>
+                <h3 className="text-xl font-semibold mb-4">Prepare Disclosure</h3>
+                <p className="text-gray-600 dark:text-gray-300 mb-6 flex-1">Use our AI integration to draft VSME disclosures, generate tables and graphics, and populate your data.</p>
+                <Button onClick={() => navigate("/disclosure")} className="w-full bg-[#077bc0] hover:bg-[#077bc0]/90 text-white">
+                  Prep Disclosure
+                </Button>
+              </div>
+            </Card>
             
-            {/* Step 3: Generate Report */}
+            {/* Step 4: Generate Report */}
             <Card className="border-2 border-[#077bc0]/20 hover:border-[#077bc0]/80 transition-all duration-300 group">
               <div className="p-6 flex flex-col items-center text-center h-full">
                 <div className="bg-[#077bc0]/20 p-4 rounded-full mb-4 group-hover:bg-[#077bc0]/30 transition-all duration-300">
                   <FileText className="h-8 w-8 text-[#077bc0]" />
                 </div>
-                <h2 className="text-2xl font-bold mb-2">Step 3</h2>
+                <h2 className="text-2xl font-bold mb-2">Step 4</h2>
                 <h3 className="text-xl font-semibold mb-4">Generate Report</h3>
                 <p className="text-gray-600 dark:text-gray-300 mb-6 flex-1">Create compliant, professional sustainability reports that are fully compliant with the VSME standard.</p>
                 <Button onClick={() => navigate("/reports")} className="w-full bg-[#077bc0] hover:bg-[#077bc0]/90 text-white">
