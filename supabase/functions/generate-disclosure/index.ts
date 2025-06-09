@@ -1,4 +1,3 @@
-
 import { serve } from 'https://deno.land/std@0.168.0/http/server.ts'
 
 const corsHeaders = {
@@ -90,24 +89,54 @@ Once the necessary data is available, this disclosure response can be generated 
         if (firstItem && typeof firstItem === 'object') {
           const keys = Object.keys(firstItem).map(k => k.toLowerCase());
           
-          // Gender/workforce composition
-          if (keys.some(k => k.includes('gender') || k.includes('sex'))) {
-            const genderData = responseData.filter(item => item.gender || item.Gender);
+          // Enhanced gender/workforce composition detection and processing
+          if (keys.some(k => k.includes('gender') || k.includes('sex')) || 
+              keys.some(k => k.includes('male') || k.includes('female'))) {
+            
+            // Handle different data structures for gender data
+            let genderData = responseData;
+            
+            // Filter out rows with no meaningful data (empty employee counts)
+            genderData = genderData.filter(item => {
+              const employeeCount = item['Number of employees'] || item['Number of Employees'] || 
+                                  item.count || item.employees || item.headcount || 
+                                  item['Employee Count'] || item.total || '0';
+              
+              // Convert to number and check if it's valid and greater than 0
+              const numericCount = parseInt(String(employeeCount).replace(/[^\d]/g, '')) || 0;
+              return numericCount > 0;
+            });
+            
             if (genderData.length > 0) {
               const totalEmployees = genderData.reduce((sum, item) => {
-                const count = parseInt(item['Number of Employees'] || item.count || item.employees || '0');
+                const count = parseInt(String(item['Number of employees'] || item['Number of Employees'] || 
+                                     item.count || item.employees || item.headcount || 
+                                     item['Employee Count'] || item.total || '0').replace(/[^\d]/g, '')) || 0;
                 return sum + count;
               }, 0);
               
-              const genderBreakdown = genderData.map(item => {
-                const gender = item.gender || item.Gender;
-                const count = parseInt(item['Number of Employees'] || item.count || item.employees || '0');
-                const percentage = totalEmployees > 0 ? Math.round((count / totalEmployees) * 100) : 0;
-                return `${count} ${gender.toLowerCase()} employees (${percentage}%)`;
-              }).join(', ');
-              
-              return `The organization's workforce comprises ${totalEmployees} employees distributed as follows: ${genderBreakdown}.`;
+              if (totalEmployees > 0) {
+                const genderBreakdown = genderData.map(item => {
+                  const gender = item.gender || item.Gender || item.category || item.type;
+                  const count = parseInt(String(item['Number of employees'] || item['Number of Employees'] || 
+                                        item.count || item.employees || item.headcount || 
+                                        item['Employee Count'] || item.total || '0').replace(/[^\d]/g, '')) || 0;
+                  const percentage = totalEmployees > 0 ? Math.round((count / totalEmployees) * 100) : 0;
+                  
+                  if (count > 0) {
+                    return `${count} ${String(gender).toLowerCase()} employees (${percentage}%)`;
+                  }
+                  return null;
+                }).filter(item => item !== null);
+                
+                if (genderBreakdown.length > 0) {
+                  return `The organization's workforce comprises ${totalEmployees} employees distributed as follows: ${genderBreakdown.join(', ')}.`;
+                }
+              }
             }
+            
+            // Fallback if no valid gender data found
+            return 'Gender composition data is available but requires further specification of employee counts.';
           }
           
           // Energy consumption data
