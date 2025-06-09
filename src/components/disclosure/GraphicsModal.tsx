@@ -29,12 +29,23 @@ interface GraphicsModalProps {
 export const GraphicsModal = ({ isOpen, onClose, recommendations, disclosureTitle }: GraphicsModalProps) => {
   const [activeChart, setActiveChart] = useState(0);
 
+  // Extract disclosure ID from title (e.g., "B2" from "General Information - Practices, policies...")
+  const getDisclosureId = (title: string) => {
+    // Look for pattern like "B2", "B3", etc. at start or in title
+    const match = title.match(/\b([B][0-9]+)\b/);
+    return match ? match[1] : '';
+  };
+
+  const disclosureId = getDisclosureId(disclosureTitle);
+  const mainTitle = disclosureId ? `${disclosureId} - General Information` : disclosureTitle;
+
   if (!recommendations.hasCharts) {
     return (
       <Dialog open={isOpen} onOpenChange={onClose}>
         <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto">
           <DialogHeader>
-            <DialogTitle>Graphics Recommendations - {disclosureTitle}</DialogTitle>
+            <DialogTitle>Recommended Graphics</DialogTitle>
+            <p className="text-sm text-muted-foreground">{mainTitle}</p>
           </DialogHeader>
           <div className="mt-4">
             <div className="bg-slate-50 p-4 rounded-lg border">
@@ -54,7 +65,8 @@ export const GraphicsModal = ({ isOpen, onClose, recommendations, disclosureTitl
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="max-w-6xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle>Interactive Charts - {disclosureTitle}</DialogTitle>
+          <DialogTitle>Recommended Graphics</DialogTitle>
+          <p className="text-sm text-muted-foreground">{mainTitle}</p>
         </DialogHeader>
         
         <div className="mt-4 space-y-6">
