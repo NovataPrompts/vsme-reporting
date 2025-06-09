@@ -1,5 +1,5 @@
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
 import { useVSMEMetrics } from "@/hooks/useVSMEMetrics";
@@ -31,6 +31,8 @@ export const DisclosureBox = ({
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
   const [lastGeneratedAt, setLastGeneratedAt] = useState<Date | null>(null);
   const [lastSavedAt, setLastSavedAt] = useState<Date | null>(null);
+  const [initialResponse, setInitialResponse] = useState("");
+  const isLoadingRef = useRef(false);
   const { toast } = useToast();
   const { vsmeMetricsData } = useVSMEMetrics();
   const { saveDisclosureResponse, loadDisclosureResponse, deleteDisclosureResponse, isLoading: isSaving } = useDisclosureResponses();
@@ -42,24 +44,29 @@ export const DisclosureBox = ({
   // Load saved response on component mount
   useEffect(() => {
     const loadSavedResponse = async () => {
+      isLoadingRef.current = true;
       const savedResponse = await loadDisclosureResponse(disclosure.id);
       if (savedResponse) {
         setResponse(savedResponse.response_content);
+        setInitialResponse(savedResponse.response_content);
         if (savedResponse.graphics_recommendations) {
           setGraphicsRecommendations(savedResponse.graphics_recommendations);
         }
         setLastSavedAt(new Date(savedResponse.updated_at));
         setHasUnsavedChanges(false);
       }
+      isLoadingRef.current = false;
     };
 
     loadSavedResponse();
   }, [disclosure.id, loadDisclosureResponse]);
 
-  // Track changes to response content
+  // Track changes to response content only when not loading
   useEffect(() => {
-    setHasUnsavedChanges(true);
-  }, [response]);
+    if (!isLoadingRef.current && response !== initialResponse) {
+      setHasUnsavedChanges(true);
+    }
+  }, [response, initialResponse]);
 
   const handleGenerateResponse = async () => {
     setIsGenerating(true);
@@ -185,6 +192,7 @@ export const DisclosureBox = ({
     
     if (success) {
       setHasUnsavedChanges(false);
+      setInitialResponse(response);
       setLastSavedAt(new Date());
     }
   };
@@ -193,6 +201,7 @@ export const DisclosureBox = ({
     const success = await deleteDisclosureResponse(disclosure.id);
     if (success) {
       setResponse("");
+      setInitialResponse("");
       setGraphicsRecommendations(null);
       setIsEditing(false);
       setHasUnsavedChanges(false);
@@ -219,7 +228,6 @@ export const DisclosureBox = ({
 
   const handleResponseChange = (value: string) => {
     setResponse(value);
-    setHasUnsavedChanges(true);
   };
 
   return (
