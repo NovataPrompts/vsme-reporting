@@ -1,4 +1,5 @@
 import { serve } from 'https://deno.land/std@0.168.0/http/server.ts'
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -18,6 +19,34 @@ serve(async (req) => {
       throw new Error('Gemini API key not configured')
     }
 
+    // Get authorization header for Supabase operations
+    const authHeader = req.headers.get('Authorization')
+    if (!authHeader) {
+      throw new Error('No authorization header')
+    }
+
+    // Initialize Supabase client
+    const supabaseUrl = Deno.env.get('SUPABASE_URL')!
+    const supabaseKey = Deno.env.get('SUPABASE_ANON_KEY')!
+    const supabase = createClient(supabaseUrl, supabaseKey, {
+      global: { headers: { Authorization: authHeader } }
+    })
+
+    // Fetch company profile for B1 disclosures
+    let companyProfile = null
+    if (disclosureId === 'B1') {
+      const { data: profile, error: profileError } = await supabase
+        .from('company_profiles')
+        .select('*')
+        .maybeSingle()
+
+      if (profileError) {
+        console.error('Error fetching company profile:', profileError)
+      } else {
+        companyProfile = profile
+      }
+    }
+
     // Double-check that all metrics belong to the specified disclosure
     const validMetrics = metrics.filter((metric: any) => 
       metric.disclosure === disclosureId && (metric.response || metric.responseData)
@@ -26,11 +55,12 @@ serve(async (req) => {
     console.log(`Processing disclosure ${disclosureId}:`, {
       receivedMetrics: metrics.length,
       validMetrics: validMetrics.length,
-      disclosureId
+      disclosureId,
+      hasCompanyProfile: !!companyProfile
     });
 
     // If no valid metrics, return a message indicating data collection is needed
-    if (validMetrics.length === 0) {
+    if (validMetrics.length === 0 && !companyProfile) {
       const noDataResponse = `Disclosure ${disclosureId}: ${disclosureTitle}
 
 This disclosure requires specific data collection and metrics to provide a comprehensive response. Currently, no relevant data has been provided for this disclosure section.
@@ -241,12 +271,31 @@ Once the necessary data is available, this disclosure response can be generated 
       };
     });
 
-    const prompt = `You are a sustainability reporting expert tasked with creating a professional disclosure response for ${disclosureTitle}.
+    // Create company profile context for B1 disclosures
+    let companyProfileContext = '';
+    if (disclosureId === 'B1' && companyProfile) {
+      companyProfileContext = `
+Company Profile Information:
+- Company Name: ${companyProfile.name}
+- Company Structure: ${companyProfile.company_structure || 'Not specified'}
+- Country of Domicile: ${companyProfile.country_of_domicile}
+- Year of Incorporation: ${companyProfile.year_of_incorporation || 'Not specified'}
+- Primary Currency: ${companyProfile.primary_currency}
+- Website: ${companyProfile.website || 'Not specified'}
+- DBA Name: ${companyProfile.dba_name || 'Not specified'}
+- Company Description: ${companyProfile.company_description || 'Not specified'}
+- Fiscal Year End: ${companyProfile.fiscal_year_end || 'Not specified'}
+`;
+    }
+
+    let prompt = `You are a sustainability reporting expert tasked with creating a professional disclosure response for ${disclosureTitle}.
 
 Disclosure Context:
 - ID: ${disclosureId}
 - Title: ${disclosureTitle}
 - Description: ${disclosureDescription}
+
+${companyProfileContext}
 
 CRITICAL INSTRUCTIONS:
 1. ONLY use the specific data provided below from disclosure ${disclosureId}
@@ -257,7 +306,17 @@ CRITICAL INSTRUCTIONS:
 6. Be factual and conservative - only state what can be directly derived from the provided metrics
 7. ONLY mention missing data if it's truly critical to the disclosure and would be expected by regulators
 8. Write in a professional, formal disclosure style appropriate for sustainability reporting
-9. Focus on presenting the available data comprehensively rather than highlighting gaps
+9. Focus on presenting the available data comprehensively rather than highlighting gaps`;
+
+    // Special instructions for B1 disclosure
+    if (disclosureId === 'B1') {
+      prompt += `
+10. For B1 disclosures, incorporate the company profile information to provide context about the organization's basis for preparation
+11. Use the company structure, domicile, and other profile details to frame the sustainability reporting approach
+12. Reference the company name, structure, and geographical scope when describing the reporting basis`;
+    }
+
+    prompt += `
 
 Available Metrics Data for ${disclosureId}:
 ${metricsData.map((m: any) => `
