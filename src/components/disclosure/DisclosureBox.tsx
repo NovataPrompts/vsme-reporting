@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -30,6 +29,8 @@ export const DisclosureBox = ({
   const [isEditing, setIsEditing] = useState(false);
   const [showGraphicsModal, setShowGraphicsModal] = useState(false);
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
+  const [lastGeneratedAt, setLastGeneratedAt] = useState<Date | null>(null);
+  const [lastSavedAt, setLastSavedAt] = useState<Date | null>(null);
   const { toast } = useToast();
   const { vsmeMetricsData } = useVSMEMetrics();
   const { saveDisclosureResponse, loadDisclosureResponse, deleteDisclosureResponse, isLoading: isSaving } = useDisclosureResponses();
@@ -47,6 +48,7 @@ export const DisclosureBox = ({
         if (savedResponse.graphics_recommendations) {
           setGraphicsRecommendations(savedResponse.graphics_recommendations);
         }
+        setLastSavedAt(new Date(savedResponse.updated_at));
         setHasUnsavedChanges(false);
       }
     };
@@ -58,6 +60,17 @@ export const DisclosureBox = ({
   useEffect(() => {
     setHasUnsavedChanges(true);
   }, [response]);
+
+  const formatTimestamp = (date: Date) => {
+    return date.toLocaleString('en-US', {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+      second: '2-digit'
+    });
+  };
 
   const handleGenerateResponse = async () => {
     setIsGenerating(true);
@@ -98,6 +111,7 @@ export const DisclosureBox = ({
       }
 
       setResponse(data.generatedResponse);
+      setLastGeneratedAt(new Date());
       setIsEditing(false); // Exit edit mode after generation
       setHasUnsavedChanges(true);
       toast({
@@ -182,6 +196,7 @@ export const DisclosureBox = ({
     
     if (success) {
       setHasUnsavedChanges(false);
+      setLastSavedAt(new Date());
     }
   };
 
@@ -192,6 +207,8 @@ export const DisclosureBox = ({
       setGraphicsRecommendations(null);
       setIsEditing(false);
       setHasUnsavedChanges(false);
+      setLastGeneratedAt(null);
+      setLastSavedAt(null);
     }
   };
 
@@ -319,6 +336,20 @@ export const DisclosureBox = ({
                 <p className="text-sm text-red-600 mt-2">
                   You have unsaved changes. Click "Save" to preserve your work.
                 </p>
+              )}
+              {(lastGeneratedAt || lastSavedAt) && (
+                <div className="mt-3 space-y-1">
+                  {lastGeneratedAt && (
+                    <p className="text-sm text-green-600">
+                      Generated: {formatTimestamp(lastGeneratedAt)}
+                    </p>
+                  )}
+                  {lastSavedAt && !hasUnsavedChanges && (
+                    <p className="text-sm text-green-600">
+                      Last saved: {formatTimestamp(lastSavedAt)}
+                    </p>
+                  )}
+                </div>
               )}
             </div>
           </div>
