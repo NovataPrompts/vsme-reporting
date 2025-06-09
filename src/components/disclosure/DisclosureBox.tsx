@@ -1,13 +1,13 @@
+
 import { useState, useEffect } from "react";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Textarea } from "@/components/ui/textarea";
-import { Loader2, Sparkles, Trash2, Edit, BarChart3, Save } from "lucide-react";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
 import { useVSMEMetrics } from "@/hooks/useVSMEMetrics";
 import { useDisclosureResponses } from "@/hooks/useDisclosureResponses";
 import { supabase } from "@/integrations/supabase/client";
 import { GraphicsModal } from "./GraphicsModal";
+import { DisclosureHeader } from "./DisclosureHeader";
+import { DisclosureContent } from "./DisclosureContent";
 
 interface Disclosure {
   id: string;
@@ -60,17 +60,6 @@ export const DisclosureBox = ({
   useEffect(() => {
     setHasUnsavedChanges(true);
   }, [response]);
-
-  const formatTimestamp = (date: Date) => {
-    return date.toLocaleString('en-US', {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit',
-      second: '2-digit'
-    });
-  };
 
   const handleGenerateResponse = async () => {
     setIsGenerating(true);
@@ -233,126 +222,37 @@ export const DisclosureBox = ({
     setHasUnsavedChanges(true);
   };
 
-  // Split title at hyphen for multi-line display
-  const titleParts = disclosure.title.split(' - ');
-  const mainTitle = titleParts[0];
-  const subTitle = titleParts[1];
-
   return (
     <>
       <Card>
         <CardHeader>
-          <CardTitle className="flex items-start justify-between gap-4">
-            <div className="flex items-start gap-3">
-              <div className="w-10 h-10 rounded-full bg-primary text-primary-foreground flex items-center justify-center font-semibold text-sm flex-shrink-0 mt-1">
-                {disclosure.id}
-              </div>
-              <div className="flex flex-col">
-                <span className="font-semibold text-lg text-primary leading-tight">
-                  {mainTitle}
-                </span>
-                {subTitle && (
-                  <span className="font-medium text-base text-muted-foreground leading-tight mt-1">
-                    {subTitle}
-                  </span>
-                )}
-              </div>
-            </div>
-            <div className="flex items-center gap-2 flex-shrink-0">
-              <Button 
-                onClick={handleGenerateResponse} 
-                disabled={isGenerating} 
-                className="flex items-center gap-2"
-              >
-                {isGenerating ? (
-                  <Loader2 className="h-4 w-4 animate-spin" />
-                ) : (
-                  <Sparkles className="h-4 w-4" />
-                )}
-                {isGenerating ? "Generating..." : "Generate Response"}
-              </Button>
-              {showGraphicsButton && (
-                <Button 
-                  onClick={handleRecommendGraphics} 
-                  disabled={isRecommendingGraphics} 
-                  variant="outline"
-                  className="flex items-center gap-2"
-                >
-                  {isRecommendingGraphics ? (
-                    <Loader2 className="h-4 w-4 animate-spin" />
-                  ) : (
-                    <BarChart3 className="h-4 w-4" />
-                  )}
-                  {isRecommendingGraphics ? "Analyzing..." : "Recommend Graphics"}
-                </Button>
-              )}
-              {response && (
-                <>
-                  <Button 
-                    onClick={handleSave}
-                    disabled={isSaving || !hasUnsavedChanges}
-                    variant="outline"
-                    className="flex items-center gap-2"
-                  >
-                    {isSaving ? (
-                      <Loader2 className="h-4 w-4 animate-spin" />
-                    ) : (
-                      <Save className="h-4 w-4" />
-                    )}
-                    {isSaving ? "Saving..." : hasUnsavedChanges ? "Save" : "Saved"}
-                  </Button>
-                  <Button 
-                    variant="outline"
-                    onClick={isEditing ? handleSaveEdit : handleEdit}
-                    className="flex items-center gap-2"
-                  >
-                    <Edit className="h-4 w-4" />
-                    {isEditing ? "Done Editing" : "Edit"}
-                  </Button>
-                  <Button 
-                    variant="outline"
-                    onClick={handleClear}
-                    className="flex items-center gap-2 text-destructive hover:text-destructive"
-                  >
-                    <Trash2 className="h-4 w-4" />
-                    Clear
-                  </Button>
-                </>
-              )}
-            </div>
-          </CardTitle>
+          <DisclosureHeader
+            disclosure={disclosure}
+            response={response}
+            isGenerating={isGenerating}
+            isRecommendingGraphics={isRecommendingGraphics}
+            isSaving={isSaving}
+            hasUnsavedChanges={hasUnsavedChanges}
+            isEditing={isEditing}
+            showGraphicsButton={showGraphicsButton}
+            onGenerateResponse={handleGenerateResponse}
+            onRecommendGraphics={handleRecommendGraphics}
+            onSave={handleSave}
+            onEdit={handleEdit}
+            onSaveEdit={handleSaveEdit}
+            onClear={handleClear}
+          />
         </CardHeader>
         <CardContent>
-          <div className="space-y-4">
-            <div>
-              <Textarea 
-                placeholder={`Enter or generate disclosure response for ${disclosure.title}...`}
-                value={response}
-                onChange={(e) => handleResponseChange(e.target.value)}
-                className="min-h-[200px] resize-y"
-                readOnly={!isEditing && response !== ""}
-              />
-              {hasUnsavedChanges && response && (
-                <p className="text-sm text-red-600 mt-2">
-                  You have unsaved changes. Click "Save" to preserve your work.
-                </p>
-              )}
-              {(lastGeneratedAt || lastSavedAt) && (
-                <div className="mt-3 space-y-1">
-                  {lastGeneratedAt && (
-                    <p className="text-sm text-green-600">
-                      Generated: {formatTimestamp(lastGeneratedAt)}
-                    </p>
-                  )}
-                  {lastSavedAt && !hasUnsavedChanges && (
-                    <p className="text-sm text-green-600">
-                      Last saved: {formatTimestamp(lastSavedAt)}
-                    </p>
-                  )}
-                </div>
-              )}
-            </div>
-          </div>
+          <DisclosureContent
+            disclosure={disclosure}
+            response={response}
+            isEditing={isEditing}
+            hasUnsavedChanges={hasUnsavedChanges}
+            lastGeneratedAt={lastGeneratedAt}
+            lastSavedAt={lastSavedAt}
+            onResponseChange={handleResponseChange}
+          />
         </CardContent>
       </Card>
 
