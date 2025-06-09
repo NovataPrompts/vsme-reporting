@@ -1,4 +1,3 @@
-
 import { serve } from 'https://deno.land/std@0.168.0/http/server.ts'
 
 const corsHeaders = {
@@ -154,6 +153,14 @@ function handleB3Graphics(metrics: any[], disclosureTitle: string, allMetrics: a
 
     if (tableData && tableData.length > 0) {
       // Calculate total energy consumption for percentage calculation
+      // EXCLUDE the "Total" row from percentage calculations
+      const dataRowsOnly = tableData.filter(item => {
+        const energyType = (item['Energy Consumption Type'] || item['Type'] || item.type || item.category || item.source || '').toString().toLowerCase()
+        return energyType !== 'total' && energyType.trim() !== ''
+      })
+      
+      console.log('Data rows excluding total:', dataRowsOnly)
+      
       let totalConsumption = 0
       
       // Try different possible column names for consumption values
@@ -171,27 +178,38 @@ function handleB3Graphics(metrics: any[], disclosureTitle: string, allMetrics: a
       console.log('Found consumption column:', consumptionColumnName)
       
       if (consumptionColumnName) {
-        tableData.forEach(item => {
+        // Calculate total from data rows only (excluding "Total" row)
+        dataRowsOnly.forEach(item => {
           const consumption = parseFloat(item[consumptionColumnName] || '0')
           if (consumption > 0) {
             totalConsumption += consumption
           }
         })
         
-        console.log('Total consumption calculated:', totalConsumption)
+        console.log('Total consumption calculated (excluding Total row):', totalConsumption)
 
         // Add percentage column to the data
         const enhancedTableData = tableData.map(item => {
+          const energyType = (item['Energy Consumption Type'] || item['Type'] || item.type || item.category || item.source || '').toString().toLowerCase()
           const consumption = parseFloat(item[consumptionColumnName] || '0')
-          const percentage = totalConsumption > 0 ? ((consumption / totalConsumption) * 100).toFixed(1) : '0'
+          
+          // Don't calculate percentage for the "Total" row
+          let percentage = ''
+          if (energyType === 'total') {
+            percentage = '-'
+          } else if (totalConsumption > 0) {
+            percentage = `${((consumption / totalConsumption) * 100).toFixed(1)}%`
+          } else {
+            percentage = '0%'
+          }
           
           return {
             ...item,
-            'Percentage (%)': `${percentage}%`
+            'Percentage (%)': percentage
           }
         })
 
-        // Add percentage column to the original column order
+        // Create proper column order: preserve original order and add percentage at the end
         const enhancedColumnOrder = originalColumnOrder ? [...originalColumnOrder, 'Percentage (%)'] : null
         
         console.log('Enhanced column order:', enhancedColumnOrder)
@@ -205,7 +223,7 @@ function handleB3Graphics(metrics: any[], disclosureTitle: string, allMetrics: a
           originalColumnOrder: enhancedColumnOrder,
           insights: [
             "Detailed breakdown of energy consumption by source",
-            "Percentage distribution shows relative consumption by energy type",
+            "Percentage distribution shows relative consumption by energy type (excluding total row)",
             "Values presented in standardized units for comparison"
           ]
         })
