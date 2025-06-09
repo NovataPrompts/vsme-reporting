@@ -1,5 +1,5 @@
 
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell } from 'recharts';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell, PieChart, Pie } from 'recharts';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Check, X } from "lucide-react";
 
@@ -101,45 +101,69 @@ export const ChartRenderer = ({ chartType, data, title, description, originalCol
     );
   }
 
-  if (chartType === "StackedBarChart") {
-    // Process data for stacked bar chart
-    const chartData = [{ name: 'Energy Consumption' }];
-    const colors = ['#8884d8', '#82ca9d', '#ffc658', '#ff7300', '#0088aa', '#00C49F'];
-    let totalMWh = 0;
+  if (chartType === "PieChart") {
+    if (!data || data.length === 0) {
+      return (
+        <div className="w-full text-center p-8">
+          <p className="text-muted-foreground">No data available for pie chart visualization</p>
+        </div>
+      );
+    }
 
-    data.forEach((item, index) => {
-      if (item.value > 0) {
-        chartData[0][item.category] = item.value;
-        totalMWh += item.value;
-      }
-    });
+    const colors = ['#8884d8', '#82ca9d', '#ffc658', '#ff7300', '#0088aa', '#00C49F'];
 
     return (
       <div className="w-full">
         <div className="mb-4">
           <h3 className="text-lg font-semibold">{title}</h3>
           <p className="text-sm text-muted-foreground">{description}</p>
-          <div className="text-center mt-2">
-            <span className="text-lg font-semibold">Total Energy Consumption: {totalMWh.toFixed(2)} MWh</span>
-          </div>
         </div>
         <ResponsiveContainer width="100%" height={400}>
-          <BarChart data={chartData} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
+          <PieChart>
+            <Pie
+              data={data}
+              cx="50%"
+              cy="50%"
+              labelLine={false}
+              label={({ category, value, unit }) => `${category}: ${value} ${unit || ''}`}
+              outerRadius={120}
+              fill="#8884d8"
+              dataKey="value"
+            >
+              {data.map((entry, index) => (
+                <Cell key={`cell-${index}`} fill={colors[index % colors.length]} />
+              ))}
+            </Pie>
+            <Tooltip formatter={(value, name) => [`${value} ${data[0]?.unit || ''}`, name]} />
+          </PieChart>
+        </ResponsiveContainer>
+      </div>
+    );
+  }
+
+  if (chartType === "StackedBarChart") {
+    if (!data || data.length === 0) {
+      return (
+        <div className="w-full text-center p-8">
+          <p className="text-muted-foreground">No data available for stacked bar chart visualization</p>
+        </div>
+      );
+    }
+
+    return (
+      <div className="w-full">
+        <div className="mb-4">
+          <h3 className="text-lg font-semibold">{title}</h3>
+          <p className="text-sm text-muted-foreground">{description}</p>
+        </div>
+        <ResponsiveContainer width="100%" height={400}>
+          <BarChart data={data} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
             <CartesianGrid strokeDasharray="3 3" />
-            <XAxis dataKey="name" />
-            <YAxis label={{ value: 'Energy (MWh)', angle: -90, position: 'insideLeft' }} />
-            <Tooltip 
-              formatter={(value, name) => [`${value} MWh`, name]}
-              labelFormatter={() => 'Energy Breakdown'}
-            />
-            {data.map((item, index) => (
-              <Bar 
-                key={item.category}
-                dataKey={item.category} 
-                stackId="energy" 
-                fill={colors[index % colors.length]} 
-              />
-            ))}
+            <XAxis dataKey="category" />
+            <YAxis label={{ value: `Energy (${data[0]?.unit || ''})`, angle: -90, position: 'insideLeft' }} />
+            <Tooltip formatter={(value, name) => [`${value} ${data[0]?.unit || ''}`, name]} />
+            <Bar dataKey="renewable" stackId="energy" fill="#82ca9d" name="Renewable" />
+            <Bar dataKey="nonRenewable" stackId="energy" fill="#ff7300" name="Non-renewable" />
           </BarChart>
         </ResponsiveContainer>
       </div>
