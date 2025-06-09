@@ -112,46 +112,47 @@ export const ChartRenderer = ({ chartType, data, title, description, originalCol
 
     const colors = ['#8884d8', '#82ca9d', '#ffc658', '#ff7300', '#0088aa', '#00C49F'];
 
-    // Enhanced label function to show category, value, and percentage
+    // Enhanced label function positioned outside the pie with larger, more legible text
     const renderCustomLabel = ({ cx, cy, midAngle, innerRadius, outerRadius, value, category, percentage }) => {
       const RADIAN = Math.PI / 180;
-      const radius = innerRadius + (outerRadius - innerRadius) * 0.7;
+      // Position labels further outside the pie chart
+      const radius = outerRadius + 60;
       const x = cx + radius * Math.cos(-midAngle * RADIAN);
       const y = cy + radius * Math.sin(-midAngle * RADIAN);
 
-      // Multi-line label showing category, value, and percentage
+      // Multi-line label showing category, value, and percentage with larger text
       return (
         <g>
           <text 
             x={x} 
-            y={y - 8} 
-            fill="white" 
+            y={y - 12} 
+            fill="hsl(var(--foreground))" 
             textAnchor={x > cx ? 'start' : 'end'} 
             dominantBaseline="central"
-            fontSize="11"
-            fontWeight="bold"
+            fontSize="14"
+            fontWeight="600"
           >
             {category}
           </text>
           <text 
             x={x} 
-            y={y + 4} 
-            fill="white" 
+            y={y + 2} 
+            fill="hsl(var(--muted-foreground))" 
             textAnchor={x > cx ? 'start' : 'end'} 
             dominantBaseline="central"
-            fontSize="10"
-            fontWeight="bold"
+            fontSize="13"
+            fontWeight="500"
           >
             {`${value} MWh`}
           </text>
           <text 
             x={x} 
-            y={y + 16} 
-            fill="white" 
+            y={y + 18} 
+            fill="hsl(var(--foreground))" 
             textAnchor={x > cx ? 'start' : 'end'} 
             dominantBaseline="central"
-            fontSize="10"
-            fontWeight="bold"
+            fontSize="13"
+            fontWeight="600"
           >
             {percentage}
           </text>
@@ -165,7 +166,7 @@ export const ChartRenderer = ({ chartType, data, title, description, originalCol
           <h3 className="text-lg font-semibold">{title}</h3>
           <p className="text-sm text-muted-foreground">{description}</p>
         </div>
-        <ResponsiveContainer width="100%" height={400}>
+        <ResponsiveContainer width="100%" height={500}>
           <PieChart>
             <Pie
               data={data}
@@ -173,7 +174,7 @@ export const ChartRenderer = ({ chartType, data, title, description, originalCol
               cy="50%"
               labelLine={false}
               label={renderCustomLabel}
-              outerRadius={120}
+              outerRadius={100}
               fill="#8884d8"
               dataKey="value"
             >
