@@ -1,4 +1,3 @@
-
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell, PieChart, Pie, Legend } from 'recharts';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Check, X } from "lucide-react";
@@ -197,10 +196,10 @@ export const ChartRenderer = ({ chartType, data, title, description, originalCol
               verticalAlign="bottom" 
               height={36}
               formatter={(value, entry) => {
-                // Access the data from the entry payload
-                if (entry && entry.payload) {
-                  const item = entry.payload;
-                  return `${item.category}: ${item.value} ${item.unit || ''} (${item.percentage})`;
+                // Find the corresponding data item by matching the value
+                const dataItem = data.find(item => item.category === value);
+                if (dataItem) {
+                  return `${dataItem.category}: ${dataItem.value} ${dataItem.unit || ''} (${dataItem.percentage})`;
                 }
                 return value;
               }}
