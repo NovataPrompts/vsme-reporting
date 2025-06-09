@@ -1,4 +1,3 @@
-
 import { useState, useEffect, useRef } from "react";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
@@ -230,6 +229,10 @@ export const DisclosureBox = ({
     setResponse(value);
   };
 
+  const handleShowGraphics = () => {
+    setShowGraphicsModal(true);
+  };
+
   return (
     <>
       <Card>
@@ -259,7 +262,10 @@ export const DisclosureBox = ({
             hasUnsavedChanges={hasUnsavedChanges}
             lastGeneratedAt={lastGeneratedAt}
             lastSavedAt={lastSavedAt}
+            graphicsRecommendations={graphicsRecommendations}
+            showGraphicsButton={showGraphicsButton}
             onResponseChange={handleResponseChange}
+            onShowGraphics={handleShowGraphics}
           />
         </CardContent>
       </Card>
