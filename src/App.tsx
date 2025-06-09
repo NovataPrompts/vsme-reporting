@@ -14,6 +14,7 @@ import Standards from "./pages/Standards";
 import Import from "./pages/Import";
 import Welcome from "./pages/Welcome";
 import Disclosure from "./pages/Disclosure";
+import Draft from "./pages/Draft";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -90,6 +91,14 @@ const App = () => (
             element={
               <ProtectedRoute>
                 <Disclosure />
+              </ProtectedRoute>
+            } 
+          />
+          <Route 
+            path="/draft" 
+            element={
+              <ProtectedRoute>
+                <Draft />
               </ProtectedRoute>
             } 
           />
