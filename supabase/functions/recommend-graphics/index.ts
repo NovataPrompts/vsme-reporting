@@ -124,7 +124,7 @@ function handleB2Graphics(metrics: any[], disclosureTitle: string) {
 function handleB3Graphics(metrics: any[], disclosureTitle: string, allMetrics: any[]) {
   const charts = []
 
-  // 1. Table based on VSME.B3.29
+  // 1. Table based on VSME.B3.29 with percentage breakdown
   const vsmeB329Metric = metrics.find(m => m.novataReference === 'VSME.B3.29')
   if (vsmeB329Metric && vsmeB329Metric.responseData) {
     let originalColumnOrder = null
@@ -134,16 +134,40 @@ function handleB3Graphics(metrics: any[], disclosureTitle: string, allMetrics: a
       originalColumnOrder = Object.keys(vsmeB329Metric.responseData.tabularData[0])
     }
 
-    const tableData = vsmeB329Metric.responseData.tabularData || vsmeB329Metric.responseData
+    let tableData = vsmeB329Metric.responseData.tabularData || vsmeB329Metric.responseData
+
+    // Calculate total energy consumption for percentage calculation
+    let totalConsumption = 0
+    tableData.forEach(item => {
+      const consumption = parseFloat(item['Consumption'] || item.consumption || item.amount || item.value || '0')
+      if (consumption > 0) {
+        totalConsumption += consumption
+      }
+    })
+
+    // Add percentage column to the data
+    const enhancedTableData = tableData.map(item => {
+      const consumption = parseFloat(item['Consumption'] || item.consumption || item.amount || item.value || '0')
+      const percentage = totalConsumption > 0 ? ((consumption / totalConsumption) * 100).toFixed(1) : '0'
+      
+      return {
+        ...item,
+        'Percentage (%)': `${percentage}%`
+      }
+    })
+
+    // Add percentage column to the original column order
+    const enhancedColumnOrder = originalColumnOrder ? [...originalColumnOrder, 'Percentage (%)'] : null
 
     charts.push({
-      title: "VSME B3.29 - Energy Consumption Data",
-      description: "Table showing detailed energy consumption metrics",
+      title: "VSME B3.29 - Energy Consumption Data with Breakdown",
+      description: "Table showing detailed energy consumption metrics with percentage breakdown by source",
       chartType: "Table",
-      data: tableData,
-      originalColumnOrder: originalColumnOrder,
+      data: enhancedTableData,
+      originalColumnOrder: enhancedColumnOrder,
       insights: [
         "Detailed breakdown of energy consumption by source",
+        "Percentage distribution shows relative consumption by energy type",
         "Values presented in standardized units for comparison"
       ]
     })
