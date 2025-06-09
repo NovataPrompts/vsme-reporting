@@ -69,11 +69,11 @@ export const ChartRenderer = ({ chartType, data, title, description, originalCol
           <p className="text-sm text-muted-foreground">{description}</p>
         </div>
         <div className="overflow-auto max-h-[400px]">
-          <Table>
+          <Table className="table-fixed">
             <TableHeader>
               <TableRow>
                 {columns.map((column) => (
-                  <TableHead key={column}>
+                  <TableHead key={column} className="w-1/4">
                     {column}
                   </TableHead>
                 ))}
@@ -83,7 +83,7 @@ export const ChartRenderer = ({ chartType, data, title, description, originalCol
               {data.map((item, index) => (
                 <TableRow key={index}>
                   {columns.map((column) => (
-                    <TableCell key={column}>
+                    <TableCell key={column} className="w-1/4">
                       {renderCellContent(item[column])}
                     </TableCell>
                   ))}
