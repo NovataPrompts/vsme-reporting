@@ -1,4 +1,3 @@
-
 import { serve } from 'https://deno.land/std@0.168.0/http/server.ts'
 
 const corsHeaders = {
@@ -214,7 +213,7 @@ function handleB3Graphics(metrics: any[], disclosureTitle: string, allMetrics: a
         const enhancedColumnOrder = [
           'Energy Consumption Type',
           'Renewable (MWh)',
-          'Non-renewable (MWh)', 
+          'Non-reewable (MWh)', 
           'Total (MWh)',
           'Percentage (%)'
         ]
@@ -235,28 +234,35 @@ function handleB3Graphics(metrics: any[], disclosureTitle: string, allMetrics: a
           ]
         })
 
-        // 2. Pie Chart - Electricity vs Fuel breakdown
-        const pieChartData = dataRowsOnly.map(item => ({
-          category: item['Energy Consumption Type'] || item['Type'] || item.type || item.category || item.source,
-          value: parseFloat(item[consumptionColumnName] || '0'),
-          unit: 'MWh'
-        }))
+        // 2. Pie Chart - Electricity vs Fuel breakdown with percentages
+        const pieChartData = dataRowsOnly.map(item => {
+          const consumption = parseFloat(item[consumptionColumnName] || '0')
+          const percentage = totalConsumption > 0 ? ((consumption / totalConsumption) * 100).toFixed(1) : '0'
+          
+          return {
+            category: item['Energy Consumption Type'] || item['Type'] || item.type || item.category || item.source,
+            value: consumption,
+            unit: 'MWh',
+            percentage: `${percentage}%`,
+            label: `${item['Energy Consumption Type'] || item['Type'] || item.type || item.category || item.source}: ${consumption} MWh (${percentage}%)`
+          }
+        })
 
         if (pieChartData.length > 0) {
           charts.push({
             title: "Energy Consumption by Source Type",
-            description: "Pie chart showing the breakdown between electricity and fuel consumption",
+            description: "Pie chart showing the breakdown between electricity and fuel consumption with percentages",
             chartType: "PieChart",
             data: pieChartData,
             insights: [
-              "Visual comparison of electricity vs fuel consumption",
+              "Visual comparison of electricity vs fuel consumption with percentages",
               "Shows relative proportion of each energy source",
               "Helps identify primary energy consumption patterns"
             ]
           })
         }
 
-        // 3. Stacked Bar Chart - Renewable vs Non-renewable by type
+        // 3. Stacked Bar Chart - Renewable vs Non-renewable by type with MWh labels
         const stackedBarData = dataRowsOnly.map(item => {
           const renewable = parseFloat(item['Renewable (MWh)'] || item['renewable'] || '0')
           const nonRenewable = parseFloat(item['Non-renewable (MWh)'] || item['nonrenewable'] || item['non_renewable'] || '0')
@@ -265,25 +271,27 @@ function handleB3Graphics(metrics: any[], disclosureTitle: string, allMetrics: a
             category: item['Energy Consumption Type'] || item['Type'] || item.type || item.category || item.source,
             renewable: renewable,
             nonRenewable: nonRenewable,
-            unit: 'MWh'
+            unit: 'MWh',
+            renewableLabel: `${renewable} MWh`,
+            nonRenewableLabel: `${nonRenewable} MWh`
           }
         })
 
         if (stackedBarData.length > 0) {
           charts.push({
             title: "Renewable vs Non-Renewable Energy by Source",
-            description: "Stacked bar chart showing renewable and non-renewable energy breakdown by electricity and fuel",
+            description: "Stacked bar chart showing renewable and non-renewable energy breakdown by electricity and fuel with MWh values",
             chartType: "StackedBarChart",
             data: stackedBarData,
             insights: [
-              "Compares renewable vs non-renewable energy across source types",
+              "Compares renewable vs non-renewable energy across source types with MWh values",
               "Shows sustainability performance by energy category",
               "Identifies opportunities for increasing renewable energy use"
             ]
           })
         }
 
-        // 4. Pie Chart - Overall Renewable vs Non-renewable
+        // 4. Pie Chart - Overall Renewable vs Non-renewable with percentages
         let totalRenewable = 0
         let totalNonRenewable = 0
         
@@ -293,26 +301,34 @@ function handleB3Graphics(metrics: any[], disclosureTitle: string, allMetrics: a
         })
 
         if (totalRenewable > 0 || totalNonRenewable > 0) {
+          const totalEnergy = totalRenewable + totalNonRenewable
+          const renewablePercentage = totalEnergy > 0 ? ((totalRenewable / totalEnergy) * 100).toFixed(1) : '0'
+          const nonRenewablePercentage = totalEnergy > 0 ? ((totalNonRenewable / totalEnergy) * 100).toFixed(1) : '0'
+
           const renewablePieData = [
             {
               category: 'Renewable',
               value: totalRenewable,
-              unit: 'MWh'
+              unit: 'MWh',
+              percentage: `${renewablePercentage}%`,
+              label: `Renewable: ${totalRenewable.toFixed(1)} MWh (${renewablePercentage}%)`
             },
             {
               category: 'Non-renewable',
               value: totalNonRenewable,
-              unit: 'MWh'
+              unit: 'MWh',
+              percentage: `${nonRenewablePercentage}%`,
+              label: `Non-renewable: ${totalNonRenewable.toFixed(1)} MWh (${nonRenewablePercentage}%)`
             }
           ]
 
           charts.push({
             title: "Overall Renewable vs Non-Renewable Energy",
-            description: `Pie chart showing the overall breakdown of renewable (${totalRenewable.toFixed(1)} MWh) vs non-renewable (${totalNonRenewable.toFixed(1)} MWh) energy`,
+            description: `Pie chart showing the overall breakdown of renewable (${totalRenewable.toFixed(1)} MWh, ${renewablePercentage}%) vs non-renewable (${totalNonRenewable.toFixed(1)} MWh, ${nonRenewablePercentage}%) energy`,
             chartType: "PieChart",
             data: renewablePieData,
             insights: [
-              `${((totalRenewable / (totalRenewable + totalNonRenewable)) * 100).toFixed(1)}% of total energy consumption is renewable`,
+              `${renewablePercentage}% of total energy consumption is renewable`,
               "Overall sustainability performance indicator",
               "Key metric for environmental impact assessment"
             ]
