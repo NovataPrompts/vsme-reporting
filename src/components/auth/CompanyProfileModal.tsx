@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
@@ -10,7 +10,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { CalendarIcon } from "lucide-react";
-import { format } from "date-fns";
+import { format, parseISO } from "date-fns";
 import { cn } from "@/lib/utils";
 import { useCompanyProfile } from '@/hooks/useCompanyProfile';
 import { useToast } from '@/hooks/use-toast';
@@ -22,11 +22,12 @@ interface CompanyProfileModalProps {
 }
 
 export const CompanyProfileModal = ({ isOpen, onComplete, onClose }: CompanyProfileModalProps) => {
-  const { saveCompanyProfile, isLoading } = useCompanyProfile();
+  const { saveCompanyProfile, getCompanyProfile, isLoading } = useCompanyProfile();
   const { toast } = useToast();
   const [fiscalYearEnd, setFiscalYearEnd] = useState<Date>();
+  const [isLoadingProfile, setIsLoadingProfile] = useState(false);
   
-  const { register, handleSubmit, setValue, watch, formState: { errors } } = useForm<{
+  const { register, handleSubmit, setValue, watch, reset, formState: { errors } } = useForm<{
     name: string;
     company_structure: string;
     dba_name: string;
@@ -39,6 +40,46 @@ export const CompanyProfileModal = ({ isOpen, onComplete, onClose }: CompanyProf
 
   const watchedName = watch('name');
   const watchedCountry = watch('country_of_domicile');
+
+  // Load existing profile data when modal opens
+  useEffect(() => {
+    if (isOpen) {
+      const loadProfile = async () => {
+        setIsLoadingProfile(true);
+        try {
+          const profile = await getCompanyProfile();
+          if (profile) {
+            console.log('Loaded profile data:', profile);
+            
+            // Set form values
+            setValue('name', profile.name || '');
+            setValue('company_structure', profile.company_structure || '');
+            setValue('dba_name', profile.dba_name || '');
+            setValue('year_of_incorporation', profile.year_of_incorporation || '');
+            setValue('company_description', profile.company_description || '');
+            setValue('website', profile.website || '');
+            setValue('country_of_domicile', profile.country_of_domicile || '');
+            setValue('primary_currency', profile.primary_currency || 'USD');
+            
+            // Set fiscal year end date
+            if (profile.fiscal_year_end) {
+              setFiscalYearEnd(parseISO(profile.fiscal_year_end));
+            }
+          }
+        } catch (error) {
+          console.error('Error loading profile:', error);
+        } finally {
+          setIsLoadingProfile(false);
+        }
+      };
+      
+      loadProfile();
+    } else {
+      // Reset form when modal closes
+      reset();
+      setFiscalYearEnd(undefined);
+    }
+  }, [isOpen, getCompanyProfile, setValue, reset]);
 
   const currentYear = new Date().getFullYear();
   const years = Array.from({ length: 50 }, (_, i) => currentYear - i);
@@ -101,164 +142,182 @@ export const CompanyProfileModal = ({ isOpen, onComplete, onClose }: CompanyProf
           <p className="text-center text-gray-600">Please provide your company information to get started</p>
         </DialogHeader>
         
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <Label htmlFor="name">Company Name *</Label>
-              <Input
-                id="name"
-                {...register('name', { required: 'Company name is required' })}
-                placeholder="Enter company name"
-              />
-              {errors.name && (
-                <p className="text-sm text-red-600">{errors.name.message}</p>
-              )}
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="company_structure">Company Structure</Label>
-              <Select onValueChange={(value) => setValue('company_structure', value)}>
-                <SelectTrigger>
-                  <SelectValue placeholder="e.g., Public, Private" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="Public">Public</SelectItem>
-                  <SelectItem value="Private">Private</SelectItem>
-                  <SelectItem value="Partnership">Partnership</SelectItem>
-                  <SelectItem value="LLC">LLC</SelectItem>
-                  <SelectItem value="Corporation">Corporation</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
+        {isLoadingProfile ? (
+          <div className="flex items-center justify-center py-8">
+            <div className="text-lg">Loading profile...</div>
           </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <Label htmlFor="dba_name">DBA Name (if applicable)</Label>
-              <Input
-                id="dba_name"
-                {...register('dba_name')}
-                placeholder="Doing Business As name"
-              />
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="year_of_incorporation">Year of Incorporation</Label>
-              <Select onValueChange={(value) => setValue('year_of_incorporation', parseInt(value))}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Select year" />
-                </SelectTrigger>
-                <SelectContent>
-                  {years.map((year) => (
-                    <SelectItem key={year} value={year.toString()}>
-                      {year}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="company_description">Company Description</Label>
-            <Textarea
-              id="company_description"
-              {...register('company_description')}
-              placeholder="Describe your company's business and activities"
-              rows={3}
-            />
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="website">Website</Label>
-            <Input
-              id="website"
-              {...register('website')}
-              placeholder="https://www.example.com"
-              type="url"
-            />
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <Label htmlFor="country_of_domicile">Country of Domicile *</Label>
-              <Select onValueChange={(value) => setValue('country_of_domicile', value)}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Select country" />
-                </SelectTrigger>
-                <SelectContent>
-                  {countries.map((country) => (
-                    <SelectItem key={country} value={country}>
-                      {country}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-              {errors.country_of_domicile && (
-                <p className="text-sm text-red-600">{errors.country_of_domicile.message}</p>
-              )}
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="primary_currency">Primary Currency</Label>
-              <Select onValueChange={(value) => setValue('primary_currency', value)} defaultValue="USD">
-                <SelectTrigger>
-                  <SelectValue placeholder="Select currency" />
-                </SelectTrigger>
-                <SelectContent>
-                  {currencies.map((currency) => (
-                    <SelectItem key={currency} value={currency}>
-                      {currency}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-          </div>
-
-          <div className="space-y-2">
-            <Label>Fiscal Year End</Label>
-            <Popover>
-              <PopoverTrigger asChild>
-                <Button
-                  variant="outline"
-                  className={cn(
-                    "w-full justify-start text-left font-normal",
-                    !fiscalYearEnd && "text-muted-foreground"
-                  )}
-                >
-                  <CalendarIcon className="mr-2 h-4 w-4" />
-                  {fiscalYearEnd ? format(fiscalYearEnd, "MMM dd") : "Select fiscal year end"}
-                </Button>
-              </PopoverTrigger>
-              <PopoverContent className="w-auto p-0" align="start">
-                <Calendar
-                  mode="single"
-                  selected={fiscalYearEnd}
-                  onSelect={setFiscalYearEnd}
-                  initialFocus
+        ) : (
+          <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="name">Company Name *</Label>
+                <Input
+                  id="name"
+                  {...register('name', { required: 'Company name is required' })}
+                  placeholder="Enter company name"
                 />
-              </PopoverContent>
-            </Popover>
-          </div>
+                {errors.name && (
+                  <p className="text-sm text-red-600">{errors.name.message}</p>
+                )}
+              </div>
 
-          <div className="flex justify-end space-x-4 pt-4">
-            <Button
-              type="button"
-              variant="outline"
-              onClick={handleClose}
-            >
-              Close
-            </Button>
-            <Button
-              type="submit"
-              disabled={isLoading}
-              className="bg-[#077bc0] hover:bg-[#077bc0]/90"
-            >
-              {isLoading ? "Saving..." : "Complete Setup"}
-            </Button>
-          </div>
-        </form>
+              <div className="space-y-2">
+                <Label htmlFor="company_structure">Company Structure</Label>
+                <Select 
+                  onValueChange={(value) => setValue('company_structure', value)}
+                  value={watch('company_structure') || ''}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="e.g., Public, Private" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="Public">Public</SelectItem>
+                    <SelectItem value="Private">Private</SelectItem>
+                    <SelectItem value="Partnership">Partnership</SelectItem>
+                    <SelectItem value="LLC">LLC</SelectItem>
+                    <SelectItem value="Corporation">Corporation</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="dba_name">DBA Name (if applicable)</Label>
+                <Input
+                  id="dba_name"
+                  {...register('dba_name')}
+                  placeholder="Doing Business As name"
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="year_of_incorporation">Year of Incorporation</Label>
+                <Select 
+                  onValueChange={(value) => setValue('year_of_incorporation', parseInt(value))}
+                  value={watch('year_of_incorporation')?.toString() || ''}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select year" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {years.map((year) => (
+                      <SelectItem key={year} value={year.toString()}>
+                        {year}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="company_description">Company Description</Label>
+              <Textarea
+                id="company_description"
+                {...register('company_description')}
+                placeholder="Describe your company's business and activities"
+                rows={3}
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="website">Website</Label>
+              <Input
+                id="website"
+                {...register('website')}
+                placeholder="https://www.example.com"
+                type="url"
+              />
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="country_of_domicile">Country of Domicile *</Label>
+                <Select 
+                  onValueChange={(value) => setValue('country_of_domicile', value)}
+                  value={watch('country_of_domicile') || ''}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select country" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {countries.map((country) => (
+                      <SelectItem key={country} value={country}>
+                        {country}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                {errors.country_of_domicile && (
+                  <p className="text-sm text-red-600">{errors.country_of_domicile.message}</p>
+                )}
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="primary_currency">Primary Currency</Label>
+                <Select 
+                  onValueChange={(value) => setValue('primary_currency', value)} 
+                  value={watch('primary_currency') || 'USD'}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select currency" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {currencies.map((currency) => (
+                      <SelectItem key={currency} value={currency}>
+                        {currency}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+
+            <div className="space-y-2">
+              <Label>Fiscal Year End</Label>
+              <Popover>
+                <PopoverTrigger asChild>
+                  <Button
+                    variant="outline"
+                    className={cn(
+                      "w-full justify-start text-left font-normal",
+                      !fiscalYearEnd && "text-muted-foreground"
+                    )}
+                  >
+                    <CalendarIcon className="mr-2 h-4 w-4" />
+                    {fiscalYearEnd ? format(fiscalYearEnd, "MMM dd") : "Select fiscal year end"}
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-auto p-0" align="start">
+                  <Calendar
+                    mode="single"
+                    selected={fiscalYearEnd}
+                    onSelect={setFiscalYearEnd}
+                    initialFocus
+                  />
+                </PopoverContent>
+              </Popover>
+            </div>
+
+            <div className="flex justify-end space-x-4 pt-4">
+              <Button
+                type="button"
+                variant="outline"
+                onClick={handleClose}
+              >
+                Close
+              </Button>
+              <Button
+                type="submit"
+                disabled={isLoading}
+                className="bg-[#077bc0] hover:bg-[#077bc0]/90"
+              >
+                {isLoading ? "Saving..." : "Complete Setup"}
+              </Button>
+            </div>
+          </form>
+        )}
       </DialogContent>
     </Dialog>
   );
