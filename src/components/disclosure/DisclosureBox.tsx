@@ -316,7 +316,7 @@ export const DisclosureBox = ({
                 readOnly={!isEditing && response !== ""}
               />
               {hasUnsavedChanges && response && (
-                <p className="text-sm text-amber-600 mt-2">
+                <p className="text-sm text-red-600 mt-2">
                   You have unsaved changes. Click "Save" to preserve your work.
                 </p>
               )}
