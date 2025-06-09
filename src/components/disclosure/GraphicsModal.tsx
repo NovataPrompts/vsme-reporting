@@ -70,11 +70,26 @@ export const GraphicsModal = ({ isOpen, onClose, recommendations, disclosureTitl
         </DialogHeader>
         
         <div className="mt-4 space-y-6">
-          {/* Contextual Analysis */}
-          {recommendations.contextualAnalysis && (
-            <div className="bg-blue-50 p-4 rounded-lg border border-blue-200">
-              <h4 className="font-semibold text-blue-900 mb-2">Contextual Analysis</h4>
-              <p className="text-blue-800 text-sm">{recommendations.contextualAnalysis}</p>
+          {/* Combined Contextual Analysis and Insights */}
+          {(recommendations.contextualAnalysis || (charts.length > 0 && charts[activeChart]?.insights)) && (
+            <div className="p-4 rounded-lg border" style={{ backgroundColor: '#aed6f1', color: '#1e40af' }}>
+              {recommendations.contextualAnalysis && (
+                <>
+                  <h4 className="font-semibold mb-2">Contextual Analysis</h4>
+                  <p className="text-sm mb-4">{recommendations.contextualAnalysis}</p>
+                </>
+              )}
+              
+              {charts.length > 0 && charts[activeChart]?.insights && charts[activeChart].insights.length > 0 && (
+                <>
+                  <h4 className="font-medium mb-2">Key Insights</h4>
+                  <ul className="list-disc list-inside text-sm space-y-1">
+                    {charts[activeChart].insights.map((insight, i) => (
+                      <li key={i}>{insight}</li>
+                    ))}
+                  </ul>
+                </>
+              )}
             </div>
           )}
 
@@ -102,18 +117,6 @@ export const GraphicsModal = ({ isOpen, onClose, recommendations, disclosureTitl
                         originalColumnOrder={chart.originalColumnOrder}
                       />
                     </div>
-
-                    {/* Insights */}
-                    {chart.insights && chart.insights.length > 0 && (
-                      <div className="bg-green-50 p-4 rounded-lg border border-green-200">
-                        <h4 className="font-medium text-green-900 mb-2">Key Insights</h4>
-                        <ul className="list-disc list-inside text-sm text-green-800 space-y-1">
-                          {chart.insights.map((insight, i) => (
-                            <li key={i}>{insight}</li>
-                          ))}
-                        </ul>
-                      </div>
-                    )}
                   </div>
                 </TabsContent>
               ))}
