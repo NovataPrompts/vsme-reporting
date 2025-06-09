@@ -112,6 +112,28 @@ export const ChartRenderer = ({ chartType, data, title, description, originalCol
 
     const colors = ['#8884d8', '#82ca9d', '#ffc658', '#ff7300', '#0088aa', '#00C49F'];
 
+    // Custom label function to show percentages
+    const renderCustomLabel = ({ cx, cy, midAngle, innerRadius, outerRadius, percentage, category }) => {
+      const RADIAN = Math.PI / 180;
+      const radius = innerRadius + (outerRadius - innerRadius) * 0.5;
+      const x = cx + radius * Math.cos(-midAngle * RADIAN);
+      const y = cy + radius * Math.sin(-midAngle * RADIAN);
+
+      return (
+        <text 
+          x={x} 
+          y={y} 
+          fill="white" 
+          textAnchor={x > cx ? 'start' : 'end'} 
+          dominantBaseline="central"
+          fontSize="12"
+          fontWeight="bold"
+        >
+          {`${percentage}%`}
+        </text>
+      );
+    };
+
     return (
       <div className="w-full">
         <div className="mb-4">
@@ -125,7 +147,7 @@ export const ChartRenderer = ({ chartType, data, title, description, originalCol
               cx="50%"
               cy="50%"
               labelLine={false}
-              label={({ category, value, unit }) => `${category}: ${value} ${unit || ''}`}
+              label={renderCustomLabel}
               outerRadius={120}
               fill="#8884d8"
               dataKey="value"
@@ -134,7 +156,16 @@ export const ChartRenderer = ({ chartType, data, title, description, originalCol
                 <Cell key={`cell-${index}`} fill={colors[index % colors.length]} />
               ))}
             </Pie>
-            <Tooltip formatter={(value, name) => [`${value} ${data[0]?.unit || ''}`, name]} />
+            <Tooltip 
+              formatter={(value, name) => [`${value} ${data[0]?.unit || ''}`, name]} 
+              labelFormatter={(label, payload) => {
+                if (payload && payload.length > 0) {
+                  const item = payload[0].payload;
+                  return `${item.category}: ${item.percentage}`;
+                }
+                return label;
+              }}
+            />
           </PieChart>
         </ResponsiveContainer>
       </div>
@@ -150,6 +181,26 @@ export const ChartRenderer = ({ chartType, data, title, description, originalCol
       );
     }
 
+    // Custom label function for bars
+    const renderBarLabel = (props: any) => {
+      const { x, y, width, height, value } = props;
+      if (value === 0) return null;
+      
+      return (
+        <text 
+          x={x + width / 2} 
+          y={y + height / 2} 
+          fill="white" 
+          textAnchor="middle" 
+          dy={3}
+          fontSize="11"
+          fontWeight="bold"
+        >
+          {`${value} MWh`}
+        </text>
+      );
+    };
+
     return (
       <div className="w-full">
         <div className="mb-4">
@@ -162,8 +213,8 @@ export const ChartRenderer = ({ chartType, data, title, description, originalCol
             <XAxis dataKey="category" />
             <YAxis label={{ value: `Energy (${data[0]?.unit || ''})`, angle: -90, position: 'insideLeft' }} />
             <Tooltip formatter={(value, name) => [`${value} ${data[0]?.unit || ''}`, name]} />
-            <Bar dataKey="renewable" stackId="energy" fill="#82ca9d" name="Renewable" />
-            <Bar dataKey="nonRenewable" stackId="energy" fill="#ff7300" name="Non-renewable" />
+            <Bar dataKey="renewable" stackId="energy" fill="#82ca9d" name="Renewable" label={renderBarLabel} />
+            <Bar dataKey="nonRenewable" stackId="energy" fill="#ff7300" name="Non-renewable" label={renderBarLabel} />
           </BarChart>
         </ResponsiveContainer>
       </div>
