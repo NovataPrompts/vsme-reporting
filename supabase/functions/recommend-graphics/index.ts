@@ -217,8 +217,8 @@ function handleB3Graphics(metrics: any[], disclosureTitle: string, allMetrics: a
         console.log('Enhanced table data sample:', enhancedTableData[0])
 
         charts.push({
-          title: "VSME B3.29 - Energy Consumption Data with Breakdown",
-          description: "Table showing detailed energy consumption metrics with percentage breakdown by source",
+          title: "Energy Consumption Breakdown",
+          description: "Table showing detailed energy consumption metrics with percentage breakdown by source (VSME B3.29)",
           chartType: "Table",
           data: enhancedTableData,
           originalColumnOrder: enhancedColumnOrder,
@@ -315,8 +315,8 @@ function handleB3Graphics(metrics: any[], disclosureTitle: string, allMetrics: a
       } else {
         // Fallback: just show the table without percentage calculation
         charts.push({
-          title: "VSME B3.29 - Energy Consumption Data",
-          description: "Table showing detailed energy consumption metrics",
+          title: "Energy Consumption Breakdown",
+          description: "Table showing detailed energy consumption metrics (VSME B3.29)",
           chartType: "Table",
           data: tableData,
           originalColumnOrder: originalColumnOrder,
