@@ -14,6 +14,7 @@ export interface CompanyProfile {
   country_of_domicile: string;
   primary_currency: string;
   fiscal_year_end: string | null;
+  organization_id?: string;
 }
 
 export const useCompanyProfile = () => {
@@ -49,7 +50,13 @@ export const useCompanyProfile = () => {
       if (!user.user) throw new Error('User not authenticated');
 
       console.log('User authenticated, user ID:', user.user.id);
-      console.log('Profile data to save:', profile);
+
+      // Get user's organization
+      const { data: userOrg } = await supabase
+        .from('user_organizations')
+        .select('organization_id')
+        .eq('user_id', user.user.id)
+        .maybeSingle();
 
       const profileData = {
         user_id: user.user.id,
@@ -62,6 +69,7 @@ export const useCompanyProfile = () => {
         country_of_domicile: profile.country_of_domicile,
         primary_currency: profile.primary_currency,
         fiscal_year_end: profile.fiscal_year_end,
+        organization_id: userOrg?.organization_id || null,
         updated_at: new Date().toISOString()
       };
 

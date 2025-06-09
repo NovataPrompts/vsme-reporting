@@ -19,6 +19,7 @@ export type Database = {
           fiscal_year_end: string | null
           id: string
           name: string
+          organization_id: string | null
           primary_currency: string
           updated_at: string
           user_id: string
@@ -34,6 +35,7 @@ export type Database = {
           fiscal_year_end?: string | null
           id?: string
           name: string
+          organization_id?: string | null
           primary_currency?: string
           updated_at?: string
           user_id: string
@@ -49,13 +51,22 @@ export type Database = {
           fiscal_year_end?: string | null
           id?: string
           name?: string
+          organization_id?: string | null
           primary_currency?: string
           updated_at?: string
           user_id?: string
           website?: string | null
           year_of_incorporation?: number | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "company_profiles_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       consol: {
         Row: {
@@ -154,6 +165,7 @@ export type Database = {
           disclosure_title: string
           graphics_recommendations: Json | null
           id: string
+          organization_id: string | null
           response_content: string
           updated_at: string
           user_id: string
@@ -164,6 +176,7 @@ export type Database = {
           disclosure_title: string
           graphics_recommendations?: Json | null
           id?: string
+          organization_id?: string | null
           response_content: string
           updated_at?: string
           user_id: string
@@ -174,9 +187,39 @@ export type Database = {
           disclosure_title?: string
           graphics_recommendations?: Json | null
           id?: string
+          organization_id?: string | null
           response_content?: string
           updated_at?: string
           user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "disclosure_responses_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      organizations: {
+        Row: {
+          created_at: string
+          id: string
+          name: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          name: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          name?: string
+          updated_at?: string
         }
         Relationships: []
       }
@@ -217,6 +260,7 @@ export type Database = {
           data: Json
           id: string
           novata_reference: string
+          organization_id: string | null
           original_filename: string | null
           sheet_name: string | null
           updated_at: string
@@ -228,6 +272,7 @@ export type Database = {
           data: Json
           id?: string
           novata_reference: string
+          organization_id?: string | null
           original_filename?: string | null
           sheet_name?: string | null
           updated_at?: string
@@ -239,12 +284,53 @@ export type Database = {
           data?: Json
           id?: string
           novata_reference?: string
+          organization_id?: string | null
           original_filename?: string | null
           sheet_name?: string | null
           updated_at?: string
           user_id?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "tabular_data_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      user_organizations: {
+        Row: {
+          created_at: string
+          id: string
+          organization_id: string
+          role: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          organization_id: string
+          role?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          organization_id?: string
+          role?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_organizations_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       vsme_novata_ref_converter: {
         Row: {
@@ -317,6 +403,7 @@ export type Database = {
           created_at: string
           id: string
           metric_id: string
+          organization_id: string | null
           response_data: Json | null
           response_value: string | null
           updated_at: string
@@ -326,6 +413,7 @@ export type Database = {
           created_at?: string
           id?: string
           metric_id: string
+          organization_id?: string | null
           response_data?: Json | null
           response_value?: string | null
           updated_at?: string
@@ -335,6 +423,7 @@ export type Database = {
           created_at?: string
           id?: string
           metric_id?: string
+          organization_id?: string | null
           response_data?: Json | null
           response_value?: string | null
           updated_at?: string
@@ -346,6 +435,13 @@ export type Database = {
             columns: ["metric_id"]
             isOneToOne: false
             referencedRelation: "consol"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "vsme_user_responses_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
             referencedColumns: ["id"]
           },
         ]

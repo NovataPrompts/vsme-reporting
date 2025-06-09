@@ -39,7 +39,7 @@ export const useVSMEUserResponses = () => {
       if (lookupError) throw lookupError;
       if (!metric) return null;
 
-      // Then get the user response for that metric
+      // Then get the user response for that metric (organization-wide)
       const { data, error } = await supabase
         .from('vsme_user_responses')
         .select('*')
@@ -101,12 +101,23 @@ export const useVSMEUserResponses = () => {
 
       console.log(`Found metric ID ${metric.id} for reference ${novataReference}`);
 
+      const { data: user } = await supabase.auth.getUser();
+      if (!user.user) throw new Error('User not authenticated');
+
+      // Get user's organization
+      const { data: userOrg } = await supabase
+        .from('user_organizations')
+        .select('organization_id')
+        .eq('user_id', user.user.id)
+        .maybeSingle();
+
       // Now save the response using the correct metric ID
       const { error } = await supabase
         .from('vsme_user_responses')
         .upsert({
           metric_id: metric.id,
-          user_id: (await supabase.auth.getUser()).data.user?.id,
+          user_id: user.user.id,
+          organization_id: userOrg?.organization_id || null,
           response_value: responseValue,
           response_data: responseData
         });

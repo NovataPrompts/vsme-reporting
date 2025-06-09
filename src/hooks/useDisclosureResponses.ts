@@ -10,6 +10,7 @@ interface DisclosureResponse {
   disclosure_title: string;
   response_content: string;
   graphics_recommendations?: any;
+  organization_id?: string;
   created_at: string;
   updated_at: string;
 }
@@ -40,10 +41,18 @@ export const useDisclosureResponses = () => {
       console.log('Saving disclosure response for user:', user.id);
       console.log('Disclosure data:', { disclosureId, disclosureTitle, responseContent: responseContent.substring(0, 100) + '...' });
 
+      // Get user's organization
+      const { data: userOrg } = await supabase
+        .from('user_organizations')
+        .select('organization_id')
+        .eq('user_id', user.id)
+        .maybeSingle();
+
       const { error } = await supabase
         .from('disclosure_responses')
         .upsert({
           user_id: user.id,
+          organization_id: userOrg?.organization_id || null,
           disclosure_id: disclosureId,
           disclosure_title: disclosureTitle,
           response_content: responseContent,
@@ -90,7 +99,6 @@ export const useDisclosureResponses = () => {
       const { data, error } = await supabase
         .from('disclosure_responses')
         .select('*')
-        .eq('user_id', user.id)
         .eq('disclosure_id', disclosureId)
         .maybeSingle();
 

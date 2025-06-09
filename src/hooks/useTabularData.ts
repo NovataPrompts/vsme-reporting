@@ -14,11 +14,22 @@ export const useTabularData = () => {
     sheetName?: string
   ) => {
     try {
+      const { data: user } = await supabase.auth.getUser();
+      if (!user.user) throw new Error('User not authenticated');
+
+      // Get user's organization
+      const { data: userOrg } = await supabase
+        .from('user_organizations')
+        .select('organization_id')
+        .eq('user_id', user.user.id)
+        .maybeSingle();
+
       const { error } = await supabase
         .from('tabular_data')
         .upsert({
           novata_reference: novataReference,
-          user_id: (await supabase.auth.getUser()).data.user?.id,
+          user_id: user.user.id,
+          organization_id: userOrg?.organization_id || null,
           data: data,
           column_order: columnOrder,
           original_filename: originalFilename,
