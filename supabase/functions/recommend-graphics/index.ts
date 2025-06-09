@@ -127,50 +127,103 @@ function handleB3Graphics(metrics: any[], disclosureTitle: string, allMetrics: a
   // 1. Table based on VSME.B3.29 with percentage breakdown
   const vsmeB329Metric = metrics.find(m => m.novataReference === 'VSME.B3.29')
   if (vsmeB329Metric && vsmeB329Metric.responseData) {
+    console.log('Found VSME.B3.29 metric:', vsmeB329Metric)
+    
+    // Get the original column order and tabular data
     let originalColumnOrder = null
+    let tableData = null
+    
     if (vsmeB329Metric.responseData.originalColumnOrder) {
       originalColumnOrder = vsmeB329Metric.responseData.originalColumnOrder
-    } else if (vsmeB329Metric.responseData.tabularData && vsmeB329Metric.responseData.tabularData.length > 0) {
-      originalColumnOrder = Object.keys(vsmeB329Metric.responseData.tabularData[0])
+      console.log('Using preserved original column order:', originalColumnOrder)
+    }
+    
+    if (vsmeB329Metric.responseData.tabularData) {
+      tableData = vsmeB329Metric.responseData.tabularData
+      console.log('Using tabular data:', tableData)
+    } else {
+      tableData = vsmeB329Metric.responseData
+      console.log('Using response data directly:', tableData)
     }
 
-    let tableData = vsmeB329Metric.responseData.tabularData || vsmeB329Metric.responseData
+    // If we still don't have column order, get it from the first row
+    if (!originalColumnOrder && tableData && tableData.length > 0) {
+      originalColumnOrder = Object.keys(tableData[0])
+      console.log('Fallback to first row keys:', originalColumnOrder)
+    }
 
-    // Calculate total energy consumption for percentage calculation
-    let totalConsumption = 0
-    tableData.forEach(item => {
-      const consumption = parseFloat(item['Consumption'] || item.consumption || item.amount || item.value || '0')
-      if (consumption > 0) {
-        totalConsumption += consumption
-      }
-    })
-
-    // Add percentage column to the data
-    const enhancedTableData = tableData.map(item => {
-      const consumption = parseFloat(item['Consumption'] || item.consumption || item.amount || item.value || '0')
-      const percentage = totalConsumption > 0 ? ((consumption / totalConsumption) * 100).toFixed(1) : '0'
+    if (tableData && tableData.length > 0) {
+      // Calculate total energy consumption for percentage calculation
+      let totalConsumption = 0
       
-      return {
-        ...item,
-        'Percentage (%)': `${percentage}%`
+      // Try different possible column names for consumption values
+      const consumptionColumns = ['Total (MWh)', 'Consumption', 'consumption', 'amount', 'value', 'Total']
+      let consumptionColumnName = null
+      
+      // Find which column contains the consumption data
+      for (const colName of consumptionColumns) {
+        if (tableData[0][colName] !== undefined) {
+          consumptionColumnName = colName
+          break
+        }
       }
-    })
+      
+      console.log('Found consumption column:', consumptionColumnName)
+      
+      if (consumptionColumnName) {
+        tableData.forEach(item => {
+          const consumption = parseFloat(item[consumptionColumnName] || '0')
+          if (consumption > 0) {
+            totalConsumption += consumption
+          }
+        })
+        
+        console.log('Total consumption calculated:', totalConsumption)
 
-    // Add percentage column to the original column order
-    const enhancedColumnOrder = originalColumnOrder ? [...originalColumnOrder, 'Percentage (%)'] : null
+        // Add percentage column to the data
+        const enhancedTableData = tableData.map(item => {
+          const consumption = parseFloat(item[consumptionColumnName] || '0')
+          const percentage = totalConsumption > 0 ? ((consumption / totalConsumption) * 100).toFixed(1) : '0'
+          
+          return {
+            ...item,
+            'Percentage (%)': `${percentage}%`
+          }
+        })
 
-    charts.push({
-      title: "VSME B3.29 - Energy Consumption Data with Breakdown",
-      description: "Table showing detailed energy consumption metrics with percentage breakdown by source",
-      chartType: "Table",
-      data: enhancedTableData,
-      originalColumnOrder: enhancedColumnOrder,
-      insights: [
-        "Detailed breakdown of energy consumption by source",
-        "Percentage distribution shows relative consumption by energy type",
-        "Values presented in standardized units for comparison"
-      ]
-    })
+        // Add percentage column to the original column order
+        const enhancedColumnOrder = originalColumnOrder ? [...originalColumnOrder, 'Percentage (%)'] : null
+        
+        console.log('Enhanced column order:', enhancedColumnOrder)
+        console.log('Enhanced table data sample:', enhancedTableData[0])
+
+        charts.push({
+          title: "VSME B3.29 - Energy Consumption Data with Breakdown",
+          description: "Table showing detailed energy consumption metrics with percentage breakdown by source",
+          chartType: "Table",
+          data: enhancedTableData,
+          originalColumnOrder: enhancedColumnOrder,
+          insights: [
+            "Detailed breakdown of energy consumption by source",
+            "Percentage distribution shows relative consumption by energy type",
+            "Values presented in standardized units for comparison"
+          ]
+        })
+      } else {
+        // Fallback: just show the table without percentage calculation
+        charts.push({
+          title: "VSME B3.29 - Energy Consumption Data",
+          description: "Table showing detailed energy consumption metrics",
+          chartType: "Table",
+          data: tableData,
+          originalColumnOrder: originalColumnOrder,
+          insights: [
+            "Detailed breakdown of energy consumption by source",
+            "Values presented in standardized units for comparison"
+          ]
+        })
+      }
+    }
   }
 
   // 2. Bar chart for GHG Emissions (Scope 1, 2, 3)
