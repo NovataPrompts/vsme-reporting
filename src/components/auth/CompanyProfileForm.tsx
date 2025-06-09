@@ -62,7 +62,7 @@ export const CompanyProfileForm = ({ onComplete }: CompanyProfileFormProps) => {
       website: data.website || '',
       country_of_domicile: data.country_of_domicile,
       primary_currency: data.primary_currency || 'USD',
-      fiscal_year_end: fiscalYearEnd ? format(fiscalYearEnd, 'yyyy-MM-dd') : ''
+      fiscal_year_end: fiscalYearEnd ? format(fiscalYearEnd, 'yyyy-MM-dd') : null
     };
 
     console.log('Profile data to save:', profileData);

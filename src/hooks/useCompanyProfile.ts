@@ -13,7 +13,7 @@ export interface CompanyProfile {
   website: string;
   country_of_domicile: string;
   primary_currency: string;
-  fiscal_year_end: string;
+  fiscal_year_end: string | null;
 }
 
 export const useCompanyProfile = () => {
@@ -61,7 +61,7 @@ export const useCompanyProfile = () => {
         website: profile.website,
         country_of_domicile: profile.country_of_domicile,
         primary_currency: profile.primary_currency,
-        fiscal_year_end: profile.fiscal_year_end || null,
+        fiscal_year_end: profile.fiscal_year_end,
         updated_at: new Date().toISOString()
       };
 
