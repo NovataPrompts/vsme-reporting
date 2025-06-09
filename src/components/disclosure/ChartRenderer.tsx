@@ -112,25 +112,50 @@ export const ChartRenderer = ({ chartType, data, title, description, originalCol
 
     const colors = ['#8884d8', '#82ca9d', '#ffc658', '#ff7300', '#0088aa', '#00C49F'];
 
-    // Custom label function to show percentages
-    const renderCustomLabel = ({ cx, cy, midAngle, innerRadius, outerRadius, percentage, category }) => {
+    // Enhanced label function to show category, value, and percentage
+    const renderCustomLabel = ({ cx, cy, midAngle, innerRadius, outerRadius, value, category, percentage }) => {
       const RADIAN = Math.PI / 180;
-      const radius = innerRadius + (outerRadius - innerRadius) * 0.5;
+      const radius = innerRadius + (outerRadius - innerRadius) * 0.7;
       const x = cx + radius * Math.cos(-midAngle * RADIAN);
       const y = cy + radius * Math.sin(-midAngle * RADIAN);
 
+      // Multi-line label showing category, value, and percentage
       return (
-        <text 
-          x={x} 
-          y={y} 
-          fill="white" 
-          textAnchor={x > cx ? 'start' : 'end'} 
-          dominantBaseline="central"
-          fontSize="12"
-          fontWeight="bold"
-        >
-          {`${percentage}%`}
-        </text>
+        <g>
+          <text 
+            x={x} 
+            y={y - 8} 
+            fill="white" 
+            textAnchor={x > cx ? 'start' : 'end'} 
+            dominantBaseline="central"
+            fontSize="11"
+            fontWeight="bold"
+          >
+            {category}
+          </text>
+          <text 
+            x={x} 
+            y={y + 4} 
+            fill="white" 
+            textAnchor={x > cx ? 'start' : 'end'} 
+            dominantBaseline="central"
+            fontSize="10"
+            fontWeight="bold"
+          >
+            {`${value} MWh`}
+          </text>
+          <text 
+            x={x} 
+            y={y + 16} 
+            fill="white" 
+            textAnchor={x > cx ? 'start' : 'end'} 
+            dominantBaseline="central"
+            fontSize="10"
+            fontWeight="bold"
+          >
+            {percentage}
+          </text>
+        </g>
       );
     };
 
