@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { ChevronLeft, ChevronRight } from "lucide-react";
@@ -185,20 +186,32 @@ export const DraftViewer = () => {
             </div>
             
             {/* Render B2 Graphics if available */}
-            {b2Response.graphics_recommendations?.hasCharts && (
-              <div className="space-y-4">
-                <h3 className="text-lg font-semibold text-gray-900">Supporting Graphics</h3>
-                {b2Response.graphics_recommendations.charts?.map((chart: any, index: number) => (
-                  <div key={index} className="bg-gray-50 p-4 rounded-lg">
-                    <ChartRenderer 
-                      chartType={chart.chartType}
-                      data={chart.data}
-                      title={chart.title}
-                      description={chart.description}
-                      originalColumnOrder={chart.originalColumnOrder}
-                    />
-                  </div>
-                ))}
+            {b2Response.graphics_recommendations?.hasCharts && b2Response.graphics_recommendations.charts && (
+              <div className="space-y-6">
+                <div className="border-t border-gray-200 pt-6">
+                  <h3 className="text-xl font-semibold text-gray-900 mb-4">Supporting Graphics</h3>
+                  {b2Response.graphics_recommendations.charts.map((chart: any, index: number) => (
+                    <div key={index} className="bg-gray-50 p-6 rounded-lg mb-6">
+                      <ChartRenderer 
+                        chartType={chart.chartType}
+                        data={chart.data}
+                        title={chart.title}
+                        description={chart.description}
+                        originalColumnOrder={chart.originalColumnOrder}
+                      />
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+            
+            {/* Show message if no graphics are available but we expected some */}
+            {(!b2Response.graphics_recommendations || !b2Response.graphics_recommendations.hasCharts) && (
+              <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                <p className="text-blue-800 text-sm">
+                  <strong>Note:</strong> Graphics recommendations for B2 disclosure are not yet available. 
+                  Graphics will be automatically generated when you visit the B2 disclosure page and generate the response with graphics.
+                </p>
               </div>
             )}
           </>
