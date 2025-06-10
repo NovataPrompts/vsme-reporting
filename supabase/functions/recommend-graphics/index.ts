@@ -124,14 +124,11 @@ function handleB2Graphics(metrics: any[], disclosureTitle: string) {
 
 async function handleB3Graphics(metrics: any[], disclosureTitle: string, allMetrics: any[], req: Request) {
   console.log('B3 handleB3Graphics called with metrics:', metrics.length)
-  console.log('All available metrics for B3:', metrics.map(m => ({ 
-    novataReference: m.novataReference, 
-    metric: m.metric,
-    hasResponse: !!m.response,
-    hasResponseData: !!m.responseData,
-    response: m.response,
-    responseData: m.responseData
-  })))
+  
+  // Initialize Supabase client for direct database queries
+  const supabaseUrl = Deno.env.get('SUPABASE_URL')!
+  const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
+  const supabase = createClient(supabaseUrl, supabaseKey)
 
   const charts = []
 
@@ -370,88 +367,111 @@ async function handleB3Graphics(metrics: any[], disclosureTitle: string, allMetr
     }
   }
 
-  // 2. GHG Emissions Charts - Use the metrics data that's already loaded
-  console.log('Processing GHG metrics from loaded data...')
+  // 2. GHG Emissions Charts - Query database directly for the specific metrics
+  console.log('Querying database for GHG metrics...')
   
-  // Find the GHG metrics in the loaded data
-  const ghgMetrics = [
-    { ref: 'VSME.B3.30.a', scope: 'Scope 1' },
-    { ref: 'VSME.B3.30.b', scope: 'Scope 2' },
-    { ref: 'VSME.C2.50', scope: 'Scope 3' }
-  ]
+  // First, get the metric IDs for the GHG metrics
+  const { data: ghgMetrics, error: ghgMetricsError } = await supabase
+    .from('consol')
+    .select('id, novata_reference, metric')
+    .in('novata_reference', ['VSME.B3.30.a', 'VSME.B3.30.b', 'VSME.C2.50'])
+
+  console.log('GHG metrics from consol table:', ghgMetrics)
+
+  if (ghgMetricsError) {
+    console.error('Error fetching GHG metrics:', ghgMetricsError)
+  }
 
   let chartData = []
   let tableData = []
   let totalEmissions = 0
 
-  ghgMetrics.forEach(({ ref, scope }) => {
-    // Find the metric in our loaded data
-    const metric = metrics.find(m => m.novataReference === ref)
-    console.log(`Processing ${ref} (${scope}):`, metric)
-    
-    let value = 0
-    if (metric && metric.response && !isNaN(parseFloat(metric.response))) {
-      value = parseFloat(metric.response)
-      console.log(`Got value from response: ${value}`)
-    } else if (metric && metric.responseData && typeof metric.responseData === 'object' && metric.responseData.value) {
-      value = parseFloat(metric.responseData.value)
-      console.log(`Got value from responseData.value: ${value}`)
-    } else if (metric && metric.responseData && !isNaN(parseFloat(metric.responseData))) {
-      value = parseFloat(metric.responseData)
-      console.log(`Got value from responseData directly: ${value}`)
+  if (ghgMetrics && ghgMetrics.length > 0) {
+    // Now get the user responses for these metrics
+    const metricIds = ghgMetrics.map(m => m.id)
+    const { data: userResponses, error: userResponsesError } = await supabase
+      .from('vsme_user_responses')
+      .select('*')
+      .in('metric_id', metricIds)
+
+    console.log('User responses for GHG metrics:', userResponses)
+
+    if (userResponsesError) {
+      console.error('Error fetching user responses:', userResponsesError)
     }
 
-    console.log(`Final extracted value for ${ref}: ${value}`)
+    if (userResponses && userResponses.length > 0) {
+      const ghgMappings = [
+        { ref: 'VSME.B3.30.a', scope: 'Scope 1' },
+        { ref: 'VSME.B3.30.b', scope: 'Scope 2' },
+        { ref: 'VSME.C2.50', scope: 'Scope 3' }
+      ]
 
-    // Add to chart data
-    chartData.push({
-      category: scope,
-      value: value,
-      unit: 'tCO2e'
-    })
+      ghgMappings.forEach(({ ref, scope }) => {
+        // Find the metric info
+        const metricInfo = ghgMetrics.find(m => m.novata_reference === ref)
+        if (!metricInfo) return
 
-    // Add to table data
-    tableData.push({
-      'Emission Scope': scope,
-      'Value': value.toString(),
-      'Unit': 'tCO2e',
-      'Metric Reference': ref,
-      'Description': metric?.metric || ''
-    })
+        // Find the user response
+        const userResponse = userResponses.find(r => r.metric_id === metricInfo.id)
+        let value = 0
 
-    totalEmissions += value
-  })
+        if (userResponse && userResponse.response_value) {
+          value = parseFloat(userResponse.response_value) || 0
+          console.log(`Found value for ${ref} (${scope}): ${value}`)
+        }
 
-  console.log('Final GHG chart data:', chartData)
-  console.log('Final GHG table data:', tableData)
-  console.log('Total emissions calculated:', totalEmissions)
+        // Add to chart data
+        chartData.push({
+          category: scope,
+          value: value,
+          unit: 'tCO2e'
+        })
 
-  // Create the bar chart
-  charts.push({
-    title: "GHG Emissions by Scope",
-    description: `Bar chart showing GHG emissions by scope with total of ${totalEmissions.toFixed(2)} tCO2e (VSME.B3.30.a, VSME.B3.30.b, VSME.C2.50)`,
-    chartType: "BarChart",
-    data: chartData,
-    insights: [
-      `Total GHG emissions: ${totalEmissions.toFixed(2)} tCO2e`,
-      "Comparison across different emission scopes",
-      "Values displayed in tonnes of CO2 equivalent"
-    ]
-  })
+        // Add to table data
+        tableData.push({
+          'Emission Scope': scope,
+          'Value': value.toString(),
+          'Unit': 'tCO2e',
+          'Metric Reference': ref,
+          'Description': metricInfo?.metric || ''
+        })
 
-  // Create the summary table
-  charts.push({
-    title: "GHG Emissions Summary Table",
-    description: "Summary table of Scope 1, 2, and 3 emissions with units (VSME.B3.30.a, VSME.B3.30.b, VSME.C2.50)",
-    chartType: "Table",
-    data: tableData,
-    originalColumnOrder: ['Emission Scope', 'Value', 'Unit', 'Metric Reference', 'Description'],
-    insights: [
-      "Structured overview of all emission scopes",
-      "Standardized units for regulatory compliance",
-      "Clear categorization of emission sources with metric references"
-    ]
-  })
+        totalEmissions += value
+      })
+
+      console.log('Final GHG chart data:', chartData)
+      console.log('Final GHG table data:', tableData)
+      console.log('Total emissions calculated:', totalEmissions)
+
+      // Create the bar chart
+      charts.push({
+        title: "GHG Emissions by Scope",
+        description: `Bar chart showing GHG emissions by scope with total of ${totalEmissions.toFixed(2)} tCO2e (VSME.B3.30.a, VSME.B3.30.b, VSME.C2.50)`,
+        chartType: "BarChart",
+        data: chartData,
+        insights: [
+          `Total GHG emissions: ${totalEmissions.toFixed(2)} tCO2e`,
+          "Comparison across different emission scopes",
+          "Values displayed in tonnes of CO2 equivalent"
+        ]
+      })
+
+      // Create the summary table
+      charts.push({
+        title: "GHG Emissions Summary Table",
+        description: "Summary table of Scope 1, 2, and 3 emissions with units (VSME.B3.30.a, VSME.B3.30.b, VSME.C2.50)",
+        chartType: "Table",
+        data: tableData,
+        originalColumnOrder: ['Emission Scope', 'Value', 'Unit', 'Metric Reference', 'Description'],
+        insights: [
+          "Structured overview of all emission scopes",
+          "Standardized units for regulatory compliance",
+          "Clear categorization of emission sources with metric references"
+        ]
+      })
+    }
+  }
 
   console.log('B3 Total charts created:', charts.length)
   console.log('B3 Chart titles:', charts.map(c => c.title))
