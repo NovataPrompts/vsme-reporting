@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { ChevronLeft, ChevronRight } from "lucide-react";
@@ -6,37 +5,78 @@ import { Card, CardContent } from "@/components/ui/card";
 import { useCompanyProfile } from "@/hooks/useCompanyProfile";
 import { useDisclosureResponses } from "@/hooks/useDisclosureResponses";
 import { ChartRenderer } from "@/components/disclosure/ChartRenderer";
+import { supabase } from "@/integrations/supabase/client";
 
 export const DraftViewer = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const totalPages = 4;
   const { getCompanyProfile } = useCompanyProfile();
-  const { loadDisclosureResponse } = useDisclosureResponses();
   
   const [companyProfile, setCompanyProfile] = useState<any>(null);
   const [disclosureResponses, setDisclosureResponses] = useState<any>({});
+  const [isLoading, setIsLoading] = useState(true);
 
   // Load data on component mount
   useEffect(() => {
     const loadData = async () => {
+      setIsLoading(true);
       try {
+        console.log('Loading draft data...');
+        
+        // Load company profile
         const profile = await getCompanyProfile();
+        console.log('Company profile loaded:', profile);
         setCompanyProfile(profile);
         
-        const b1Response = await loadDisclosureResponse('B1');
-        const b2Response = await loadDisclosureResponse('B2');
+        // Load disclosure responses directly from Supabase
+        const { data: { user }, error: userError } = await supabase.auth.getUser();
         
-        setDisclosureResponses({
-          B1: b1Response,
-          B2: b2Response
-        });
+        if (userError || !user) {
+          console.error('User not authenticated:', userError);
+          return;
+        }
+
+        console.log('Loading disclosure responses for user:', user.id);
+
+        // Get user's organization
+        const { data: userOrg } = await supabase
+          .from('user_organizations')
+          .select('organization_id')
+          .eq('user_id', user.id)
+          .maybeSingle();
+
+        console.log('User organization:', userOrg);
+
+        // Load disclosure responses for this user/organization
+        const { data: responses, error: responsesError } = await supabase
+          .from('disclosure_responses')
+          .select('*')
+          .eq('user_id', user.id)
+          .in('disclosure_id', ['B1', 'B2']);
+
+        if (responsesError) {
+          console.error('Error loading disclosure responses:', responsesError);
+        } else {
+          console.log('Disclosure responses loaded:', responses);
+          
+          // Organize responses by disclosure_id
+          const organizedResponses: any = {};
+          responses?.forEach(response => {
+            organizedResponses[response.disclosure_id] = response;
+          });
+          
+          setDisclosureResponses(organizedResponses);
+        }
+        
       } catch (error) {
         console.error('Error loading data:', error);
+      } finally {
+        setIsLoading(false);
       }
     };
     
     loadData();
-  }, [getCompanyProfile, loadDisclosureResponse]);
+  }, [getCompanyProfile]);
 
   const nextPage = () => {
     if (currentPage < totalPages) {
@@ -171,13 +211,21 @@ export const DraftViewer = () => {
     </div>
   );
 
+  if (isLoading) {
+    return (
+      <div className="flex flex-col items-center justify-center h-64">
+        <div className="text-lg text-gray-600">Loading draft report...</div>
+      </div>
+    );
+  }
+
   return (
     <div className="flex flex-col items-center space-y-6">
       {/* Navigation Controls */}
       <div className="flex items-center gap-4">
         <Button
           variant="outline"
-          onClick={prevPage}
+          onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
           disabled={currentPage === 1}
           className="flex items-center gap-2"
         >
@@ -191,7 +239,7 @@ export const DraftViewer = () => {
         
         <Button
           variant="outline"
-          onClick={nextPage}
+          onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
           disabled={currentPage === totalPages}
           className="flex items-center gap-2"
         >
