@@ -1,5 +1,5 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
@@ -10,8 +10,33 @@ import { ChartRenderer } from "@/components/disclosure/ChartRenderer";
 export const DraftViewer = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const totalPages = 4;
-  const { data: companyProfile } = useCompanyProfile();
-  const { data: disclosureResponses } = useDisclosureResponses();
+  const { getCompanyProfile } = useCompanyProfile();
+  const { loadDisclosureResponse } = useDisclosureResponses();
+  
+  const [companyProfile, setCompanyProfile] = useState<any>(null);
+  const [disclosureResponses, setDisclosureResponses] = useState<any>({});
+
+  // Load data on component mount
+  useEffect(() => {
+    const loadData = async () => {
+      try {
+        const profile = await getCompanyProfile();
+        setCompanyProfile(profile);
+        
+        const b1Response = await loadDisclosureResponse('B1');
+        const b2Response = await loadDisclosureResponse('B2');
+        
+        setDisclosureResponses({
+          B1: b1Response,
+          B2: b2Response
+        });
+      } catch (error) {
+        console.error('Error loading data:', error);
+      }
+    };
+    
+    loadData();
+  }, [getCompanyProfile, loadDisclosureResponse]);
 
   const nextPage = () => {
     if (currentPage < totalPages) {
@@ -30,8 +55,8 @@ export const DraftViewer = () => {
   };
 
   // Get disclosure responses
-  const b1Response = disclosureResponses?.find(r => r.disclosure_id === 'B1');
-  const b2Response = disclosureResponses?.find(r => r.disclosure_id === 'B2');
+  const b1Response = disclosureResponses.B1;
+  const b2Response = disclosureResponses.B2;
 
   const tableOfContents = [
     { page: 3, title: "B1 - General Information - Basis for Preparation" },
@@ -125,7 +150,13 @@ export const DraftViewer = () => {
                 <h3 className="text-lg font-semibold text-gray-900">Supporting Graphics</h3>
                 {b2Response.graphics_recommendations.charts?.map((chart: any, index: number) => (
                   <div key={index} className="bg-gray-50 p-4 rounded-lg">
-                    <ChartRenderer chart={chart} />
+                    <ChartRenderer 
+                      chartType={chart.chartType}
+                      data={chart.data}
+                      title={chart.title}
+                      description={chart.description}
+                      originalColumnOrder={chart.originalColumnOrder}
+                    />
                   </div>
                 ))}
               </div>
