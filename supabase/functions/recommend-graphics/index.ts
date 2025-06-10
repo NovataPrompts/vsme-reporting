@@ -1,3 +1,4 @@
+
 import { serve } from 'https://deno.land/std@0.168.0/http/server.ts'
 
 const corsHeaders = {
@@ -121,6 +122,16 @@ function handleB2Graphics(metrics: any[], disclosureTitle: string) {
 }
 
 function handleB3Graphics(metrics: any[], disclosureTitle: string, allMetrics: any[]) {
+  console.log('B3 handleB3Graphics called with metrics:', metrics.length)
+  console.log('All available metrics for B3:', metrics.map(m => ({ 
+    novataReference: m.novataReference, 
+    metric: m.metric,
+    hasResponse: !!m.response,
+    hasResponseData: !!m.responseData,
+    response: m.response,
+    responseData: m.responseData
+  })))
+
   const charts = []
 
   // 1. Table based on VSME.B3.29 with percentage breakdown
@@ -358,44 +369,40 @@ function handleB3Graphics(metrics: any[], disclosureTitle: string, allMetrics: a
     }
   }
 
-  // 5. UPDATED Bar chart for GHG Emissions using the correct references
-  console.log('Looking for GHG metrics with correct references...')
-  const ghgMetrics = []
+  // 2. FIXED: GHG Emissions Charts using the correct Novata references
+  console.log('Looking for GHG metrics with correct Novata references...')
+  console.log('Available metrics in B3:', metrics.map(m => `${m.novataReference}: ${m.metric}`))
   
-  // Find GHG metrics using the exact references you specified
+  // Find GHG metrics using the exact Novata references
   const scope1Metric = metrics.find(m => m.novataReference === 'VSME.B3.30.a')
   const scope2Metric = metrics.find(m => m.novataReference === 'VSME.B3.30.b') 
   const scope3Metric = metrics.find(m => m.novataReference === 'VSME.C2.50')
   
-  console.log('Found GHG metrics with correct references:', {
-    'VSME.B3.30.a': scope1Metric ? 'YES' : 'NO',
-    'VSME.B3.30.b': scope2Metric ? 'YES' : 'NO', 
-    'VSME.C2.50': scope3Metric ? 'YES' : 'NO'
+  console.log('GHG metrics search results:', {
+    'VSME.B3.30.a': scope1Metric ? { 
+      found: true, 
+      response: scope1Metric.response, 
+      responseData: scope1Metric.responseData,
+      metric: scope1Metric.metric 
+    } : { found: false },
+    'VSME.B3.30.b': scope2Metric ? { 
+      found: true, 
+      response: scope2Metric.response, 
+      responseData: scope2Metric.responseData,
+      metric: scope2Metric.metric 
+    } : { found: false },
+    'VSME.C2.50': scope3Metric ? { 
+      found: true, 
+      response: scope3Metric.response, 
+      responseData: scope3Metric.responseData,
+      metric: scope3Metric.metric 
+    } : { found: false }
   })
 
-  if (scope1Metric) {
-    console.log('Scope 1 metric data:', {
-      response: scope1Metric.response,
-      responseData: scope1Metric.responseData
-    })
-    ghgMetrics.push(scope1Metric)
-  }
-  
-  if (scope2Metric) {
-    console.log('Scope 2 metric data:', {
-      response: scope2Metric.response,
-      responseData: scope2Metric.responseData
-    })
-    ghgMetrics.push(scope2Metric)
-  }
-  
-  if (scope3Metric) {
-    console.log('Scope 3 metric data:', {
-      response: scope3Metric.response,
-      responseData: scope3Metric.responseData
-    })
-    ghgMetrics.push(scope3Metric)
-  }
+  const ghgMetrics = []
+  if (scope1Metric) ghgMetrics.push(scope1Metric)
+  if (scope2Metric) ghgMetrics.push(scope2Metric)
+  if (scope3Metric) ghgMetrics.push(scope3Metric)
 
   console.log('Total GHG metrics found:', ghgMetrics.length)
 
@@ -405,7 +412,7 @@ function handleB3Graphics(metrics: any[], disclosureTitle: string, allMetrics: a
     let totalEmissions = 0
 
     ghgMetrics.forEach(metric => {
-      console.log(`Processing metric ${metric.novataReference}:`, {
+      console.log(`Processing GHG metric ${metric.novataReference}:`, {
         response: metric.response,
         responseData: metric.responseData,
         metric: metric.metric
@@ -521,7 +528,8 @@ function handleB3Graphics(metrics: any[], disclosureTitle: string, allMetrics: a
     })
   }
 
-  console.log('Total charts created:', charts.length)
+  console.log('B3 Total charts created:', charts.length)
+  console.log('B3 Chart titles:', charts.map(c => c.title))
 
   if (charts.length === 0) {
     return new Response(
@@ -540,6 +548,8 @@ function handleB3Graphics(metrics: any[], disclosureTitle: string, allMetrics: a
     charts: charts,
     contextualAnalysis: `This visualization package for B3 includes ${charts.length} graphics covering energy consumption and greenhouse gas emissions data across different scopes and categories.`
   }
+
+  console.log('B3 Final response:', response)
 
   return new Response(
     JSON.stringify(response),
