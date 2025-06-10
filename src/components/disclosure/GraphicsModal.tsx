@@ -3,6 +3,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useState } from "react";
 import { ChartRenderer } from "./ChartRenderer";
+import { BarChart3, PieChart, Table } from "lucide-react";
 
 interface Chart {
   title: string;
@@ -39,6 +40,37 @@ export const GraphicsModal = ({ isOpen, onClose, recommendations, disclosureTitl
   const disclosureId = getDisclosureId(disclosureTitle);
   const mainTitle = disclosureId ? `${disclosureId} - General Information` : disclosureTitle;
 
+  // Function to get the appropriate icon and count for chart types
+  const getChartIcon = (chartType: string) => {
+    switch (chartType.toLowerCase()) {
+      case 'table':
+        return <Table className="h-4 w-4" />;
+      case 'piechart':
+        return <PieChart className="h-4 w-4" />;
+      case 'barchart':
+      case 'stackedbarchart':
+        return <BarChart3 className="h-4 w-4" />;
+      default:
+        return <BarChart3 className="h-4 w-4" />;
+    }
+  };
+
+  // Function to get chart type counts and generate labels
+  const getChartLabels = (charts: Chart[]) => {
+    const typeCounts: { [key: string]: number } = {};
+    
+    return charts.map((chart, index) => {
+      const chartType = chart.chartType.toLowerCase();
+      typeCounts[chartType] = (typeCounts[chartType] || 0) + 1;
+      
+      return {
+        icon: getChartIcon(chart.chartType),
+        label: typeCounts[chartType] > 1 ? `${typeCounts[chartType]}` : '',
+        index
+      };
+    });
+  };
+
   if (!recommendations.hasCharts) {
     return (
       <Dialog open={isOpen} onOpenChange={onClose}>
@@ -60,6 +92,7 @@ export const GraphicsModal = ({ isOpen, onClose, recommendations, disclosureTitl
   }
 
   const charts = recommendations.charts || [];
+  const chartLabels = getChartLabels(charts);
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
@@ -75,8 +108,11 @@ export const GraphicsModal = ({ isOpen, onClose, recommendations, disclosureTitl
             <Tabs value={activeChart.toString()} onValueChange={(value) => setActiveChart(parseInt(value))}>
               <TabsList className="grid w-full grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
                 {charts.map((chart, index) => (
-                  <TabsTrigger key={index} value={index.toString()}>
-                    {chart.title}
+                  <TabsTrigger key={index} value={index.toString()} className="flex items-center gap-2">
+                    {getChartIcon(chart.chartType)}
+                    {chartLabels[index].label && (
+                      <span className="text-xs">{chartLabels[index].label}</span>
+                    )}
                   </TabsTrigger>
                 ))}
               </TabsList>
