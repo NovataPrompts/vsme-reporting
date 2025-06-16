@@ -126,7 +126,7 @@ export const DisclosureContent = ({
           placeholder={`Enter or generate disclosure response for ${disclosure.title}...`}
           value={response}
           onChange={(e) => onResponseChange(e.target.value)}
-          className="min-h-[200px] resize-y border-blue-500 bg-white"
+          className="min-h-[200px] resize-y border-2 border-[#0088CC] bg-white"
           readOnly={!isEditing && response !== ""}
         />
         {hasUnsavedChanges && response && (
