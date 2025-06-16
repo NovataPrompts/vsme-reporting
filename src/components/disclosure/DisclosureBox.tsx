@@ -7,17 +7,14 @@ import { supabase } from "@/integrations/supabase/client";
 import { GraphicsModal } from "./GraphicsModal";
 import { DisclosureHeader } from "./DisclosureHeader";
 import { DisclosureContent } from "./DisclosureContent";
-
 interface Disclosure {
   id: string;
   title: string;
   description: string;
 }
-
 interface DisclosureBoxProps {
   disclosure: Disclosure;
 }
-
 export const DisclosureBox = ({
   disclosure
 }: DisclosureBoxProps) => {
@@ -32,9 +29,18 @@ export const DisclosureBox = ({
   const [lastSavedAt, setLastSavedAt] = useState<Date | null>(null);
   const [initialResponse, setInitialResponse] = useState("");
   const isLoadingRef = useRef(false);
-  const { toast } = useToast();
-  const { vsmeMetricsData } = useVSMEMetrics();
-  const { saveDisclosureResponse, loadDisclosureResponse, deleteDisclosureResponse, isLoading: isSaving } = useDisclosureResponses();
+  const {
+    toast
+  } = useToast();
+  const {
+    vsmeMetricsData
+  } = useVSMEMetrics();
+  const {
+    saveDisclosureResponse,
+    loadDisclosureResponse,
+    deleteDisclosureResponse,
+    isLoading: isSaving
+  } = useDisclosureResponses();
 
   // Define which disclosures need graphics - now includes B3
   const disclosuresWithGraphics = ['B2', 'B3'];
@@ -56,7 +62,6 @@ export const DisclosureBox = ({
       }
       isLoadingRef.current = false;
     };
-
     loadSavedResponse();
   }, [disclosure.id, loadDisclosureResponse]);
 
@@ -66,7 +71,6 @@ export const DisclosureBox = ({
       setHasUnsavedChanges(true);
     }
   }, [response, initialResponse]);
-
   const handleGenerateResponse = async () => {
     setIsGenerating(true);
     try {
@@ -74,25 +78,25 @@ export const DisclosureBox = ({
       const relevantMetrics = vsmeMetricsData.filter(metric => {
         // Check if metric has a response or responseData
         const hasData = metric.response || metric.responseData;
-        
+
         // Check if metric belongs to this disclosure
         const belongsToDisclosure = metric.disclosure === disclosure.id;
-        
         return hasData && belongsToDisclosure;
       });
-
       console.log(`Filtering metrics for disclosure ${disclosure.id}:`, {
         totalMetrics: vsmeMetricsData.length,
         relevantMetrics: relevantMetrics.length,
-        filteredMetrics: relevantMetrics.map(m => ({ 
-          metric: m.metric, 
-          disclosure: m.disclosure, 
+        filteredMetrics: relevantMetrics.map(m => ({
+          metric: m.metric,
+          disclosure: m.disclosure,
           hasResponse: !!m.response,
-          hasResponseData: !!m.responseData 
+          hasResponseData: !!m.responseData
         }))
       });
-
-      const { data, error } = await supabase.functions.invoke('generate-disclosure', {
+      const {
+        data,
+        error
+      } = await supabase.functions.invoke('generate-disclosure', {
         body: {
           disclosureId: disclosure.id,
           disclosureTitle: disclosure.title,
@@ -100,11 +104,9 @@ export const DisclosureBox = ({
           metrics: relevantMetrics
         }
       });
-
       if (error) {
         throw new Error(error.message || 'Failed to generate disclosure response');
       }
-
       setResponse(data.generatedResponse);
       setLastGeneratedAt(new Date());
       setIsEditing(false); // Exit edit mode after generation
@@ -124,7 +126,6 @@ export const DisclosureBox = ({
       setIsGenerating(false);
     }
   };
-
   const handleRecommendGraphics = async () => {
     setIsRecommendingGraphics(true);
     try {
@@ -136,16 +137,15 @@ export const DisclosureBox = ({
       });
 
       // Get all metrics with data for contextual analysis
-      const allMetricsWithData = vsmeMetricsData.filter(metric => 
-        metric.response || metric.responseData
-      );
-
+      const allMetricsWithData = vsmeMetricsData.filter(metric => metric.response || metric.responseData);
       console.log(`Generating graphics recommendations for disclosure ${disclosure.id}:`, {
         relevantMetrics: relevantMetrics.length,
         totalContextualMetrics: allMetricsWithData.length
       });
-
-      const { data, error } = await supabase.functions.invoke('recommend-graphics', {
+      const {
+        data,
+        error
+      } = await supabase.functions.invoke('recommend-graphics', {
         body: {
           disclosureId: disclosure.id,
           disclosureTitle: disclosure.title,
@@ -154,21 +154,17 @@ export const DisclosureBox = ({
           allMetrics: allMetricsWithData // Pass all metrics for context
         }
       });
-
       if (error) {
         console.error('Graphics recommendation error:', error);
         throw new Error(error.message || 'Failed to generate graphics recommendations');
       }
-
       setGraphicsRecommendations(data);
       setShowGraphicsModal(true);
       setHasUnsavedChanges(true);
-      
       toast({
         title: "Graphics Recommendations Generated",
         description: `Visualization recommendations for ${disclosure.title} have been generated.`
       });
-      
     } catch (error) {
       console.error('Error generating graphics recommendations:', error);
       toast({
@@ -180,22 +176,14 @@ export const DisclosureBox = ({
       setIsRecommendingGraphics(false);
     }
   };
-
   const handleSave = async () => {
-    const success = await saveDisclosureResponse(
-      disclosure.id,
-      disclosure.title,
-      response,
-      graphicsRecommendations
-    );
-    
+    const success = await saveDisclosureResponse(disclosure.id, disclosure.title, response, graphicsRecommendations);
     if (success) {
       setHasUnsavedChanges(false);
       setInitialResponse(response);
       setLastSavedAt(new Date());
     }
   };
-
   const handleClear = async () => {
     const success = await deleteDisclosureResponse(disclosure.id);
     if (success) {
@@ -208,7 +196,6 @@ export const DisclosureBox = ({
       setLastSavedAt(null);
     }
   };
-
   const handleEdit = () => {
     setIsEditing(true);
     toast({
@@ -216,7 +203,6 @@ export const DisclosureBox = ({
       description: "You can now edit the disclosure response."
     });
   };
-
   const handleSaveEdit = () => {
     setIsEditing(false);
     toast({
@@ -224,59 +210,25 @@ export const DisclosureBox = ({
       description: "Remember to save your changes using the Save button."
     });
   };
-
   const handleResponseChange = (value: string) => {
     setResponse(value);
   };
-
   const handleShowGraphics = () => {
     setShowGraphicsModal(true);
   };
-
-  return (
-    <>
+  return <>
       <Card>
-        <CardHeader>
-          <DisclosureHeader
-            disclosure={disclosure}
-            response={response}
-            isGenerating={isGenerating}
-            isRecommendingGraphics={isRecommendingGraphics}
-            isSaving={isSaving}
-            hasUnsavedChanges={hasUnsavedChanges}
-            isEditing={isEditing}
-            showGraphicsButton={showGraphicsButton}
-            onGenerateResponse={handleGenerateResponse}
-            onRecommendGraphics={handleRecommendGraphics}
-            onSave={handleSave}
-            onEdit={handleEdit}
-            onSaveEdit={handleSaveEdit}
-            onClear={handleClear}
-          />
+        <CardHeader className="bg-gray-100">
+          <DisclosureHeader disclosure={disclosure} response={response} isGenerating={isGenerating} isRecommendingGraphics={isRecommendingGraphics} isSaving={isSaving} hasUnsavedChanges={hasUnsavedChanges} isEditing={isEditing} showGraphicsButton={showGraphicsButton} onGenerateResponse={handleGenerateResponse} onRecommendGraphics={handleRecommendGraphics} onSave={handleSave} onEdit={handleEdit} onSaveEdit={handleSaveEdit} onClear={handleClear} />
         </CardHeader>
-        <CardContent>
-          <DisclosureContent
-            disclosure={disclosure}
-            response={response}
-            isEditing={isEditing}
-            hasUnsavedChanges={hasUnsavedChanges}
-            lastGeneratedAt={lastGeneratedAt}
-            lastSavedAt={lastSavedAt}
-            graphicsRecommendations={graphicsRecommendations}
-            showGraphicsButton={showGraphicsButton}
-            onResponseChange={handleResponseChange}
-            onShowGraphics={handleShowGraphics}
-          />
+        <CardContent className="bg-gray-100">
+          <DisclosureContent disclosure={disclosure} response={response} isEditing={isEditing} hasUnsavedChanges={hasUnsavedChanges} lastGeneratedAt={lastGeneratedAt} lastSavedAt={lastSavedAt} graphicsRecommendations={graphicsRecommendations} showGraphicsButton={showGraphicsButton} onResponseChange={handleResponseChange} onShowGraphics={handleShowGraphics} />
         </CardContent>
       </Card>
 
       {/* Graphics Modal */}
-      <GraphicsModal
-        isOpen={showGraphicsModal}
-        onClose={() => setShowGraphicsModal(false)}
-        recommendations={graphicsRecommendations || { hasCharts: false }}
-        disclosureTitle={disclosure.title}
-      />
-    </>
-  );
+      <GraphicsModal isOpen={showGraphicsModal} onClose={() => setShowGraphicsModal(false)} recommendations={graphicsRecommendations || {
+      hasCharts: false
+    }} disclosureTitle={disclosure.title} />
+    </>;
 };
