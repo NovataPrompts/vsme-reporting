@@ -1,6 +1,6 @@
 
-
 import { Header } from "@/components/layout/Header";
+import { ReportBreadcrumb } from "@/components/navigation/ReportBreadcrumb";
 import { DisclosureBox } from "@/components/disclosure/DisclosureBox";
 import { Button } from "@/components/ui/button";
 import { RefreshCw } from "lucide-react";
@@ -95,6 +95,8 @@ const Disclosure = () => {
       <Header />
       <main className="container mx-auto px-4 pt-20 pb-24">
         <div className="max-w-6xl mx-auto">
+          <ReportBreadcrumb />
+          
           <div className="mb-8 flex items-center justify-between">
             <div>
               <h1 className="text-3xl font-bold text-primary mb-2">Disclosure Responses</h1>
@@ -128,4 +130,3 @@ const Disclosure = () => {
 };
 
 export default Disclosure;
-

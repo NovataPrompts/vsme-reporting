@@ -1,4 +1,6 @@
+
 import { Header } from "@/components/layout/Header";
+import { ReportBreadcrumb } from "@/components/navigation/ReportBreadcrumb";
 import { Button } from "@/components/ui/button";
 import { ArrowRight, LineChart, FileText, Share2 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
@@ -11,6 +13,10 @@ const Index = () => {
       <Header />
       
       <main className="flex-1 pt-24">
+        <div className="container mx-auto px-4 md:px-6">
+          <ReportBreadcrumb />
+        </div>
+        
         {/* Hero Section */}
         <section className="relative overflow-hidden mb-12">
           {/* Background Image with Overlay */}

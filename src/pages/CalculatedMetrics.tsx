@@ -1,5 +1,6 @@
 
 import { Header } from "@/components/layout/Header";
+import { ReportBreadcrumb } from "@/components/navigation/ReportBreadcrumb";
 import { CalculatedMetrics as CalculatedMetricsComponent } from "@/components/dashboard/CalculatedMetrics";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft } from "lucide-react";
@@ -14,6 +15,8 @@ const CalculatedMetrics = () => {
       
       <main className="flex-1 pt-24 pb-12">
         <div className="container mx-auto px-4 md:px-6">
+          <ReportBreadcrumb />
+          
           <div className="flex items-center mb-6">
             <Button 
               variant="ghost" 

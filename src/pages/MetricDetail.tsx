@@ -2,6 +2,7 @@
 import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { Header } from "@/components/layout/Header";
+import { ReportBreadcrumb } from "@/components/navigation/ReportBreadcrumb";
 import { Card, CardContent } from "@/components/ui/card";
 import { metrics } from "@/components/dashboard/data/metricsData";
 import { MetricHeader } from "@/components/metrics/MetricHeader";
@@ -65,6 +66,8 @@ const MetricDetail = () => {
       
       <main className="flex-1 pt-24 pb-12">
         <div className="container mx-auto px-4 md:px-6">
+          <ReportBreadcrumb />
+          
           <Card className="shadow-sm border-[#008099]/30">
             <MetricHeader 
               icon={metric.icon}
