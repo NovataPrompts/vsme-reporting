@@ -1,4 +1,3 @@
-
 import { VSMEMetricsSearch } from "@/components/metrics/VSMEMetricsSearch";
 import { VSMEMetricsDropdown } from "@/components/metrics/VSMEMetricsDropdown";
 import { useVSMEDatabase } from "@/hooks/useVSMEDatabase";
@@ -9,6 +8,7 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { VSMEMetric } from "@/types/vsmeMetrics";
 import { OrganizationManager } from "@/components/OrganizationManager";
+import { ReportBreadcrumb } from "@/components/navigation/ReportBreadcrumb";
 
 const Metrics = () => {
   const { loadStaticMetrics, isLoading } = useVSMEDatabase();
@@ -110,6 +110,7 @@ const Metrics = () => {
       <div className="min-h-screen flex flex-col">
         <main className="flex-1 pt-12 pb-12">
           <div className="container mx-auto px-4 md:px-6">
+            <ReportBreadcrumb />
             <div className="flex items-center justify-center h-64">
               <div className="text-center">
                 <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#057cc1] mx-auto mb-4"></div>
@@ -128,6 +129,8 @@ const Metrics = () => {
       <div className="min-h-screen flex flex-col">
         <main className="flex-1 pt-12 pb-12">
           <div className="container mx-auto px-4 md:px-6">
+            <ReportBreadcrumb />
+            
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
               <div>
                 <h1 className="text-3xl font-bold mb-2">VSME Metrics</h1>
@@ -177,6 +180,8 @@ const Metrics = () => {
     <div className="min-h-screen flex flex-col">
       <main className="flex-1 pt-12 pb-12">
         <div className="container mx-auto px-4 md:px-6">
+          <ReportBreadcrumb />
+          
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
             <div>
               <h1 className="text-3xl font-bold mb-2">VSME Metrics</h1>
