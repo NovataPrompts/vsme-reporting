@@ -33,10 +33,11 @@ const Draft = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen flex flex-col">
       <Header />
-      <main className="container mx-auto px-4 pt-20 pb-24">
-        <div className="max-w-6xl mx-auto">
+      
+      <main className="flex-1 pt-24 pb-12">
+        <div className="container mx-auto px-4 md:px-6">
           <ReportBreadcrumb />
           
           <div className="mb-8 flex items-center justify-between">
