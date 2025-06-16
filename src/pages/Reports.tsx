@@ -2,6 +2,8 @@
 import React, { useState } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useToast } from "@/hooks/use-toast";
+import { Header } from "@/components/layout/Header";
+import { ReportBreadcrumb } from "@/components/navigation/ReportBreadcrumb";
 
 // Imported components
 import ReportActionCards from '@/components/reports/ReportActionCards';
@@ -142,9 +144,12 @@ const Reports = () => {
   };
   
   return (
-    <div className="min-h-screen flex flex-col">
-      <main className="flex-1 pt-12 pb-12">
+    <div className="min-h-screen flex flex-col bg-background">
+      <Header />
+      
+      <main className="flex-1 pt-24 pb-12">
         <div className="container mx-auto px-4 md:px-6">
+          <ReportBreadcrumb />
           
           <div className="mb-8">
             <h1 className="text-2xl font-bold mb-2">Reports</h1>

@@ -23,13 +23,9 @@ export const ReportBreadcrumb = () => {
   const location = useLocation();
 
   const getCurrentStepIndex = () => {
-    // Extract the actual path from hash if using hash router
+    // For HashRouter, the actual route is in location.pathname
+    // The hash fragment in the URL is handled automatically by HashRouter
     let currentPath = location.pathname;
-    
-    // If there's a hash, extract the path from it (for hash router)
-    if (location.hash && location.hash.startsWith('#/')) {
-      currentPath = location.hash.substring(1);
-    }
     
     // Clean any query parameters
     currentPath = currentPath.split('?')[0];
@@ -48,7 +44,7 @@ export const ReportBreadcrumb = () => {
     navigate(path);
   };
 
-  // Only show breadcrumb if we're on one of the defined steps
+  // Show breadcrumb for all defined workflow steps
   if (currentStepIndex === -1) {
     return null;
   }
