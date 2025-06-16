@@ -31,7 +31,8 @@ export const ReportBreadcrumb = () => {
 
   const handleStepClick = (path: string, event: React.MouseEvent) => {
     event.preventDefault();
-    navigate(path);
+    // Use replace to avoid adding to browser history and clean up any tokens
+    navigate(path, { replace: true });
   };
 
   return (
@@ -40,7 +41,7 @@ export const ReportBreadcrumb = () => {
         <BreadcrumbList>
           {breadcrumbSteps.map((step, index) => {
             const isActive = index === currentStepIndex;
-            const isClickable = index <= currentStepIndex || currentStepIndex === -1;
+            const isClickable = true; // Allow clicking on all steps for better UX
             
             return (
               <div key={step.key} className="flex items-center">
@@ -51,12 +52,8 @@ export const ReportBreadcrumb = () => {
                     </BreadcrumbPage>
                   ) : (
                     <BreadcrumbLink
-                      onClick={(e) => isClickable && handleStepClick(step.path, e)}
-                      className={`${
-                        isClickable 
-                          ? "cursor-pointer hover:text-primary transition-colors" 
-                          : "text-muted-foreground cursor-not-allowed"
-                      }`}
+                      onClick={(e) => handleStepClick(step.path, e)}
+                      className="cursor-pointer hover:text-primary transition-colors"
                     >
                       {step.label}
                     </BreadcrumbLink>
