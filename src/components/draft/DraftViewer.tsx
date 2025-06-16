@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { ChevronLeft, ChevronRight } from "lucide-react";
@@ -274,14 +275,13 @@ export const DraftViewer = () => {
             {b2Response.graphics_recommendations?.hasCharts && b2Response.graphics_recommendations.charts && (
               <div className="space-y-6">
                 <div className="border-t border-gray-200 pt-6">
-                  <h3 className="text-xl font-semibold text-gray-900 mb-4">Supporting Graphics</h3>
                   {b2Response.graphics_recommendations.charts.map((chart: any, index: number) => (
                     <div key={index} className="bg-gray-50 p-6 rounded-lg mb-6">
                       <ChartRenderer 
                         chartType={chart.chartType}
                         data={chart.data}
-                        title={chart.title}
-                        description={chart.description}
+                        title="VSME B2.26 - Sustainability Practices Implementation Status"
+                        description=""
                         originalColumnOrder={chart.originalColumnOrder}
                       />
                     </div>
