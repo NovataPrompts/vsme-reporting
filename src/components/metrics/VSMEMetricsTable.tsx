@@ -159,7 +159,7 @@ export const VSMEMetricsTable = ({
                                         <Table className="h-4 w-4" />
                                         View Table
                                       </Button>
-                                    </div> : <div className="mt-2 p-3 rounded border bg-white">
+                                    </div> : <div className="mt-2 p-3 border bg-white rounded-md">
                                       <div className="text-sm text-[#00344d]">
                                         {metric.response || "No response provided"}
                                         {metric.response && metric.unit && <span className="ml-1 text-gray-500">({metric.unit})</span>}
