@@ -29,7 +29,8 @@ export const ReportBreadcrumb = () => {
 
   const currentStepIndex = getCurrentStepIndex();
 
-  const handleStepClick = (path: string) => {
+  const handleStepClick = (path: string, event: React.MouseEvent) => {
+    event.preventDefault();
     navigate(path);
   };
 
@@ -50,7 +51,7 @@ export const ReportBreadcrumb = () => {
                     </BreadcrumbPage>
                   ) : (
                     <BreadcrumbLink
-                      onClick={() => isClickable && handleStepClick(step.path)}
+                      onClick={(e) => isClickable && handleStepClick(step.path, e)}
                       className={`${
                         isClickable 
                           ? "cursor-pointer hover:text-primary transition-colors" 
