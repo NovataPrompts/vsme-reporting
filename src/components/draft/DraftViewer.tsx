@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { ChevronLeft, ChevronRight } from "lucide-react";
@@ -66,6 +65,13 @@ export const DraftViewer = () => {
             organizedResponses[response.disclosure_id] = response;
           });
           
+          // Check if B2 response exists but doesn't have graphics recommendations
+          const b2Response = organizedResponses.B2;
+          if (b2Response && (!b2Response.graphics_recommendations || !b2Response.graphics_recommendations.hasCharts)) {
+            console.log('B2 response found without graphics, generating recommendations...');
+            await generateB2Graphics(b2Response, organizedResponses);
+          }
+          
           setDisclosureResponses(organizedResponses);
         }
         
@@ -78,6 +84,85 @@ export const DraftViewer = () => {
     
     loadData();
   }, [getCompanyProfile]);
+
+  const generateB2Graphics = async (b2Response: any, organizedResponses: any) => {
+    try {
+      console.log('Generating graphics for B2 disclosure...');
+      
+      // Get user metrics for B2
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return;
+
+      // Get user's metrics that might be relevant for B2
+      const { data: userResponses } = await supabase
+        .from('vsme_user_responses')
+        .select(`
+          *,
+          consol!inner(*)
+        `)
+        .eq('user_id', user.id);
+
+      console.log('User responses for graphics:', userResponses);
+
+      // Find VSME.B2.26 metric specifically
+      const b226Metric = userResponses?.find(response => 
+        response.consol?.novata_reference === 'VSME.B2.26'
+      );
+
+      let metricsForB2 = [];
+      if (b226Metric) {
+        metricsForB2.push({
+          metric: b226Metric.consol?.metric || 'Practices, policies and future initiatives for transitioning towards a more sustainable economy',
+          novataReference: 'VSME.B2.26',
+          responseData: b226Metric.response_data
+        });
+      }
+
+      console.log('Calling recommend-graphics function for B2...');
+      
+      // Call the recommend-graphics function
+      const { data: graphicsData, error: graphicsError } = await supabase.functions.invoke('recommend-graphics', {
+        body: {
+          disclosureId: 'B2',
+          disclosureTitle: 'Practices, policies and future initiatives for transitioning towards a more sustainable economy',
+          disclosureDescription: 'Practices, policies and future initiatives for transitioning towards a more sustainable economy',
+          metrics: metricsForB2,
+          allMetrics: userResponses || []
+        }
+      });
+
+      if (graphicsError) {
+        console.error('Error generating graphics recommendations:', graphicsError);
+        return;
+      }
+
+      console.log('Graphics recommendations generated:', graphicsData);
+
+      if (graphicsData && graphicsData.hasCharts) {
+        // Update the disclosure response with graphics recommendations
+        const { error: updateError } = await supabase
+          .from('disclosure_responses')
+          .update({
+            graphics_recommendations: graphicsData
+          })
+          .eq('user_id', user.id)
+          .eq('disclosure_id', 'B2');
+
+        if (updateError) {
+          console.error('Error updating disclosure response with graphics:', updateError);
+        } else {
+          console.log('Successfully updated B2 response with graphics recommendations');
+          // Update local state
+          organizedResponses.B2 = {
+            ...b2Response,
+            graphics_recommendations: graphicsData
+          };
+        }
+      }
+    } catch (error) {
+      console.error('Error in generateB2Graphics:', error);
+    }
+  };
 
   const nextPage = () => {
     if (currentPage < totalPages) {
