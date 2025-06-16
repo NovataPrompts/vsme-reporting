@@ -1,7 +1,7 @@
 
 import { Button } from "@/components/ui/button";
 import { CardTitle } from "@/components/ui/card";
-import { Loader2, Sparkles, BarChart3, Save, Edit, Trash2 } from "lucide-react";
+import { Loader2, Sparkles, Save, Edit, Trash2 } from "lucide-react";
 
 interface Disclosure {
   id: string;
@@ -77,21 +77,6 @@ export const DisclosureHeader = ({
           )}
           {isGenerating ? "Generating..." : "Generate Response"}
         </Button>
-        {showGraphicsButton && (
-          <Button 
-            onClick={onRecommendGraphics} 
-            disabled={isRecommendingGraphics} 
-            variant="outline"
-            className="flex items-center gap-2"
-          >
-            {isRecommendingGraphics ? (
-              <Loader2 className="h-4 w-4 animate-spin" />
-            ) : (
-              <BarChart3 className="h-4 w-4" />
-            )}
-            {isRecommendingGraphics ? "Analyzing..." : "Recommend Graphics"}
-          </Button>
-        )}
         {response && (
           <>
             <Button 
