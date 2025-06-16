@@ -3,7 +3,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route, Navigate, useLocation } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate, useLocation, useNavigate } from "react-router-dom";
 import { ProtectedRoute } from "./components/auth/ProtectedRoute";
 import Dashboard from "./pages/Dashboard";
 import Reports from "./pages/Reports";
@@ -22,6 +22,7 @@ const queryClient = new QueryClient();
 
 const LocationLogger = () => {
   const location = useLocation();
+  const navigate = useNavigate();
   
   useEffect(() => {
     console.log('App - Current location:', {
@@ -31,7 +32,14 @@ const LocationLogger = () => {
       state: location.state,
       key: location.key
     });
-  }, [location]);
+
+    // Clean up any hash fragments that might be left over from HashRouter
+    if (location.hash && location.hash.startsWith('#/')) {
+      const cleanPath = location.hash.substring(1);
+      console.log('App - Cleaning hash route, redirecting to:', cleanPath);
+      navigate(cleanPath, { replace: true });
+    }
+  }, [location, navigate]);
   
   return null;
 };
