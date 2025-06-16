@@ -1,3 +1,4 @@
+
 import { useState, useEffect, useRef } from "react";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
@@ -213,16 +214,13 @@ export const DisclosureBox = ({
   const handleResponseChange = (value: string) => {
     setResponse(value);
   };
-  const handleShowGraphics = () => {
-    setShowGraphicsModal(true);
-  };
   return <>
       <Card>
         <CardHeader className="bg-gray-100">
           <DisclosureHeader disclosure={disclosure} response={response} isGenerating={isGenerating} isRecommendingGraphics={isRecommendingGraphics} isSaving={isSaving} hasUnsavedChanges={hasUnsavedChanges} isEditing={isEditing} showGraphicsButton={showGraphicsButton} onGenerateResponse={handleGenerateResponse} onRecommendGraphics={handleRecommendGraphics} onSave={handleSave} onEdit={handleEdit} onSaveEdit={handleSaveEdit} onClear={handleClear} />
         </CardHeader>
         <CardContent className="bg-gray-100">
-          <DisclosureContent disclosure={disclosure} response={response} isEditing={isEditing} hasUnsavedChanges={hasUnsavedChanges} lastGeneratedAt={lastGeneratedAt} lastSavedAt={lastSavedAt} graphicsRecommendations={graphicsRecommendations} showGraphicsButton={showGraphicsButton} onResponseChange={handleResponseChange} onShowGraphics={handleShowGraphics} />
+          <DisclosureContent disclosure={disclosure} response={response} isEditing={isEditing} hasUnsavedChanges={hasUnsavedChanges} lastGeneratedAt={lastGeneratedAt} lastSavedAt={lastSavedAt} graphicsRecommendations={graphicsRecommendations} showGraphicsButton={showGraphicsButton} isRecommendingGraphics={isRecommendingGraphics} onResponseChange={handleResponseChange} onRecommendGraphics={handleRecommendGraphics} />
         </CardContent>
       </Card>
 

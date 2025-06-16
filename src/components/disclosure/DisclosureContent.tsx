@@ -1,7 +1,8 @@
+
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { DisclosureTimestamps } from "./DisclosureTimestamps";
-import { Table, ChartBarStacked, ChartPie, ChartBarBig, ChartArea } from "lucide-react";
+import { Table, ChartBarStacked, ChartPie, ChartBarBig, ChartArea, Loader2 } from "lucide-react";
 
 interface DisclosureContentProps {
   disclosure: { id: string; title: string; description: string };
@@ -12,8 +13,9 @@ interface DisclosureContentProps {
   lastSavedAt: Date | null;
   graphicsRecommendations: any;
   showGraphicsButton: boolean;
+  isRecommendingGraphics: boolean;
   onResponseChange: (value: string) => void;
-  onShowGraphics: () => void;
+  onRecommendGraphics: () => void;
 }
 
 export const DisclosureContent = ({
@@ -25,8 +27,9 @@ export const DisclosureContent = ({
   lastSavedAt,
   graphicsRecommendations,
   showGraphicsButton,
+  isRecommendingGraphics,
   onResponseChange,
-  onShowGraphics
+  onRecommendGraphics
 }: DisclosureContentProps) => {
   const getGraphicsIcon = (chartType: string) => {
     switch (chartType) {
@@ -143,11 +146,16 @@ export const DisclosureContent = ({
                 <Button 
                   variant="outline" 
                   size="sm"
-                  onClick={onShowGraphics}
+                  onClick={onRecommendGraphics}
+                  disabled={isRecommendingGraphics}
                   className="flex items-center gap-2"
                 >
-                  <Table className="h-4 w-4" />
-                  Recommended Graphics
+                  {isRecommendingGraphics ? (
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                  ) : (
+                    <Table className="h-4 w-4" />
+                  )}
+                  {isRecommendingGraphics ? "Analyzing..." : "Recommended Graphics"}
                 </Button>
               </div>
             </div>
