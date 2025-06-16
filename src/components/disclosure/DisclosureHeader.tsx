@@ -1,4 +1,3 @@
-
 import { Button } from "@/components/ui/button";
 import { CardTitle } from "@/components/ui/card";
 import { Loader2, Sparkles, Save, Edit, Trash2 } from "lucide-react";
@@ -101,9 +100,9 @@ export const DisclosureHeader = ({
               {isEditing ? "Done Editing" : "Edit"}
             </Button>
             <Button 
-              variant="outline"
+              variant="destructiveOutline"
               onClick={onClear}
-              className="flex items-center gap-2 text-destructive hover:text-destructive"
+              className="flex items-center gap-2"
             >
               <Trash2 className="h-4 w-4" />
               Clear
