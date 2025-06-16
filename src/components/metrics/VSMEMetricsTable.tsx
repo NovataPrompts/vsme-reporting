@@ -7,6 +7,7 @@ import { Table as TableComponent, TableHeader, TableBody, TableHead, TableRow, T
 import { VSMEMetric } from "@/types/vsmeMetrics";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { UserResponseDialog } from "./UserResponseDialog";
+
 interface VSMEMetricsTableProps {
   metrics: VSMEMetric[];
 }
@@ -159,7 +160,7 @@ export const VSMEMetricsTable = ({
                                         <Table className="h-4 w-4" />
                                         View Table
                                       </Button>
-                                    </div> : <div className="mt-2 p-3 border bg-white rounded-md">
+                                    </div> : <div className="mt-2 p-3 border-blue-500 bg-white rounded-md">
                                       <div className="text-sm text-[#00344d]">
                                         {metric.response || "No response provided"}
                                         {metric.response && metric.unit && <span className="ml-1 text-gray-500">({metric.unit})</span>}
