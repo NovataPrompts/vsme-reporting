@@ -1,3 +1,4 @@
+
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -27,7 +28,7 @@ const App = () => (
         <Routes>
           <Route 
             path="/" 
-            element={<Navigate to="/welcome" replace />} 
+            element={<Navigate to="/dashboard" replace />} 
           />
           <Route 
             path="/welcome" 
