@@ -23,34 +23,28 @@ export const ReportBreadcrumb = () => {
   const location = useLocation();
 
   const getCurrentStepIndex = () => {
-    // For HashRouter, check both pathname and hash
-    let currentPath = location.pathname;
+    // Get the current path - with HashRouter, use location.pathname
+    const currentPath = location.pathname;
     
-    // If there's a hash that starts with #/, use that as the path
-    if (location.hash && location.hash.startsWith('#/')) {
-      currentPath = location.hash.substring(1);
-    }
-    
-    // Clean any query parameters
-    currentPath = currentPath.split('?')[0];
-    
-    console.log('Current path for breadcrumb:', currentPath);
-    console.log('Location object:', location);
-    console.log('Available breadcrumb paths:', breadcrumbSteps.map(s => s.path));
+    console.log('Breadcrumb - Current pathname:', currentPath);
+    console.log('Breadcrumb - Full location:', location);
+    console.log('Breadcrumb - Available paths:', breadcrumbSteps.map(s => s.path));
     
     return breadcrumbSteps.findIndex(step => step.path === currentPath);
   };
 
   const currentStepIndex = getCurrentStepIndex();
-  console.log('Current step index:', currentStepIndex);
+  console.log('Breadcrumb - Current step index:', currentStepIndex);
 
   const handleStepClick = (path: string, event: React.MouseEvent) => {
     event.preventDefault();
+    console.log('Breadcrumb - Navigating to:', path);
     navigate(path);
   };
 
   // Show breadcrumb for all defined workflow steps
   if (currentStepIndex === -1) {
+    console.log('Breadcrumb - Not showing, current step not found');
     return null;
   }
 

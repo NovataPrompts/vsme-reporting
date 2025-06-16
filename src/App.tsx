@@ -3,7 +3,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { HashRouter, Routes, Route, Navigate } from "react-router-dom";
+import { HashRouter, Routes, Route, Navigate, useLocation } from "react-router-dom";
 import { ProtectedRoute } from "./components/auth/ProtectedRoute";
 import Dashboard from "./pages/Dashboard";
 import Reports from "./pages/Reports";
@@ -16,8 +16,25 @@ import Welcome from "./pages/Welcome";
 import Disclosure from "./pages/Disclosure";
 import Draft from "./pages/Draft";
 import NotFound from "./pages/NotFound";
+import { useEffect } from "react";
 
 const queryClient = new QueryClient();
+
+const LocationLogger = () => {
+  const location = useLocation();
+  
+  useEffect(() => {
+    console.log('App - Current location:', {
+      pathname: location.pathname,
+      search: location.search,
+      hash: location.hash,
+      state: location.state,
+      key: location.key
+    });
+  }, [location]);
+  
+  return null;
+};
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
@@ -25,6 +42,7 @@ const App = () => (
       <Toaster />
       <Sonner />
       <HashRouter>
+        <LocationLogger />
         <Routes>
           <Route 
             path="/" 
