@@ -24,7 +24,7 @@ export const MobileNavigation = ({ isOpen, onClose }: MobileNavigationProps) => 
       <nav className="flex flex-col space-y-2 px-4">
         <NavLink 
           to="/welcome" 
-          className={({ isActive }) => `px-4 py-2 rounded-md transition-all-ease ${
+          className={({ isActive }) => `px-4 py-2 rounded-md transition-all duration-200 ${
             isActive 
               ? "text-secondary font-medium" 
               : "text-primary/80 dark:text-white/80 hover:text-primary dark:hover:text-white"
@@ -35,7 +35,7 @@ export const MobileNavigation = ({ isOpen, onClose }: MobileNavigationProps) => 
         </NavLink>
         <NavLink 
           to="/dashboard" 
-          className={({ isActive }) => `px-4 py-2 rounded-md transition-all-ease ${
+          className={({ isActive }) => `px-4 py-2 rounded-md transition-all duration-200 ${
             isActive 
               ? "text-secondary font-medium" 
               : "text-primary/80 dark:text-white/80 hover:text-primary dark:hover:text-white"
@@ -46,7 +46,7 @@ export const MobileNavigation = ({ isOpen, onClose }: MobileNavigationProps) => 
         </NavLink>
         <NavLink 
           to="/standards" 
-          className={({ isActive }) => `px-4 py-2 rounded-md transition-all-ease ${
+          className={({ isActive }) => `px-4 py-2 rounded-md transition-all duration-200 ${
             isActive 
               ? "text-secondary font-medium" 
               : "text-primary/80 dark:text-white/80 hover:text-primary dark:hover:text-white"
@@ -57,7 +57,7 @@ export const MobileNavigation = ({ isOpen, onClose }: MobileNavigationProps) => 
         </NavLink>
         <NavLink 
           to="/disclosure" 
-          className={({ isActive }) => `px-4 py-2 rounded-md transition-all-ease ${
+          className={({ isActive }) => `px-4 py-2 rounded-md transition-all duration-200 ${
             isActive 
               ? "text-secondary font-medium" 
               : "text-primary/80 dark:text-white/80 hover:text-primary dark:hover:text-white"
@@ -68,7 +68,7 @@ export const MobileNavigation = ({ isOpen, onClose }: MobileNavigationProps) => 
         </NavLink>
         <NavLink 
           to="/metrics" 
-          className={({ isActive }) => `px-4 py-2 rounded-md transition-all-ease ${
+          className={({ isActive }) => `px-4 py-2 rounded-md transition-all duration-200 ${
             isActive 
               ? "text-secondary font-medium" 
               : "text-primary/80 dark:text-white/80 hover:text-primary dark:hover:text-white"
@@ -79,7 +79,7 @@ export const MobileNavigation = ({ isOpen, onClose }: MobileNavigationProps) => 
         </NavLink>
         <NavLink 
           to="/reports" 
-          className={({ isActive }) => `px-4 py-2 rounded-md transition-all-ease ${
+          className={({ isActive }) => `px-4 py-2 rounded-md transition-all duration-200 ${
             isActive 
               ? "text-secondary font-medium" 
               : "text-primary/80 dark:text-white/80 hover:text-primary dark:hover:text-white"

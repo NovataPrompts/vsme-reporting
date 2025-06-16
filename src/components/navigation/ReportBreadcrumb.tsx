@@ -23,14 +23,19 @@ export const ReportBreadcrumb = () => {
   const location = useLocation();
 
   const getCurrentStepIndex = () => {
-    // For HashRouter, the actual route is in location.pathname
-    // The hash fragment in the URL is handled automatically by HashRouter
+    // For HashRouter, check both pathname and hash
     let currentPath = location.pathname;
+    
+    // If there's a hash that starts with #/, use that as the path
+    if (location.hash && location.hash.startsWith('#/')) {
+      currentPath = location.hash.substring(1);
+    }
     
     // Clean any query parameters
     currentPath = currentPath.split('?')[0];
     
-    console.log('Current cleaned path for breadcrumb:', currentPath);
+    console.log('Current path for breadcrumb:', currentPath);
+    console.log('Location object:', location);
     console.log('Available breadcrumb paths:', breadcrumbSteps.map(s => s.path));
     
     return breadcrumbSteps.findIndex(step => step.path === currentPath);
