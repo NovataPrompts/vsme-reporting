@@ -1,4 +1,5 @@
 
+
 import { Header } from "@/components/layout/Header";
 import { DisclosureBox } from "@/components/disclosure/DisclosureBox";
 import { Button } from "@/components/ui/button";
@@ -98,7 +99,7 @@ const Disclosure = () => {
             <div>
               <h1 className="text-3xl font-bold text-primary mb-2">Disclosure Responses</h1>
               <p className="text-muted-foreground">
-                Generate comprehensive disclosure responses based on your metrics data.
+                Generate comprehensive disclosure responses based on your VSME responses data.
               </p>
             </div>
             <Button
@@ -127,3 +128,4 @@ const Disclosure = () => {
 };
 
 export default Disclosure;
+
