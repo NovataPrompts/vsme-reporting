@@ -23,18 +23,35 @@ export const ReportBreadcrumb = () => {
   const location = useLocation();
 
   const getCurrentStepIndex = () => {
-    // Get the current path and clean it
-    const currentPath = location.pathname;
-    console.log('Current path for breadcrumb:', currentPath);
+    // Extract the actual path from hash if using hash router
+    let currentPath = location.pathname;
+    
+    // If there's a hash, extract the path from it (for hash router)
+    if (location.hash && location.hash.startsWith('#/')) {
+      currentPath = location.hash.substring(1);
+    }
+    
+    // Clean any query parameters
+    currentPath = currentPath.split('?')[0];
+    
+    console.log('Current cleaned path for breadcrumb:', currentPath);
+    console.log('Available breadcrumb paths:', breadcrumbSteps.map(s => s.path));
+    
     return breadcrumbSteps.findIndex(step => step.path === currentPath);
   };
 
   const currentStepIndex = getCurrentStepIndex();
+  console.log('Current step index:', currentStepIndex);
 
   const handleStepClick = (path: string, event: React.MouseEvent) => {
     event.preventDefault();
     navigate(path);
   };
+
+  // Only show breadcrumb if we're on one of the defined steps
+  if (currentStepIndex === -1) {
+    return null;
+  }
 
   return (
     <div className="mb-6">
