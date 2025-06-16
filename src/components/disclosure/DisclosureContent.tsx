@@ -1,4 +1,3 @@
-
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { DisclosureTimestamps } from "./DisclosureTimestamps";
@@ -93,10 +92,9 @@ export const DisclosureContent = ({
     return "Graphics recommendations available";
   };
 
-  // Default recommendations when no graphics recommendations are loaded yet
   const getDefaultRecommendationDisplay = () => {
     if (disclosure.id === "B1") {
-      return null; // No graphics for B1
+      return null;
     } else if (disclosure.id === "B2") {
       return (
         <div className="flex items-center gap-2 text-sm text-muted-foreground">
@@ -128,7 +126,7 @@ export const DisclosureContent = ({
           placeholder={`Enter or generate disclosure response for ${disclosure.title}...`}
           value={response}
           onChange={(e) => onResponseChange(e.target.value)}
-          className="min-h-[200px] resize-y"
+          className="min-h-[200px] resize-y border-blue-500 bg-white"
           readOnly={!isEditing && response !== ""}
         />
         {hasUnsavedChanges && response && (
