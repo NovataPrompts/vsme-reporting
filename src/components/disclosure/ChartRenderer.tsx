@@ -8,9 +8,10 @@ interface ChartRendererProps {
   title: string;
   description: string;
   originalColumnOrder?: string[];
+  height?: number;
 }
 
-export const ChartRenderer = ({ chartType, data, title, description, originalColumnOrder }: ChartRendererProps) => {
+export const ChartRenderer = ({ chartType, data, title, description, originalColumnOrder, height = 400 }: ChartRendererProps) => {
   // Blue and navy color scheme using design system colors
   const chartColors = ['#00344d', '#008099', '#539db5', '#0088aa', '#00C49F', '#82ca9d'];
 
@@ -70,12 +71,12 @@ export const ChartRenderer = ({ chartType, data, title, description, originalCol
     console.log('Available columns in data:', Object.keys(data[0] || {}));
 
     return (
-      <div className="w-full">
+      <div className="w-full h-full">
         <div className="mb-4">
           <h3 className="text-lg font-semibold">{title}</h3>
-          <p className="text-sm text-muted-foreground">{description}</p>
+          {description && <p className="text-sm text-muted-foreground">{description}</p>}
         </div>
-        <div className="overflow-auto max-h-[400px]">
+        <div className="overflow-auto" style={{ maxHeight: height - 80 }}>
           <Table className="table-fixed">
             <TableHeader>
               <TableRow>
@@ -161,12 +162,12 @@ export const ChartRenderer = ({ chartType, data, title, description, originalCol
     };
 
     return (
-      <div className="w-full">
+      <div className="w-full h-full">
         <div className="mb-4">
           <h3 className="text-lg font-semibold">{title}</h3>
-          <p className="text-sm text-muted-foreground">{description}</p>
+          {description && <p className="text-sm text-muted-foreground">{description}</p>}
         </div>
-        <ResponsiveContainer width="100%" height={500}>
+        <ResponsiveContainer width="100%" height={height - 80}>
           <PieChart>
             <Pie
               data={data}
@@ -174,7 +175,7 @@ export const ChartRenderer = ({ chartType, data, title, description, originalCol
               cy="50%"
               labelLine={false}
               label={renderCustomLabel}
-              outerRadius={100}
+              outerRadius={Math.min(80, (height - 150) / 3)}
               fill="#8884d8"
               dataKey="value"
             >
@@ -240,12 +241,12 @@ export const ChartRenderer = ({ chartType, data, title, description, originalCol
     };
 
     return (
-      <div className="w-full">
+      <div className="w-full h-full">
         <div className="mb-4">
           <h3 className="text-lg font-semibold">{title}</h3>
-          <p className="text-sm text-muted-foreground">{description}</p>
+          {description && <p className="text-sm text-muted-foreground">{description}</p>}
         </div>
-        <ResponsiveContainer width="100%" height={400}>
+        <ResponsiveContainer width="100%" height={height - 80}>
           <BarChart data={data} margin={{ top: 20, right: 30, left: 20, bottom: 60 }}>
             <CartesianGrid strokeDasharray="3 3" />
             <XAxis dataKey="category" />
@@ -270,12 +271,12 @@ export const ChartRenderer = ({ chartType, data, title, description, originalCol
     }
 
     return (
-      <div className="w-full">
+      <div className="w-full h-full">
         <div className="mb-4">
           <h3 className="text-lg font-semibold">{title}</h3>
-          <p className="text-sm text-muted-foreground">{description}</p>
+          {description && <p className="text-sm text-muted-foreground">{description}</p>}
         </div>
-        <ResponsiveContainer width="100%" height={400}>
+        <ResponsiveContainer width="100%" height={height - 80}>
           <BarChart data={data} margin={{ top: 20, right: 30, left: 20, bottom: 60 }}>
             <CartesianGrid strokeDasharray="3 3" />
             <XAxis dataKey="category" />

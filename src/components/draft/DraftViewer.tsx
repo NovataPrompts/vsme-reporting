@@ -257,14 +257,14 @@ export const DraftViewer = () => {
   );
 
   const renderB2Page = () => (
-    <div className="h-full space-y-6 overflow-y-auto">
-      <div className="border-b border-gray-200 pb-4">
+    <div className="h-full space-y-4 overflow-hidden">
+      <div className="border-b border-gray-200 pb-3">
         <h1 className="text-2xl font-bold text-gray-900">
           B2 - Practices, Policies and Future Initiatives
         </h1>
       </div>
       
-      <div className="space-y-6">
+      <div className="space-y-4 h-full overflow-hidden">
         {b2Response ? (
           <>
             <div className="prose prose-sm max-w-none">
@@ -273,17 +273,19 @@ export const DraftViewer = () => {
             
             {/* Render B2 Graphics if available */}
             {b2Response.graphics_recommendations?.hasCharts && b2Response.graphics_recommendations.charts && (
-              <div className="space-y-6">
-                <div className="border-t border-gray-200 pt-6">
+              <div className="space-y-4">
+                <div className="border-t border-gray-200 pt-4">
                   {b2Response.graphics_recommendations.charts.map((chart: any, index: number) => (
-                    <div key={index} className="bg-gray-50 p-6 rounded-lg mb-6">
-                      <ChartRenderer 
-                        chartType={chart.chartType}
-                        data={chart.data}
-                        title="VSME B2.26 - Sustainability Practices Implementation Status"
-                        description=""
-                        originalColumnOrder={chart.originalColumnOrder}
-                      />
+                    <div key={index} className="bg-gray-50 p-4 rounded-lg">
+                      <div className="h-[300px]">
+                        <ChartRenderer 
+                          chartType={chart.chartType}
+                          data={chart.data}
+                          title="VSME B2.26 - Sustainability Practices Implementation Status"
+                          description=""
+                          originalColumnOrder={chart.originalColumnOrder}
+                        />
+                      </div>
                     </div>
                   ))}
                 </div>
