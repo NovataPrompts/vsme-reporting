@@ -23,9 +23,9 @@ export const ReportBreadcrumb = () => {
   const location = useLocation();
 
   const getCurrentStepIndex = () => {
-    // Clean the pathname by removing hash and query parameters
-    const currentPath = location.pathname.split('?')[0].split('#')[0];
-    console.log('Current cleaned path:', currentPath);
+    // Get the current path and clean it
+    const currentPath = location.pathname;
+    console.log('Current path for breadcrumb:', currentPath);
     return breadcrumbSteps.findIndex(step => step.path === currentPath);
   };
 
@@ -33,7 +33,6 @@ export const ReportBreadcrumb = () => {
 
   const handleStepClick = (path: string, event: React.MouseEvent) => {
     event.preventDefault();
-    // Navigate without replace to maintain normal navigation behavior
     navigate(path);
   };
 

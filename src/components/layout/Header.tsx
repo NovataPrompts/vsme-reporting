@@ -41,21 +41,17 @@ export const Header = () => {
         <div className="flex items-center justify-between h-16">
           <Logo />
           
-          {!isReportsPage && (
-            <>
-              <DesktopNavigation />
-              <div className="flex items-center gap-4">
-                <ImportButton />
-                <MobileMenuToggle 
-                  isOpen={mobileMenuOpen}
-                  onToggle={toggleMobileMenu}
-                />
-              </div>
-            </>
-          )}
+          <DesktopNavigation />
+          <div className="flex items-center gap-4">
+            <ImportButton />
+            <MobileMenuToggle 
+              isOpen={mobileMenuOpen}
+              onToggle={toggleMobileMenu}
+            />
+          </div>
         </div>
       </div>
-      {!isReportsPage && <MobileNavigation isOpen={mobileMenuOpen} onClose={toggleMobileMenu} />}
+      <MobileNavigation isOpen={mobileMenuOpen} onClose={toggleMobileMenu} />
     </header>
   );
 };
