@@ -3,7 +3,8 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { HashRouter, Routes, Route, Navigate, useLocation } from "react-router-dom";
+import { HashRouter, Routes, Route, Navigate, useLocation, useNavigate } from "react-router-dom";
+import { ProtectedRoute } from "./components/auth/ProtectedRoute";
 import Dashboard from "./pages/Dashboard";
 import Reports from "./pages/Reports";
 import Metrics from "./pages/Metrics";
@@ -21,6 +22,7 @@ const queryClient = new QueryClient();
 
 const LocationLogger = () => {
   const location = useLocation();
+  const navigate = useNavigate();
   
   useEffect(() => {
     console.log('App - Current location:', {
@@ -30,7 +32,7 @@ const LocationLogger = () => {
       state: location.state,
       key: location.key
     });
-  }, [location]);
+  }, [location, navigate]);
   
   return null;
 };
@@ -49,48 +51,92 @@ const App = () => (
           />
           <Route 
             path="/welcome" 
-            element={<Welcome />} 
+            element={
+              <ProtectedRoute>
+                <Welcome />
+              </ProtectedRoute>
+            } 
           />
           <Route 
             path="/dashboard" 
-            element={<Dashboard />} 
+            element={
+              <ProtectedRoute>
+                <Dashboard />
+              </ProtectedRoute>
+            } 
           />
           <Route 
             path="/reports" 
-            element={<Reports />} 
+            element={
+              <ProtectedRoute>
+                <Reports />
+              </ProtectedRoute>
+            } 
           />
           <Route 
             path="/metrics" 
-            element={<Metrics />} 
+            element={
+              <ProtectedRoute>
+                <Metrics />
+              </ProtectedRoute>
+            } 
           />
           <Route 
             path="/metrics/calculated" 
-            element={<CalculatedMetrics />} 
+            element={
+              <ProtectedRoute>
+                <CalculatedMetrics />
+              </ProtectedRoute>
+            } 
           />
           <Route 
             path="/metric/:id" 
-            element={<MetricDetail />} 
+            element={
+              <ProtectedRoute>
+                <MetricDetail />
+              </ProtectedRoute>
+            } 
           />
           <Route 
             path="/standards" 
-            element={<Standards />} 
+            element={
+              <ProtectedRoute>
+                <Standards />
+              </ProtectedRoute>
+            } 
           />
           <Route 
             path="/disclosure" 
-            element={<Disclosure />} 
+            element={
+              <ProtectedRoute>
+                <Disclosure />
+              </ProtectedRoute>
+            } 
           />
           <Route 
             path="/draft" 
-            element={<Draft />} 
+            element={
+              <ProtectedRoute>
+                <Draft />
+              </ProtectedRoute>
+            } 
           />
           <Route 
             path="/import" 
-            element={<Import />} 
+            element={
+              <ProtectedRoute>
+                <Import />
+              </ProtectedRoute>
+            } 
           />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route 
             path="*" 
-            element={<NotFound />} 
+            element={
+              <ProtectedRoute>
+                <NotFound />
+              </ProtectedRoute>
+            } 
           />
         </Routes>
       </HashRouter>
