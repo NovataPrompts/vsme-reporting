@@ -1,50 +1,12 @@
-import React, { useState, useEffect } from 'react';
+
+import React from 'react';
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { FileText, BarChart3, RefreshCw, Building, SquarePen } from "lucide-react";
+import { FileText, BarChart3, RefreshCw, SquarePen } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import { CompanyProfileModal } from "@/components/auth/CompanyProfileModal";
-import { useCompanyProfile } from '@/hooks/useCompanyProfile';
 
 const Welcome = () => {
   const navigate = useNavigate();
-  const { getCompanyProfile } = useCompanyProfile();
-  const [hasCompanyProfile, setHasCompanyProfile] = useState(false);
-  const [showProfileModal, setShowProfileModal] = useState(false);
-  const [checkingProfile, setCheckingProfile] = useState(true);
-
-  useEffect(() => {
-    const checkCompanyProfile = async () => {
-      const profile = await getCompanyProfile();
-      const hasProfile = !!profile;
-      setHasCompanyProfile(hasProfile);
-      setCheckingProfile(false);
-      
-      // Show modal if no profile exists
-      if (!hasProfile) {
-        setShowProfileModal(true);
-      }
-    };
-
-    checkCompanyProfile();
-  }, [getCompanyProfile]);
-
-  const handleProfileComplete = () => {
-    setHasCompanyProfile(true);
-    setShowProfileModal(false);
-  };
-
-  const handleOpenProfile = () => {
-    setShowProfileModal(true);
-  };
-
-  if (checkingProfile) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-lg">Loading...</div>
-      </div>
-    );
-  }
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -56,16 +18,6 @@ const Welcome = () => {
                 <h1 className="text-2xl font-bold mb-2">Welcome to VSME Sustainability Reporting</h1>
                 <p className="text-base text-gray-600 dark:text-gray-300 max-w-2xl">Complete these four steps to create your VSME report.</p>
               </div>
-              {hasCompanyProfile && (
-                <Button
-                  onClick={handleOpenProfile}
-                  variant="outline"
-                  className="flex items-center gap-2"
-                >
-                  <Building className="h-4 w-4" />
-                  Edit Company Profile
-                </Button>
-              )}
             </div>
           </div>
           
@@ -134,12 +86,6 @@ const Welcome = () => {
           </div>
         </div>
       </main>
-
-      <CompanyProfileModal
-        isOpen={showProfileModal}
-        onComplete={handleProfileComplete}
-        onClose={() => setShowProfileModal(false)}
-      />
     </div>
   );
 };
