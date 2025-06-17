@@ -22,7 +22,7 @@ const Index = () => {
           {/* Background Image with Overlay */}
           <div className="absolute inset-0 z-0">
             <img 
-              src="/lovable-uploads/43c7e6d0-8a2f-432f-9320-55b38b1bb6b8.png" 
+              src="./lovable-uploads/43c7e6d0-8a2f-432f-9320-55b38b1bb6b8.png" 
               alt="Northern Lights" 
               className="w-full h-full object-cover"
             />
@@ -66,7 +66,7 @@ const Index = () => {
           {/* Keep the same background image visible */}
           <div className="absolute inset-0 -z-10">
             <img 
-              src="/lovable-uploads/43c7e6d0-8a2f-432f-9320-55b38b1bb6b8.png" 
+              src="./lovable-uploads/43c7e6d0-8a2f-432f-9320-55b38b1bb6b8.png" 
               alt="Northern Lights" 
               className="w-full h-full object-cover"
             />

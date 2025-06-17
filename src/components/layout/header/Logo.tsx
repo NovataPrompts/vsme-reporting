@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 
 export const Logo = () => {
   const [logoLoaded, setLogoLoaded] = useState(false);
-  const logoUrl = "/lovable-uploads/dc0ec24e-33a6-4f08-b694-455ce8c649fb.png";
+  const logoUrl = "./lovable-uploads/dc0ec24e-33a6-4f08-b694-455ce8c649fb.png";
 
   // Preload the logo image when component mounts
   useEffect(() => {
